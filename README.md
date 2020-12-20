@@ -1,6 +1,6 @@
 # Docker-Nagios
 
-[![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/tronyx/Docker-Nagios/blob/master/LICENSE.md) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/tronyx/Docker-Nagios.svg)](http://isitmaintained.com/project/tronyx/Docker-Nagios "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/tronyx/Docker-Nagios.svg)](http://isitmaintained.com/project/tronyx/Docker-Nagios "Percentage of issues still open")
+[![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios) [![Docker Pulls](https://img.shields.io/docker/pulls/tronyx/nagios.svg)](https://hub.docker.com/r/tronyx/nagios) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/tronyx/Docker-Nagios/blob/master/LICENSE.md) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/tronyx/Docker-Nagios.svg)](http://isitmaintained.com/project/tronyx/Docker-Nagios "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/tronyx/Docker-Nagios.svg)](http://isitmaintained.com/project/tronyx/Docker-Nagios "Percentage of issues still open")
 
 ## Notes
 
