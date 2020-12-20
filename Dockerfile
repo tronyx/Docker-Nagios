@@ -244,6 +244,7 @@ RUN chmod +x /usr/local/bin/start_nagios        && \
     chmod +x /etc/sv/nagios/run                 && \
     chmod +x /etc/sv/postfix/run                 && \
     chmod +x /etc/sv/rsyslog/run                 && \
+    chmod +x /etc/sv/xinetd/run                 && \
     chmod +x /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh
 
 RUN cd /opt/nagiosgraph/etc && \
