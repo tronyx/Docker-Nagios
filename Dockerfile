@@ -26,8 +26,9 @@ ENV NSCA_TAG               nsca-2.10.0
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections  && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections            && \
     echo postfix postfix/mailname string ${NAGIOS_FQDN} | debconf-set-selections             && \
+    apt-get update && apt-get install software-properties-common                             && \
     add-apt-repository universe          && \
-    apt-get update && apt-get install -y    \
+    apt-get install -y                      \
         apache2                             \
         apache2-utils                       \
         autoconf                            \
