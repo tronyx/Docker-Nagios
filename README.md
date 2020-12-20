@@ -33,7 +33,7 @@ NagiosGraph configuration lives in /opt/nagiosgraph/etc
 
 ### Install
 
-```sh
+```bash
 docker pull tronyx/nagios
 ```
 
@@ -41,20 +41,20 @@ docker pull tronyx/nagios
 
 Run with the example configuration with the following:
 
-```sh
-docker run --name nagios -p 0.0.0.0:8080:80 tronyx/nagios
+```bash
+docker run --name nagios -p 8080:80 tronyx/nagios
 ```
 
 Alternatively you can use external Nagios configuration & log data with the following:
 
-```sh
+```bash
 docker run --name nagios  \
   -v /path-to-nagios/etc/:/opt/nagios/etc/ \
   -v /path-to-nagios/var:/opt/nagios/var/ \
   -v /path-to-custom-plugins:/opt/Custom-Nagios-Plugins \
   -v /path-to-nagiosgraph-var:/opt/nagiosgraph/var \
   -v /path-to-nagiosgraph-etc:/opt/nagiosgraph/etc \
-  -p 0.0.0.0:8080:80 tronyx/nagios
+  -p 8080:80 tronyx/nagios
 ```
 
 Note: The path for the custom plugins will be /opt/Custom-Nagios-Plugins, you will need to reference this directory in your configuration scripts.
@@ -64,15 +64,18 @@ There are a number of environment variables that you can use to adjust the behav
 | Environamne Variable | Description |
 |--------|--------|
 | MAIL_RELAY_HOST | Set Postfix relayhost |
-| MAIL_INET_PROTOCOLS | set the inet_protocols in postfix |
-| NAGIOS_FQDN | set the server Fully Qualified Domain Name in postfix |
-| NAGIOS_TIMEZONE | set the timezone of the server |
+| MAIL_INET_PROTOCOLS | Set the inet_protocols in postfix |
+| NAGIOS_FQDN | Set the server Fully Qualified Domain Name in postfix |
+| NAGIOS_TIMEZONE | Set the timezone of the server |
 
-For best results your Nagios image should have access to both IPv4 & IPv6 networks
+For the best results your Nagios container should have access to both IPv4 & IPv6 networks.
 
 ### Credentials
 
-The default credentials for the web interface is `nagiosadmin` / `nagios`
+The default credentials for the web interface are:
+
+Username: `nagiosadmin`
+Password: `nagios`
 
 ### Extra Plugins
 
