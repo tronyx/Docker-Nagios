@@ -26,6 +26,7 @@ ENV NSCA_TAG               nsca-2.10.0
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections  && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections            && \
     echo postfix postfix/mailname string ${NAGIOS_FQDN} | debconf-set-selections             && \
+    add-apt-repository universe          && \
     apt-get update && apt-get install -y    \
         apache2                             \
         apache2-utils                       \
@@ -72,7 +73,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         php-cli                             \
         php-gd                              \
         postfix                             \
-        python-pip                          \
+        python2                             \
+        python3-pip                         \
         python3-nagiosplugin                \
         sblim-wbemcli                       \
         rsyslog                             \
@@ -82,7 +84,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         snmpd                               \
         snmp-mibs-downloader                \
         unzip                               \
-        python                              \
+        python2                             \
         xinetd                              \
                                                 && \
     apt-get clean && rm -Rf /var/lib/apt/lists/*
@@ -182,6 +184,8 @@ RUN cd /tmp                                                 && \
     cd /tmp && rm -Rf nsca
 
 RUN cd /opt                                                                         && \
+    curl https://bootstrap.pypa.io/get-pip.py --output get-pip.py                   && \
+    python2 get-pip.py                                                              && \
     pip install "pymssql<3.0"                                                       && \
     git clone https://github.com/willixix/naglio-plugins.git     WL-Nagios-Plugins  && \
     git clone https://github.com/JasonRivers/nagios-plugins.git  JR-Nagios-Plugins  && \
