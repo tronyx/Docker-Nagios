@@ -74,8 +74,7 @@ For the best results your Nagios container should have access to both IPv4 & IPv
 
 The default credentials for the web interface are:
 
-Username: `nagiosadmin`
-Password: `nagios`
+`nagiosadmin` // `nagios`
 
 ### Extra Plugins
 
