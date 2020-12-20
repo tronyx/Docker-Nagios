@@ -74,7 +74,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         postfix                             \
         python-pip                          \
         python3-nagiosplugin                \
-        python-pywbem                       \
+        sblim-wbemcli                       \
         rsyslog                             \
         runit                               \
         smbclient                           \
