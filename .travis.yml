@@ -1,13 +1,15 @@
-sudo:
-  - required
-language:
-  - bash
+sudo: required
+language: bash
 services:
   - docker
-
 install:
   - git clone https://github.com/JasonRivers/Docker-Nagios.git ~/Docker-Nagios
-
 script:
-  - ./build.sh
-
+  # Build image
+  - docker build -t tronyx/nagios .
+  # Test image
+  - docker run -p 8080:80 tronyx/nagios apache2 -v
+after_success:
+  # Push image if not a PR
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker login -u "$DOCKER_USER" -p "$DOCKER_PASS" ${DOCKER_REGISTRY}; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker push tronyx/nagios; fi'
