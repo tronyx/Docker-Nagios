@@ -13,7 +13,7 @@ Listing these as I wish to give the original users credit for their work.
 
 Build Status: [![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios)
 
-Nagios Core 4.4.6 running on Ubuntu 18.04 LTS with NagiosGraph & NRPE
+Nagios Core 4.4.6 running on Ubuntu 18.04 LTS with NagiosGraph, NRPE, & NSCA
 
 ### Configurations
 Nagios Configuration lives in /opt/nagios/etc
@@ -30,13 +30,13 @@ docker pull tronyx/nagios:latest
 Run with the example configuration with the following:
 
 ```sh
-docker run --name nagios4 -p 0.0.0.0:8080:80 tronyx/nagios:latest
+docker run --name nagios -p 0.0.0.0:8080:80 tronyx/nagios:latest
 ```
 
 alternatively you can use external Nagios configuration & log data with the following:
 
 ```sh
-docker run --name nagios4  \
+docker run --name nagios  \
   -v /path-to-nagios/etc/:/opt/nagios/etc/ \
   -v /path-to-nagios/var:/opt/nagios/var/ \
   -v /path-to-custom-plugins:/opt/Custom-Nagios-Plugins \
@@ -64,7 +64,8 @@ The default credentials for the web interface is `nagiosadmin` / `nagios`
 
 ### Extra Plugins
 
-* Nagios nrpe [<http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details>]
+* Nagios NRPE [<http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details>]
+* Nagios NSCA [<https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details>]
 * Nagiosgraph [<http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details>]
 * JR-Nagios-Plugins -  custom plugins @JasonRivers created [<https://github.com/JasonRivers/nagios-plugins>]
 * WL-Nagios-Plugins -  custom plugins from William Leibzon [<https://github.com/willixix/WL-NagiosPlugins>]
