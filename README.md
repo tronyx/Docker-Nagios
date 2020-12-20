@@ -1,5 +1,7 @@
 # Docker-Nagios
 
+## Notes
+
 Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-Nagios) to incorporate various improvements from the open PRs on his repo. I have incorporated the following PRs:
 
 [#116](https://github.com/JasonRivers/Docker-Nagios/pull/116)
@@ -11,9 +13,13 @@ Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-
 
 Listing these as I wish to give the original users credit for their work.
 
-Build Status: [![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios)
+I have also updated the image to Ubuntu 20.04 LTS.
 
-Nagios Core 4.4.6 running on Ubuntu 18.04 LTS with NagiosGraph, NRPE, & NSCA
+## Description
+
+Nagios Core 4.4.6 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, & NSCA
+
+Build Status: [![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios)
 
 ### Configurations
 Nagios Configuration lives in /opt/nagios/etc
@@ -22,7 +28,7 @@ NagiosGraph configuration lives in /opt/nagiosgraph/etc
 ### Install
 
 ```sh
-docker pull tronyx/nagios:latest
+docker pull tronyx/nagios
 ```
 
 ### Running
@@ -30,7 +36,7 @@ docker pull tronyx/nagios:latest
 Run with the example configuration with the following:
 
 ```sh
-docker run --name nagios -p 0.0.0.0:8080:80 tronyx/nagios:latest
+docker run --name nagios -p 0.0.0.0:8080:80 tronyx/nagios
 ```
 
 alternatively you can use external Nagios configuration & log data with the following:
@@ -42,7 +48,7 @@ docker run --name nagios  \
   -v /path-to-custom-plugins:/opt/Custom-Nagios-Plugins \
   -v /path-to-nagiosgraph-var:/opt/nagiosgraph/var \
   -v /path-to-nagiosgraph-etc:/opt/nagiosgraph/etc \
-  -p 0.0.0.0:8080:80 tronyx/nagios:latest
+  -p 0.0.0.0:8080:80 tronyx/nagios
 ```
 
 Note: The path for the custom plugins will be /opt/Custom-Nagios-Plugins, you will need to reference this directory in your configuration scripts.
@@ -58,7 +64,7 @@ There are a number of environment variables that you can use to adjust the behav
 
 For best results your Nagios image should have access to both IPv4 & IPv6 networks
 
-#### Credentials
+### Credentials
 
 The default credentials for the web interface is `nagiosadmin` / `nagios`
 
