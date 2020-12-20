@@ -3,7 +3,7 @@ language: bash
 services:
   - docker
 install:
-  - git clone https://github.com/JasonRivers/Docker-Nagios.git ~/Docker-Nagios
+  - git clone https://github.com/tronyx/Docker-Nagios.git ~/Docker-Nagios
 script:
   # Build image
   - docker build -t tronyx/nagios .
