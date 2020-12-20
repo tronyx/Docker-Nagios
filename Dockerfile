@@ -1,11 +1,18 @@
 FROM ubuntu:20.04
 
+# Args
 ARG VCS_REF
+ARG BUILD_DATE
 
-LABEL maintainer="Tronyx <tronyx@tronflix.app>" \
-    org.label-schema.vcs-ref=$VCS_REF \
-    org.label-schema.vcs-url="https://github.com/tronyx/Docker-Nagios/"
+# Labels
+LABEL maintainer="Tronyx <tronyx@tronflix.app>"
+LABEL org.label-schema.name="tronyx/nagios"
+LABEL org.label-schema.description="Dockerized Nagios Core"
+LABEL org.label-schema.vcs-ref=$VCS_REF
+LABEL org.label-schema.build-date=$BUILD_DATE
+LABEL org.label-schema.vcs-url="https://github.com/tronyx/Docker-Nagios/"
 
+# Environment variables
 ENV NAGIOS_HOME            /opt/nagios
 ENV NAGIOS_USER            nagios
 ENV NAGIOS_GROUP           nagios
