@@ -257,17 +257,20 @@ RUN cd /opt/nagiosgraph/etc && \
 
 RUN rm /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh
 
-# enable all runit services
+# Enable all runit services
 RUN ln -s /etc/sv/* /etc/service
 
 ENV APACHE_LOCK_DIR /var/run
 ENV APACHE_LOG_DIR /var/log/apache2
 
-#Set ServerName and timezone for Apache
+# Set ServerName and timezone for Apache
 RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.conf    && \
     echo "PassEnv TZ" > /etc/apache2/conf-available/timezone.conf            && \
     ln -s /etc/apache2/conf-available/servername.conf /etc/apache2/conf-enabled/servername.conf    && \
     ln -s /etc/apache2/conf-available/timezone.conf /etc/apache2/conf-enabled/timezone.conf
+
+# Remove unecessary packages after install/setup are complete
+RUN apt-get remove -y software-properties-common
 
 EXPOSE 80
 
