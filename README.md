@@ -17,9 +17,9 @@ I have also updated the image to Ubuntu 20.04 LTS.
 
 ## Description
 
-Nagios Core 4.4.6 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, & NSCA
+Nagios Core 4.4.6 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, & NSCA.
 
-Build Status: [![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios)
+[![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios)
 
 ### Configurations
 Nagios Configuration lives in /opt/nagios/etc
