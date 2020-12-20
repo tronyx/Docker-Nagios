@@ -13,7 +13,7 @@ Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-
 
 Listing these as I wish to give the original users credit for their work.
 
-### Changes That I've Made
+## Changes That I've Made
 
 Things that I have changed/updated so far:
 
@@ -21,15 +21,16 @@ Things that I have changed/updated so far:
 * Updated Nagios Plugins to current latest (2.3.3)
 * Updated NRPE to current latest (4.0.2)
 
-## Description
+## Information
 
 Nagios Core 4.4.6 running on Ubuntu 18.04 LTS with NagiosGraph, NRPE, & NSCA.
 
 [![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios)
 
 ### Configurations
-Nagios Configuration lives in /opt/nagios/etc
-NagiosGraph configuration lives in /opt/nagiosgraph/etc
+
+* Nagios Configuration lives in the `/opt/nagios/etc` directory.
+* NagiosGraph configuration lives in the `/opt/nagiosgraph/etc` directory.
 
 ### Install
 
