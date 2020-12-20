@@ -4,20 +4,20 @@
 
 Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-Nagios) to incorporate various improvements from the open PRs on his repo. I have incorporated the following PRs:
 
-[#116](https://github.com/JasonRivers/Docker-Nagios/pull/116)
-[#112](https://github.com/JasonRivers/Docker-Nagios/pull/112)
-[#110](https://github.com/JasonRivers/Docker-Nagios/pull/110)
-[#101](https://github.com/JasonRivers/Docker-Nagios/pull/101)
-[#96](https://github.com/JasonRivers/Docker-Nagios/pull/96)
-[#72](https://github.com/JasonRivers/Docker-Nagios/pull/72)
+* [#96](https://github.com/JasonRivers/Docker-Nagios/pull/96)
+* [#101](https://github.com/JasonRivers/Docker-Nagios/pull/101) - Fixes to allow building on ARM aarch64 architecture (@garethrandall)
+* [#110](https://github.com/JasonRivers/Docker-Nagios/pull/110) - Update to Ubuntu 18.04 LTS (@asimzeeshan)
+* [#112](https://github.com/JasonRivers/Docker-Nagios/pull/112) - Add python3-nagiosplugin for plugins that need it (@davralin)
+* [#116](https://github.com/JasonRivers/Docker-Nagios/pull/116) - Update Nagios to 4.4.6 (@mmerian)
+* [#120](https://github.com/JasonRivers/Docker-Nagios/pull/120) - Add NSCA (@mmerian)
 
 Listing these as I wish to give the original users credit for their work.
 
-### Changes I've Made
+### Changes That I've Made
 
 Things that I have changed/updated so far:
 
-* Updated the image to Ubuntu 20.04 LTS
+* Updated the image to Ubuntu 20.04 LTS (Currently still testing w/ `tronyx/nagios:ubuntu-20.04` tag)
 * Updated Nagios Plugins to current latest (2.3.3)
 * Updated NRPE to current latest (4.0.2)
 
