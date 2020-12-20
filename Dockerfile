@@ -18,8 +18,8 @@ ENV NG_CGI_DIR             ${NAGIOS_HOME}/sbin
 ENV NG_WWW_DIR             ${NAGIOS_HOME}/share/nagiosgraph
 ENV NG_CGI_URL             /cgi-bin
 ENV NAGIOS_BRANCH          nagios-4.4.6
-ENV NAGIOS_PLUGINS_BRANCH  release-2.2.1
-ENV NRPE_BRANCH            nrpe-3.2.1
+ENV NAGIOS_PLUGINS_BRANCH  release-2.3.3
+ENV NRPE_BRANCH            nrpe-4.0.2
 ENV NSCA_TAG               nsca-2.10.0
 
 
@@ -77,7 +77,6 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         python2                             \
         python3-pip                         \
         python3-nagiosplugin                \
-        sblim-wbemcli                       \
         rsyslog                             \
         runit                               \
         smbclient                           \
@@ -184,18 +183,19 @@ RUN cd /tmp                                                 && \
     cp sample-config/send_nsca.cfg ${NAGIOS_HOME}/etc/      && \
     cd /tmp && rm -Rf nsca
 
-RUN cd /opt                                                                         && \
-    curl https://bootstrap.pypa.io/get-pip.py --output get-pip.py                   && \
-    python2 get-pip.py                                                              && \
-    pip install "pymssql<3.0"                                                       && \
-    git clone https://github.com/willixix/naglio-plugins.git     WL-Nagios-Plugins  && \
-    git clone https://github.com/JasonRivers/nagios-plugins.git  JR-Nagios-Plugins  && \
-    git clone https://github.com/justintime/nagios-plugins.git   JE-Nagios-Plugins  && \
+RUN cd /opt                                                                                   && \
+    curl https://bootstrap.pypa.io/get-pip.py --output get-pip.py                             && \
+    python2 get-pip.py                                                                        && \
+    pip install "pymssql<3.0"                                                                 && \
+    pip3 install pywbem                                                                        && \
+    git clone https://github.com/willixix/naglio-plugins.git     WL-Nagios-Plugins            && \
+    git clone https://github.com/JasonRivers/nagios-plugins.git  JR-Nagios-Plugins            && \
+    git clone https://github.com/justintime/nagios-plugins.git   JE-Nagios-Plugins            && \
     git clone https://github.com/nagiosenterprises/check_mssql_collection.git   nagios-mssql  && \
-    chmod +x /opt/WL-Nagios-Plugins/check*                                          && \
-    chmod +x /opt/JE-Nagios-Plugins/check_mem/check_mem.pl                          && \
-    cp /opt/JE-Nagios-Plugins/check_mem/check_mem.pl ${NAGIOS_HOME}/libexec/           && \
-    cp /opt/nagios-mssql/check_mssql_database.py ${NAGIOS_HOME}/libexec/                         && \
+    chmod +x /opt/WL-Nagios-Plugins/check*                                                    && \
+    chmod +x /opt/JE-Nagios-Plugins/check_mem/check_mem.pl                                    && \
+    cp /opt/JE-Nagios-Plugins/check_mem/check_mem.pl ${NAGIOS_HOME}/libexec/                  && \
+    cp /opt/nagios-mssql/check_mssql_database.py ${NAGIOS_HOME}/libexec/                      && \
     cp /opt/nagios-mssql/check_mssql_server.py ${NAGIOS_HOME}/libexec/
 
 
