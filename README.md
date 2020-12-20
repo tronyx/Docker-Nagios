@@ -13,7 +13,13 @@ Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-
 
 Listing these as I wish to give the original users credit for their work.
 
-I have also updated the image to Ubuntu 20.04 LTS.
+### Changes I've Made
+
+Things that I have changed/updated so far:
+
+* Updated the image to Ubuntu 20.04 LTS
+* Updated Nagios Plugins to current latest (2.3.3)
+* Updated NRPE to current latest (4.0.2)
 
 ## Description
 
@@ -39,7 +45,7 @@ Run with the example configuration with the following:
 docker run --name nagios -p 0.0.0.0:8080:80 tronyx/nagios
 ```
 
-alternatively you can use external Nagios configuration & log data with the following:
+Alternatively you can use external Nagios configuration & log data with the following:
 
 ```sh
 docker run --name nagios  \
