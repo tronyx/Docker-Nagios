@@ -70,5 +70,3 @@ The default credentials for the web interface is `nagiosadmin` / `nagios`
 * JR-Nagios-Plugins -  custom plugins @JasonRivers created [<https://github.com/JasonRivers/nagios-plugins>]
 * WL-Nagios-Plugins -  custom plugins from William Leibzon [<https://github.com/willixix/WL-NagiosPlugins>]
 * JE-Nagios-Plugins -  custom plugins from Justin Ellison [<https://github.com/justintime/nagios-plugins>]
-
-
