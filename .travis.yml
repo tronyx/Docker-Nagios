@@ -1,4 +1,5 @@
-language: bash
+language: shell
+dist: focal
 services:
   - docker
 install:
