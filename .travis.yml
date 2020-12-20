@@ -5,10 +5,10 @@ install:
   - git clone https://github.com/tronyx/Docker-Nagios.git ~/Docker-Nagios
 script:
   # Build image
-  - docker build -t tronyx/nagios .
+  - docker build -t tronyx/nagios:ubuntu-20.04 .
   # Test image
-  - docker run -p 8080:80 tronyx/nagios apache2 -v
+  - docker run -p 8080:80 tronyx/nagios:ubuntu-20.04 apache2 -v
 after_success:
   # Push image if not a PR
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker login -u "$DOCKER_USER" -p "$DOCKER_PASS" ${DOCKER_REGISTRY}; fi'
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker push tronyx/nagios; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker push tronyx/nagios:ubuntu-20.04; fi'
