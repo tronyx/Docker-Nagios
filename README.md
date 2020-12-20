@@ -11,7 +11,7 @@ Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-
 
 Listing these as I wish to give the original users credit for their work.
 
-Build Status: [![Build Status](https://travis-ci.org/tronyx/Docker-Nagios.svg?branch=master)](https://travis-ci.org/tronyx/Docker-Nagios)
+Build Status: [![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios)
 
 Nagios Core 4.4.6 running on Ubuntu 18.04 LTS with NagiosGraph & NRPE
 
