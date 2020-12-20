@@ -1,5 +1,10 @@
 FROM ubuntu:20.04
-LABEL maintainer="Tronyx <tronyx@tronflix.app>"
+
+ARG VCS_REF
+
+LABEL maintainer="Tronyx <tronyx@tronflix.app>" \
+    org.label-schema.vcs-ref=$VCS_REF \
+    org.label-schema.vcs-url="https://github.com/tronyx/Docker-Nagios/"
 
 ENV NAGIOS_HOME            /opt/nagios
 ENV NAGIOS_USER            nagios
