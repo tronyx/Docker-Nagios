@@ -1,3 +1,6 @@
+language: shell
+os: linux
+dist: bionic
 language: bash
 services:
   - docker
@@ -5,7 +8,7 @@ install:
   - git clone https://github.com/tronyx/Docker-Nagios.git ~/Docker-Nagios
 script:
   # Build image
-  - docker build -t tronyx/nagios .
+  - docker build --no-cache=true --build-arg VCS_REF=`git rev-parse --short HEAD` --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') -t tronyx/nagios
   # Test image
   - docker run -p 8080:80 tronyx/nagios apache2 -v
 after_success:
