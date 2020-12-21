@@ -1,48 +1,61 @@
 # Docker-Nagios
 
+[![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios) [![Docker Pulls](https://img.shields.io/docker/pulls/tronyx/nagios.svg)](https://hub.docker.com/r/tronyx/nagios) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/tronyx/Docker-Nagios/blob/master/LICENSE.md) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/tronyx/Docker-Nagios.svg)](http://isitmaintained.com/project/tronyx/Docker-Nagios "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/tronyx/Docker-Nagios.svg)](http://isitmaintained.com/project/tronyx/Docker-Nagios "Percentage of issues still open")
+
+## Notes
+
 Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-Nagios) to incorporate various improvements from the open PRs on his repo. I have incorporated the following PRs:
 
-[#116](https://github.com/JasonRivers/Docker-Nagios/pull/116)
-[#112](https://github.com/JasonRivers/Docker-Nagios/pull/112)
-[#110](https://github.com/JasonRivers/Docker-Nagios/pull/110)
-[#101](https://github.com/JasonRivers/Docker-Nagios/pull/101)
-[#96](https://github.com/JasonRivers/Docker-Nagios/pull/96)
-[#72](https://github.com/JasonRivers/Docker-Nagios/pull/72)
+* [#96](https://github.com/JasonRivers/Docker-Nagios/pull/96) - Fix issue with Nagiosgraph source (@fregge)
+* [#101](https://github.com/JasonRivers/Docker-Nagios/pull/101) - Fixes to allow building on ARM aarch64 architecture (@garethrandall)
+* [#110](https://github.com/JasonRivers/Docker-Nagios/pull/110) - Update to Ubuntu 18.04 LTS (@asimzeeshan)
+* [#112](https://github.com/JasonRivers/Docker-Nagios/pull/112) - Add python3-nagiosplugin for plugins that need it (@davralin)
+* [#116](https://github.com/JasonRivers/Docker-Nagios/pull/116) - Update Nagios to 4.4.6 (@mmerian)
+* [#120](https://github.com/JasonRivers/Docker-Nagios/pull/120) - Add NSCA (@mmerian)
 
 Listing these as I wish to give the original users credit for their work.
 
-Build Status: [![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios)
+## Changes That I've Made
 
-Nagios Core 4.4.6 running on Ubuntu 18.04 LTS with NagiosGraph, NRPE, & NSCA
+Things that I have changed/updated so far:
+
+* Updated the image to Ubuntu 20.04 LTS (Currently still testing w/ `tronyx/nagios:ubuntu-20.04` tag)
+* Updated Nagios Plugins to current latest (2.3.3)
+* Updated NRPE to current latest (4.0.2)
+
+## Information
+
+Nagios Core 4.4.6 running on Ubuntu 18.04 LTS with NagiosGraph, NRPE, & NSCA.
 
 ### Configurations
-Nagios Configuration lives in /opt/nagios/etc
-NagiosGraph configuration lives in /opt/nagiosgraph/etc
+
+* Nagios Configuration lives in the `/opt/nagios/etc` directory.
+* NagiosGraph configuration lives in the `/opt/nagiosgraph/etc` directory.
 
 ### Install
 
-```sh
-docker pull tronyx/nagios:latest
+```bash
+docker pull tronyx/nagios
 ```
 
 ### Running
 
 Run with the example configuration with the following:
 
-```sh
-docker run --name nagios -p 0.0.0.0:8080:80 tronyx/nagios:latest
+```bash
+docker run --name nagios -p 8080:80 tronyx/nagios
 ```
 
-alternatively you can use external Nagios configuration & log data with the following:
+Alternatively you can use external Nagios configuration & log data with the following:
 
-```sh
+```bash
 docker run --name nagios  \
   -v /path-to-nagios/etc/:/opt/nagios/etc/ \
   -v /path-to-nagios/var:/opt/nagios/var/ \
   -v /path-to-custom-plugins:/opt/Custom-Nagios-Plugins \
   -v /path-to-nagiosgraph-var:/opt/nagiosgraph/var \
   -v /path-to-nagiosgraph-etc:/opt/nagiosgraph/etc \
-  -p 0.0.0.0:8080:80 tronyx/nagios:latest
+  -p 8080:80 tronyx/nagios
 ```
 
 Note: The path for the custom plugins will be /opt/Custom-Nagios-Plugins, you will need to reference this directory in your configuration scripts.
@@ -52,15 +65,17 @@ There are a number of environment variables that you can use to adjust the behav
 | Environamne Variable | Description |
 |--------|--------|
 | MAIL_RELAY_HOST | Set Postfix relayhost |
-| MAIL_INET_PROTOCOLS | set the inet_protocols in postfix |
-| NAGIOS_FQDN | set the server Fully Qualified Domain Name in postfix |
-| NAGIOS_TIMEZONE | set the timezone of the server |
+| MAIL_INET_PROTOCOLS | Set the inet_protocols in postfix |
+| NAGIOS_FQDN | Set the server Fully Qualified Domain Name in postfix |
+| NAGIOS_TIMEZONE | Set the timezone of the server |
 
-For best results your Nagios image should have access to both IPv4 & IPv6 networks
+For the best results your Nagios container should have access to both IPv4 & IPv6 networks.
 
-#### Credentials
+### Credentials
 
-The default credentials for the web interface is `nagiosadmin` / `nagios`
+The default credentials for the web interface are:
+
+`nagiosadmin` // `nagios`
 
 ### Extra Plugins
 
