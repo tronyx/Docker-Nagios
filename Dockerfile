@@ -5,34 +5,34 @@ ARG VCS_REF
 ARG BUILD_DATE
 
 # Labels
-LABEL maintainer="Tronyx <tronyx@tronflix.app>"
-LABEL org.label-schema.name="tronyx/nagios"
-LABEL org.label-schema.description="Dockerized Nagios Core"
-LABEL org.label-schema.vcs-ref=${VCS_REF}
-LABEL org.label-schema.build-date=${BUILD_DATE}
-LABEL org.label-schema.vcs-url="https://github.com/tronyx/Docker-Nagios/"
+LABEL maintainer="Tronyx <tronyx@tronflix.app>" \
+    org.label-schema.name="tronyx/nagios" \
+    org.label-schema.description="Dockerized Nagios Core" \
+    org.label-schema.vcs-ref=${VCS_REF} \
+    org.label-schema.build-date=${BUILD_DATE} \
+    org.label-schema.vcs-url="https://github.com/tronyx/Docker-Nagios/"
 
 # Environment variables
-ENV NAGIOS_HOME            /opt/nagios
-ENV NAGIOS_USER            nagios
-ENV NAGIOS_GROUP           nagios
-ENV NAGIOS_CMDUSER         nagios
-ENV NAGIOS_CMDGROUP        nagios
-ENV NAGIOS_FQDN            nagios.example.com
-ENV NAGIOSADMIN_USER       nagiosadmin
-ENV NAGIOSADMIN_PASS       nagios
-ENV APACHE_RUN_USER        nagios
-ENV APACHE_RUN_GROUP       nagios
-ENV NAGIOS_TIMEZONE        UTC
-ENV DEBIAN_FRONTEND        noninteractive
-ENV NG_NAGIOS_CONFIG_FILE  ${NAGIOS_HOME}/etc/nagios.cfg
-ENV NG_CGI_DIR             ${NAGIOS_HOME}/sbin
-ENV NG_WWW_DIR             ${NAGIOS_HOME}/share/nagiosgraph
-ENV NG_CGI_URL             /cgi-bin
-ENV NAGIOS_BRANCH          nagios-4.4.6
-ENV NAGIOS_PLUGINS_BRANCH  release-2.3.3
-ENV NRPE_BRANCH            nrpe-4.0.2
-ENV NSCA_TAG               nsca-2.10.0
+ENV NAGIOS_HOME=/opt/nagios \
+    NAGIOS_USER=nagios \
+    NAGIOS_GROUP=nagios \
+    NAGIOS_CMDUSER=nagios \
+    NAGIOS_CMDGROUP=nagios \
+    NAGIOS_FQDN=nagios.example.com \
+    NAGIOSADMIN_USER=nagiosadmin \
+    NAGIOSADMIN_PASS=nagios \
+    APACHE_RUN_USER=nagios \
+    APACHE_RUN_GROUP=nagios \
+    NAGIOS_TIMEZONE=UTC \
+    DEBIAN_FRONTEND=noninteractive \
+    NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
+    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
+    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph \
+    NG_CGI_URL=/cgi-bin \
+    NAGIOS_BRANCH=nagios-4.4.6 \
+    NAGIOS_PLUGINS_BRANCH=release-2.3.3 \
+    NRPE_BRANCH=nrpe-4.0.2 \
+    NSCA_TAG=nsca-2.10.0
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
@@ -112,9 +112,9 @@ RUN cd /tmp && \
     cd qstat && \
     ./autogen.sh && \
     ./configure && \
-    make > /dev/null && \
-    make install > /dev/null && \
-    make clean > /dev/null
+    make && \
+    make install && \
+    make clean
 
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nagioscore.git -b ${NAGIOS_BRANCH} && \
@@ -127,12 +127,12 @@ RUN cd /tmp && \
         --with-command-group=${NAGIOS_CMDGROUP} \
         --with-nagios-user=${NAGIOS_USER} \
         --with-nagios-group=${NAGIOS_GROUP} && \
-    make all > /dev/null && \
-    make install > /dev/null && \
-    make install-config > /dev/null && \
-    make install-commandmode > /dev/null && \
-    make install-webconf > /dev/null && \
-    make clean > /dev/null
+    make all && \
+    make install && \
+    make install-config && \
+    make install-commandmode && \
+    make install-webconf && \
+    make clean
 
 RUN cd /tmp && \
     git clone https://github.com/nagios-plugins/nagios-plugins.git -b $NAGIOS_PLUGINS_BRANCH && \
@@ -142,9 +142,9 @@ RUN cd /tmp && \
         --prefix=${NAGIOS_HOME} \
         --with-ipv6 \
         --with-ping6-command="/bin/ping6 -n -U -W %d -c %d %s" && \
-    make > /dev/null && \
-    make install > /dev/null && \
-    make clean > /dev/null && \
+    make && \
+    make install && \
+    make clean && \
     mkdir -p /usr/lib/nagios/plugins && \
     ln -sf ${NAGIOS_HOME}/libexec/utils.pm /usr/lib/nagios/plugins
 
@@ -159,7 +159,7 @@ RUN cd /tmp && \
         --with-ssl-lib=/usr/lib/$(uname -m)-linux-gnu && \
     make check_nrpe > /dev/null && \
     cp src/check_nrpe ${NAGIOS_HOME}/libexec/ && \
-    make clean > /dev/null
+    make clean
 
 RUN cd /tmp && \
     git clone https://git.code.sf.net/p/nagiosgraph/git nagiosgraph && \
@@ -180,7 +180,7 @@ RUN cd /tmp && \
         --prefix=${NAGIOS_HOME} \
         --with-nsca-user=${NAGIOS_USER} \
         --with-nsca-grp=${NAGIOS_GROUP} && \
-    make all > /dev/null && \
+    make all && \
     cp src/nsca ${NAGIOS_HOME}/bin/ && \
     cp src/send_nsca ${NAGIOS_HOME}/bin/ && \
     cp sample-config/nsca.cfg ${NAGIOS_HOME}/etc/ && \
@@ -224,10 +224,6 @@ RUN sed -i 's,/bin/mail,/usr/bin/mail,' ${NAGIOS_HOME}/etc/objects/commands.cfg 
 RUN cp /etc/services /var/spool/postfix/etc/ && \
     echo "smtp_address_preference = ipv4" >> /etc/postfix/main.cf
 
-#RUN rm -rf /etc/rsyslog.d \
-#    /etc/rsyslog.conf \
-#    /etc/sv/getty-5
-
 ADD overlay /
 
 RUN echo "use_timezone=${NAGIOS_TIMEZONE}" >> ${NAGIOS_HOME}/etc/nagios.cfg
@@ -259,8 +255,8 @@ RUN cd /opt/nagiosgraph/etc && \
 # Enable all runit services
 RUN ln -s /etc/sv/* /etc/service
 
-ENV APACHE_LOCK_DIR /var/run
-ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_LOCK_DIR=/var/run \
+    APACHE_LOG_DIR=/var/log/apache2
 
 # Set ServerName and timezone for Apache
 RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.conf && \
@@ -270,8 +266,8 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt-get autoremove && \
-    apt-get remove -y software-properties-common && \
+RUN apt-get -y autoremove && \
+    apt-get -y remove software-properties-common && \
     # Remove dirs from git clones
     cd /tmp && \
     rm -rf qstat \
