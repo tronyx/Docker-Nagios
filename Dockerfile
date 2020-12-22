@@ -1,16 +1,6 @@
 FROM ubuntu:20.04
 
-# Args
-ARG VCS_REF
-ARG BUILD_DATE
-
-# Labels
-LABEL maintainer="Tronyx <tronyx@tronflix.app>" \
-    org.label-schema.name="tronyx/nagios" \
-    org.label-schema.description="Dockerized Nagios Core" \
-    org.label-schema.vcs-ref=${VCS_REF} \
-    org.label-schema.build-date=${BUILD_DATE} \
-    org.label-schema.vcs-url="https://github.com/tronyx/Docker-Nagios/"
+LABEL maintainer="Tronyx <tronyx@tronflix.app>"
 
 # Environment variables
 ENV NAGIOS_HOME=/opt/nagios \
@@ -37,9 +27,10 @@ ENV NAGIOS_HOME=/opt/nagios \
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
     echo postfix postfix/mailname string ${NAGIOS_FQDN} | debconf-set-selections && \
-    apt-get -qq update && apt-get -qq -y install software-properties-common && \
+    apt-get -qq update && \
+    apt-get -qq -y install --no-install-recommends software-properties-common && \
     add-apt-repository universe && \
-    apt-get -qq -y install \
+    apt-get -qq -y install --no-install-recommends \
         apache2 \
         apache2-utils \
         autoconf \
@@ -100,9 +91,9 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN ( egrep -i "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP    ) && \
-    ( egrep -i "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
-RUN ( id -u $NAGIOS_USER    || useradd --system -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER    ) && \
+RUN ( grep -Ei "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP ) && \
+    ( grep -Ei "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
+RUN ( id -u $NAGIOS_USER    || useradd --system -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER ) && \
     ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
 
 # Reduce unecesssary git output
@@ -204,7 +195,8 @@ RUN cd /opt && \
 
 RUN sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars
 
-RUN export DOC_ROOT="DocumentRoot $(echo ${NAGIOS_HOME}/share)" && \
+#RUN export DOC_ROOT="DocumentRoot $(echo ${NAGIOS_HOME}/share)" && \
+RUN export DOC_ROOT="DocumentRoot ${NAGIOS_HOME}/share" && \
     sed -i "s,DocumentRoot.*,${DOC_ROOT}," /etc/apache2/sites-enabled/000-default.conf && \
     sed -i "s,</VirtualHost>,<IfDefine ENABLE_USR_LIB_CGI_BIN>\nScriptAlias /cgi-bin/ ${NAGIOS_HOME}/sbin/\n</IfDefine>\n</VirtualHost>," /etc/apache2/sites-enabled/000-default.conf && \
     ln -s /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/cgi.load
@@ -269,7 +261,7 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt -qq -y autoremove && \
+RUN apt-get -qq -y autoremove && \
     apt-get -qq -y remove software-properties-common && \
     # Remove dirs from git clones
     cd /tmp && \
