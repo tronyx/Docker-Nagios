@@ -19,7 +19,7 @@ Listing these as I wish to give the original users credit for their work.
 
 Things that I have changed/updated so far:
 
-* Updated the image to Ubuntu 20.04 LTS (Currently still testing w/ `tronyx/nagios:ubuntu-20.04` tag)
+* Updated the image to Ubuntu 20.04 LTS
 * Updated Nagios Plugins to current latest (2.3.3)
 * Updated NRPE to current latest (4.0.2)
 
