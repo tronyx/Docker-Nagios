@@ -7,7 +7,7 @@ install:
   - git clone https://github.com/tronyx/Docker-Nagios.git ~/Docker-Nagios
 script:
   # Build image
-  - docker build --no-cache=true --build-arg VCS_REF=$(git rev-parse --short HEAD) --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') -t tronyx/nagios:ubuntu-20.04 .
+  - docker build --no-cache=true -t tronyx/nagios:ubuntu-20.04 .
   # Test image
   - docker run -p 8080:80 tronyx/nagios:ubuntu-20.04 apache2 -v
 after_success:
