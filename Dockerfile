@@ -225,6 +225,8 @@ RUN sed -i 's,/bin/mail,/usr/bin/mail,' ${NAGIOS_HOME}/etc/objects/commands.cfg 
 RUN cp /etc/services /var/spool/postfix/etc/ && \
     echo "smtp_address_preference = ipv4" >> /etc/postfix/main.cf
 
+RUN rm -rf /etc/rsyslog.d /etc/rsyslog.conf /etc/sv/getty-5
+
 ADD overlay /
 
 RUN echo "use_timezone=${NAGIOS_TIMEZONE}" >> ${NAGIOS_HOME}/etc/nagios.cfg
@@ -267,7 +269,7 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt-get -qq -y autoremove && \
+RUN apt -qq -y autoremove && \
     apt-get -qq -y remove software-properties-common && \
     # Remove dirs from git clones
     cd /tmp && \
@@ -279,10 +281,7 @@ RUN apt-get -qq -y autoremove && \
     nsca && \
     # Remove some other files and dirs
     rm -rf /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
-    /opt/get-pip.py \
-    /etc/rsyslog.d \
-    /etc/rsyslog.conf \
-    /etc/sv/getty-5
+    /opt/get-pip.py
 
 # Expose port 80 for the web UI
 EXPOSE 80
