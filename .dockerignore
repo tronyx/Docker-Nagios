@@ -1,2 +1,7 @@
+.git
+.github
+*.md
+.dockerignore
 .travis.yml
-build.sh
+Dockerfile
+docker-compose.yml
