@@ -109,9 +109,9 @@ RUN cd /tmp && \
     cd qstat && \
     ./autogen.sh && \
     ./configure && \
-    make && \
-    make install && \
-    make clean
+    make -s && \
+    make -s install && \
+    make -s clean
 
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nagioscore.git -b ${NAGIOS_BRANCH} && \
@@ -276,8 +276,8 @@ RUN apt-get remove -y software-properties-common && \
     nrpe \
     nagiosgraph \
     nsca && \
-    # Remove some files
-    rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
+    # Remove some other files and dirs
+    rm -rf /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
     /opt/get-pip.py \
     /etc/rsyslog.d \
     /etc/rsyslog.conf \
