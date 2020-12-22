@@ -22,8 +22,7 @@ ENV NAGIOS_HOME=/opt/nagios \
     NAGIOS_BRANCH=nagios-4.4.6 \
     NAGIOS_PLUGINS_BRANCH=release-2.3.3 \
     NRPE_BRANCH=nrpe-4.0.2 \
-    NSCA_TAG=nsca-2.10.0 \
-    MK_LIVESTATUS_VERSION=1.6.0p19
+    NSCA_TAG=nsca-2.10.0
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
@@ -99,6 +98,7 @@ RUN ( id -u $NAGIOS_USER    || useradd --system -d $NAGIOS_HOME -g $NAGIOS_GROUP
 # Reduce unecesssary git output
 RUN git config --global advice.detachedHead false
 
+# Install QStat
 RUN cd /tmp && \
     git clone https://github.com/multiplay/qstat.git && \
     cd qstat && \
@@ -108,6 +108,7 @@ RUN cd /tmp && \
     make install && \
     make clean
 
+# Install Nagios Core
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nagioscore.git -b ${NAGIOS_BRANCH} && \
     cd nagioscore && \
@@ -126,6 +127,7 @@ RUN cd /tmp && \
     make install-webconf && \
     make clean
 
+# Install Nagios Plugins
 RUN cd /tmp && \
     git clone https://github.com/nagios-plugins/nagios-plugins.git -b $NAGIOS_PLUGINS_BRANCH && \
     cd nagios-plugins && \
@@ -140,9 +142,10 @@ RUN cd /tmp && \
     mkdir -p /usr/lib/nagios/plugins && \
     ln -sf ${NAGIOS_HOME}/libexec/utils.pm /usr/lib/nagios/plugins
 
-RUN wget -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
-    chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py
+#RUN wget -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
+#    chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py
 
+# Install NRPE
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nrpe.git -b ${NRPE_BRANCH} && \
     cd nrpe && \
@@ -153,6 +156,7 @@ RUN cd /tmp && \
     cp src/check_nrpe ${NAGIOS_HOME}/libexec/ && \
     make clean
 
+# Install NagiosGraph
 RUN cd /tmp && \
     git clone https://git.code.sf.net/p/nagiosgraph/git nagiosgraph && \
     cd nagiosgraph && \
@@ -164,6 +168,7 @@ RUN cd /tmp && \
         --nagios-cgi-url /cgi-bin && \
     cp share/nagiosgraph.ssi ${NAGIOS_HOME}/share/ssi/common-header.ssi
 
+# Install NSCA
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nsca.git && \
     cd nsca && \
@@ -188,23 +193,13 @@ RUN cd /opt && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
     git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
     git clone https://github.com/nagiosenterprises/check_mssql_collection.git nagios-mssql && \
+    wget -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
     chmod +x /opt/WL-Nagios-Plugins/check* && \
     chmod +x /opt/JE-Nagios-Plugins/check_mem/check_mem.pl && \
+    chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py && \
     cp /opt/JE-Nagios-Plugins/check_mem/check_mem.pl ${NAGIOS_HOME}/libexec/ && \
     cp /opt/nagios-mssql/check_mssql_database.py ${NAGIOS_HOME}/libexec/ && \
     cp /opt/nagios-mssql/check_mssql_server.py ${NAGIOS_HOME}/libexec/
-
-# Install mk-livestatus
-RUN cd /tmp && \
-    wget https://mathias-kettner.de/download/mk-livestatus-${MK_LIVESTATUS_VERSION}.tar.gz && \
-    tar zxf mk-livestatus-${MK_LIVESTATUS_VERSION}.tar.gz && \
-    cd mk-livestatus-${MK_LIVESTATUS_VERSION} && \
-    ./configure --with-nagios4 && \
-    make && \
-    make install
-
-RUN mkdir -p /usr/local/nagios/var/rw && \
-    chown ${NAGIOS_USER}:${NAGIOS_GROUP} /usr/local/nagios/var/rw
 
 RUN sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars
 
@@ -283,17 +278,13 @@ RUN apt-get -qq -y autoremove && \
     nagios-plugins \
     nrpe \
     nagiosgraph \
-    nsca \
-    mk-livestatus-${MK_LIVESTATUS_VERSION}* && \
+    nsca && \
     # Remove some other files and dirs
-    rm -rf /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
+    rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
     /opt/get-pip.py
 
-# Expose ports
-# 80 for the web UI
+# Expose port 80 for the web UI
 EXPOSE 80
-# 6557 for mk-livestatus
-EXPOSE 6557
 
 # Specify volumes
 VOLUME "${NAGIOS_HOME}/var" "${NAGIOS_HOME}/etc" "/var/log/apache2" "/opt/Custom-Nagios-Plugins" "/opt/nagiosgraph/var" "/opt/nagiosgraph/etc"
