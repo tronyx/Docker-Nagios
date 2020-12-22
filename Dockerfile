@@ -97,9 +97,9 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         unzip \
         python2 \
         xinetd && \
-    apt-get clean && rm -Rf /var/lib/apt/lists/*
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN ( egrep -i "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP    )                        && \
+RUN ( egrep -i "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP    ) && \
     ( egrep -i "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
 RUN ( id -u $NAGIOS_USER    || useradd --system -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER    ) && \
     ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
@@ -111,8 +111,7 @@ RUN cd /tmp && \
     ./configure && \
     make && \
     make install && \
-    make clean && \
-    cd /tmp && rm -Rf qstat
+    make clean
 
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nagioscore.git -b ${NAGIOS_BRANCH} && \
@@ -130,8 +129,7 @@ RUN cd /tmp && \
     make install-config && \
     make install-commandmode && \
     make install-webconf && \
-    make clean && \
-    cd /tmp && rm -Rf nagioscore
+    make clean
 
 RUN cd /tmp && \
     git clone https://github.com/nagios-plugins/nagios-plugins.git -b $NAGIOS_PLUGINS_BRANCH && \
@@ -145,8 +143,7 @@ RUN cd /tmp && \
     make install && \
     make clean && \
     mkdir -p /usr/lib/nagios/plugins && \
-    ln -sf ${NAGIOS_HOME}/libexec/utils.pm /usr/lib/nagios/plugins && \
-    cd /tmp && rm -Rf nagios-plugins
+    ln -sf ${NAGIOS_HOME}/libexec/utils.pm /usr/lib/nagios/plugins
 
 RUN wget -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
     chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py
@@ -159,8 +156,7 @@ RUN cd /tmp && \
         --with-ssl-lib=/usr/lib/$(uname -m)-linux-gnu && \
     make check_nrpe && \
     cp src/check_nrpe ${NAGIOS_HOME}/libexec/ && \
-    make clean && \
-    cd /tmp && rm -Rf nrpe
+    make clean
 
 RUN cd /tmp && \
     git clone https://git.code.sf.net/p/nagiosgraph/git nagiosgraph && \
@@ -171,9 +167,8 @@ RUN cd /tmp && \
         --www-user ${NAGIOS_USER} \
         --nagios-perfdata-file ${NAGIOS_HOME}/var/perfdata.log \
         --nagios-cgi-url /cgi-bin && \
-    cp share/nagiosgraph.ssi ${NAGIOS_HOME}/share/ssi/common-header.ssi && \
-    cd /tmp && rm -Rf nagiosgraph
-    
+    cp share/nagiosgraph.ssi ${NAGIOS_HOME}/share/ssi/common-header.ssi
+
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nsca.git && \
     cd nsca && \
@@ -186,11 +181,10 @@ RUN cd /tmp && \
     cp src/nsca ${NAGIOS_HOME}/bin/ && \
     cp src/send_nsca ${NAGIOS_HOME}/bin/ && \
     cp sample-config/nsca.cfg ${NAGIOS_HOME}/etc/ && \
-    cp sample-config/send_nsca.cfg ${NAGIOS_HOME}/etc/ && \
-    cd /tmp && rm -Rf nsca
+    cp sample-config/send_nsca.cfg ${NAGIOS_HOME}/etc/
 
 RUN cd /opt && \
-    curl https://bootstrap.pypa.io/get-pip.py --output get-pip.py && \
+    wget -O get-pip.py https://bootstrap.pypa.io/get-pip.py && \
     python2 get-pip.py && \
     pip install "pymssql<3.0" && \
     pip3 install pywbem && \
@@ -203,7 +197,6 @@ RUN cd /opt && \
     cp /opt/JE-Nagios-Plugins/check_mem/check_mem.pl ${NAGIOS_HOME}/libexec/ && \
     cp /opt/nagios-mssql/check_mssql_database.py ${NAGIOS_HOME}/libexec/ && \
     cp /opt/nagios-mssql/check_mssql_server.py ${NAGIOS_HOME}/libexec/
-
 
 RUN sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars
 
@@ -228,9 +221,9 @@ RUN sed -i 's,/bin/mail,/usr/bin/mail,' ${NAGIOS_HOME}/etc/objects/commands.cfg 
 RUN cp /etc/services /var/spool/postfix/etc/ && \
     echo "smtp_address_preference = ipv4" >> /etc/postfix/main.cf
 
-RUN rm -rf /etc/rsyslog.d /etc/rsyslog.conf
-
-RUN rm -rf /etc/sv/getty-5
+#RUN rm -rf /etc/rsyslog.d \
+#    /etc/rsyslog.conf \
+#    /etc/sv/getty-5
 
 ADD overlay /
 
@@ -250,18 +243,15 @@ RUN a2enmod session && \
     a2enmod auth_form && \
     a2enmod request
 
+# Make scripts executable
 RUN chmod +x /usr/local/bin/start_nagios && \
-    chmod +x /etc/sv/apache/run && \
-    chmod +x /etc/sv/nagios/run && \
-    chmod +x /etc/sv/postfix/run && \
-    chmod +x /etc/sv/rsyslog/run && \
-    chmod +x /etc/sv/xinetd/run && \
+    chmod +x /etc/sv/*/run && \
     chmod +x /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh
 
 RUN cd /opt/nagiosgraph/etc && \
     sh fix-nagiosgraph-multiple-selection.sh
 
-RUN rm /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh
+#RUN rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh
 
 # Enable all runit services
 RUN ln -s /etc/sv/* /etc/service
@@ -275,11 +265,29 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
     ln -s /etc/apache2/conf-available/servername.conf /etc/apache2/conf-enabled/servername.conf && \
     ln -s /etc/apache2/conf-available/timezone.conf /etc/apache2/conf-enabled/timezone.conf
 
+# Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt-get remove -y software-properties-common
+RUN apt-get remove -y software-properties-common && \
+    # Remove dirs from git clones
+    cd /tmp && \
+    rm -rf qstat \
+    nagioscore \
+    nagios-plugins \
+    nrpe \
+    nagiosgraph \
+    nsca && \
+    # Remove some files
+    rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
+    /opt/get-pip.py \
+    /etc/rsyslog.d \
+    /etc/rsyslog.conf \
+    /etc/sv/getty-5
 
+# Expose port 80 for the web UI
 EXPOSE 80
 
+# Specify volumes
 VOLUME "${NAGIOS_HOME}/var" "${NAGIOS_HOME}/etc" "/var/log/apache2" "/opt/Custom-Nagios-Plugins" "/opt/nagiosgraph/var" "/opt/nagiosgraph/etc"
 
+# Start command
 CMD [ "/usr/local/bin/start_nagios" ]
