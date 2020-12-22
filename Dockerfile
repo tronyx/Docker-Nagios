@@ -22,7 +22,8 @@ ENV NAGIOS_HOME=/opt/nagios \
     NAGIOS_BRANCH=nagios-4.4.6 \
     NAGIOS_PLUGINS_BRANCH=release-2.3.3 \
     NRPE_BRANCH=nrpe-4.0.2 \
-    NSCA_TAG=nsca-2.10.0
+    NSCA_TAG=nsca-2.10.0 \
+    MK_LIVESTATUS_VERSION=1.6.0p19
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
@@ -86,7 +87,6 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         snmpd \
         snmp-mibs-downloader \
         unzip \
-        python2 \
         xinetd && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/*
@@ -178,6 +178,7 @@ RUN cd /tmp && \
     cp sample-config/nsca.cfg ${NAGIOS_HOME}/etc/ && \
     cp sample-config/send_nsca.cfg ${NAGIOS_HOME}/etc/
 
+# Install additional plugins
 RUN cd /opt && \
     wget -O get-pip.py https://bootstrap.pypa.io/get-pip.py && \
     python2 get-pip.py && \
@@ -192,6 +193,18 @@ RUN cd /opt && \
     cp /opt/JE-Nagios-Plugins/check_mem/check_mem.pl ${NAGIOS_HOME}/libexec/ && \
     cp /opt/nagios-mssql/check_mssql_database.py ${NAGIOS_HOME}/libexec/ && \
     cp /opt/nagios-mssql/check_mssql_server.py ${NAGIOS_HOME}/libexec/
+
+# Install mk-livestatus
+RUN cd /tmp && \
+    wget https://mathias-kettner.de/download/mk-livestatus-${MK_LIVESTATUS_VERSION}.tar.gz && \
+    tar zxf mk-livestatus-${MK_LIVESTATUS_VERSION}.tar.gz && \
+    cd mk-livestatus-${MK_LIVESTATUS_VERSION} && \
+    ./configure --with-nagios4 && \
+    make && \
+    make install
+
+RUN mkdir -p /usr/local/nagios/var/rw && \
+    chown ${NAGIOS_USER}:${NAGIOS_GROUP} /usr/local/nagios/var/rw
 
 RUN sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars
 
@@ -270,13 +283,17 @@ RUN apt-get -qq -y autoremove && \
     nagios-plugins \
     nrpe \
     nagiosgraph \
-    nsca && \
+    nsca \
+    mk-livestatus-${MK_LIVESTATUS_VERSION}* && \
     # Remove some other files and dirs
     rm -rf /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
     /opt/get-pip.py
 
-# Expose port 80 for the web UI
+# Expose ports
+# 80 for the web UI
 EXPOSE 80
+# 6557 for mk-livestatus
+EXPOSE 6557
 
 # Specify volumes
 VOLUME "${NAGIOS_HOME}/var" "${NAGIOS_HOME}/etc" "/var/log/apache2" "/opt/Custom-Nagios-Plugins" "/opt/nagiosgraph/var" "/opt/nagiosgraph/etc"

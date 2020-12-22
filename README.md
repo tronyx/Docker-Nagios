@@ -10,6 +10,7 @@ Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-
 * [#101](https://github.com/JasonRivers/Docker-Nagios/pull/101) - Fixes to allow building on ARM aarch64 architecture (@garethrandall)
 * [#110](https://github.com/JasonRivers/Docker-Nagios/pull/110) - Update to Ubuntu 18.04 LTS (@asimzeeshan)
 * [#112](https://github.com/JasonRivers/Docker-Nagios/pull/112) - Add python3-nagiosplugin for plugins that need it (@davralin)
+* [#115](https://github.com/JasonRivers/Docker-Nagios/pull/115) - Add mk_livestatus allowing it to work w/ Thruk (@mmerian)
 * [#116](https://github.com/JasonRivers/Docker-Nagios/pull/116) - Update Nagios to 4.4.6 (@mmerian)
 * [#120](https://github.com/JasonRivers/Docker-Nagios/pull/120) - Add NSCA (@mmerian)
 
@@ -25,7 +26,7 @@ Things that I have changed/updated so far:
 
 ## Information
 
-Nagios Core 4.4.6 running on Ubuntu 18.04 LTS with NagiosGraph, NRPE, & NSCA.
+Nagios Core 4.4.6 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, & NSCA.
 
 ### Configurations
 
