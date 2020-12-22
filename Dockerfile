@@ -37,9 +37,9 @@ ENV NAGIOS_HOME=/opt/nagios \
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
     echo postfix postfix/mailname string ${NAGIOS_FQDN} | debconf-set-selections && \
-    apt-get update && apt-get install -y software-properties-common && \
+    apt-get -qq update && apt-get -qq -y install software-properties-common && \
     add-apt-repository universe && \
-    apt-get install -y \
+    apt-get -qq -y install \
         apache2 \
         apache2-utils \
         autoconf \
@@ -97,7 +97,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         unzip \
         python2 \
         xinetd && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get -qq clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN ( egrep -i "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP    ) && \
     ( egrep -i "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
@@ -266,8 +267,8 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt-get -y autoremove && \
-    apt-get -y remove software-properties-common && \
+RUN apt-get -qq -y autoremove && \
+    apt-get -qq -y remove software-properties-common && \
     # Remove dirs from git clones
     cd /tmp && \
     rm -rf qstat \
