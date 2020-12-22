@@ -1,1 +1,7 @@
+.git
+.github
+*.md
+.dockerignore
 .travis.yml
+Dockerfile
+docker-compose.yml
