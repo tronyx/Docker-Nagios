@@ -104,14 +104,17 @@ RUN ( egrep -i "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP    ) &
 RUN ( id -u $NAGIOS_USER    || useradd --system -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER    ) && \
     ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
 
+# Reduce unecesssary git output
+RUN git config --global advice.detachedHead false
+
 RUN cd /tmp && \
     git clone https://github.com/multiplay/qstat.git && \
     cd qstat && \
     ./autogen.sh && \
     ./configure && \
-    make -s && \
-    make -s install && \
-    make -s clean
+    make > /dev/null && \
+    make install > /dev/null && \
+    make clean > /dev/null
 
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nagioscore.git -b ${NAGIOS_BRANCH} && \
@@ -124,12 +127,12 @@ RUN cd /tmp && \
         --with-command-group=${NAGIOS_CMDGROUP} \
         --with-nagios-user=${NAGIOS_USER} \
         --with-nagios-group=${NAGIOS_GROUP} && \
-    make all && \
-    make install && \
-    make install-config && \
-    make install-commandmode && \
-    make install-webconf && \
-    make clean
+    make all > /dev/null && \
+    make install > /dev/null && \
+    make install-config > /dev/null && \
+    make install-commandmode > /dev/null && \
+    make install-webconf > /dev/null && \
+    make clean > /dev/null
 
 RUN cd /tmp && \
     git clone https://github.com/nagios-plugins/nagios-plugins.git -b $NAGIOS_PLUGINS_BRANCH && \
@@ -139,9 +142,9 @@ RUN cd /tmp && \
         --prefix=${NAGIOS_HOME} \
         --with-ipv6 \
         --with-ping6-command="/bin/ping6 -n -U -W %d -c %d %s" && \
-    make && \
-    make install && \
-    make clean && \
+    make > /dev/null && \
+    make install > /dev/null && \
+    make clean > /dev/null && \
     mkdir -p /usr/lib/nagios/plugins && \
     ln -sf ${NAGIOS_HOME}/libexec/utils.pm /usr/lib/nagios/plugins
 
@@ -154,9 +157,9 @@ RUN cd /tmp && \
     ./configure \
         --with-ssl=/usr/bin/openssl \
         --with-ssl-lib=/usr/lib/$(uname -m)-linux-gnu && \
-    make check_nrpe && \
+    make check_nrpe > /dev/null && \
     cp src/check_nrpe ${NAGIOS_HOME}/libexec/ && \
-    make clean
+    make clean > /dev/null
 
 RUN cd /tmp && \
     git clone https://git.code.sf.net/p/nagiosgraph/git nagiosgraph && \
@@ -177,7 +180,7 @@ RUN cd /tmp && \
         --prefix=${NAGIOS_HOME} \
         --with-nsca-user=${NAGIOS_USER} \
         --with-nsca-grp=${NAGIOS_GROUP} && \
-    make all && \
+    make all > /dev/null && \
     cp src/nsca ${NAGIOS_HOME}/bin/ && \
     cp src/send_nsca ${NAGIOS_HOME}/bin/ && \
     cp sample-config/nsca.cfg ${NAGIOS_HOME}/etc/ && \
@@ -267,7 +270,8 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt-get remove -y software-properties-common && \
+RUN apt-get autoremove && \
+    apt-get remove -y software-properties-common && \
     # Remove dirs from git clones
     cd /tmp && \
     rm -rf qstat \
