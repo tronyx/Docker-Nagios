@@ -5,12 +5,18 @@ services:
   - docker
 install:
   - git clone https://github.com/tronyx/Docker-Nagios.git ~/Docker-Nagios
-script:
-  # Build image
-  - docker build --no-cache=true -t tronyx/nagios:ubuntu-20.04 .
-  # Test image
-  - docker run -p 8080:80 tronyx/nagios:ubuntu-20.04 apache2 -v
+jobs:
+  include:
+    - stage: Build docker image
+      script:
+        - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker build --no-cache=true -t tronyx/nagios .; fi'
+        - 'if [[ $TRAVIS_BRANCH != "master" ]]; then docker build --no-cache=true -t tronyx/nagios:${TRAVIS_BRANCH} .; fi'
+    - stage: Test docker image
+      script:
+        - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker run -p 8080:80 tronyx/nagios apache2 -v; fi'
+        - 'if [[ $TRAVIS_BRANCH != "master" ]]; then docker run -p 8080:80 tronyx/nagios:${TRAVIS_BRANCH} apache2 -v; fi'
 after_success:
   # Push image if not a PR
   - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}" "${DOCKER_REGISTRY}"; fi'
-  - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then docker push tronyx/nagios:ubuntu-20.04; fi'
+  - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then docker push tronyx/nagios; fi'
+  - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]] && [[ $TRAVIS_BRANCH != "master" ]]; then docker push tronyx/nagios:${TRAVIS_BRANCH}; fi'
