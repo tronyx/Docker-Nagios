@@ -10,12 +10,20 @@ version: '3'
 services:
   nagios:
     image: tronyx/nagios:latest
+    container_name: nagios
+    restart: on-failure
+    ports:
+      - "8080:80"
+    environment:
+      NAGIOS_TIMEZONE: America/New_York
     volumes:
-    - nagiosetc:/opt/nagios/etc
-    - nagiosvar:/opt/nagios/var
-    - customplugins:/opt/Custom-Nagios-Plugins
-    - nagiosgraphvar:/opt/nagiosgraph/var
-    - nagiosgraphetc:/opt/nagiosgraph/etc
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/localtime:/etc/timezone:ro"
+      - nagiosetc:/opt/nagios/etc
+      - nagiosvar:/opt/nagios/var
+      - customplugins:/opt/Custom-Nagios-Plugins
+      - nagiosgraphvar:/opt/nagiosgraph/var
+      - nagiosgraphetc:/opt/nagiosgraph/etc
 
 volumes:
     nagiosetc:

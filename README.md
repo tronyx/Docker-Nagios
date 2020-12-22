@@ -1,6 +1,6 @@
 # Docker-Nagios
 
-[![Build Status](https://www.travis-ci.com/tronyx/Docker-Nagios.svg?branch=master)](https://www.travis-ci.com/tronyx/Docker-Nagios) [![Docker Pulls](https://img.shields.io/docker/pulls/tronyx/nagios.svg)](https://hub.docker.com/r/tronyx/nagios) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/tronyx/Docker-Nagios/blob/master/LICENSE.md) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/tronyx/Docker-Nagios.svg)](http://isitmaintained.com/project/tronyx/Docker-Nagios "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/tronyx/Docker-Nagios.svg)](http://isitmaintained.com/project/tronyx/Docker-Nagios "Percentage of issues still open")
+[![Travis branch](https://img.shields.io/travis/rust-lang/rust/master.svg?logo=travis)](https://travis-ci.org/tronyx/Docker-Nagios) [![CodeFactor](https://www.codefactor.io/repository/github/tronyx/docker-nagios/badge)](https://www.codefactor.io/repository/github/tronyx/docker-nagios) [![Docker Pulls](https://img.shields.io/docker/pulls/tronyx/nagios.svg)](https://hub.docker.com/r/tronyx/nagios) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/tronyx/Docker-Nagios/blob/master/LICENSE.md) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/tronyx/Docker-Nagios.svg)](http://isitmaintained.com/project/tronyx/Docker-Nagios "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/tronyx/Docker-Nagios.svg)](http://isitmaintained.com/project/tronyx/Docker-Nagios "Percentage of issues still open")
 
 ## Notes
 
@@ -19,13 +19,15 @@ Listing these as I wish to give the original users credit for their work.
 
 Things that I have changed/updated so far:
 
-* Updated the image to Ubuntu 20.04 LTS (Currently still testing w/ `tronyx/nagios:ubuntu-20.04` tag)
+* Updated the image to Ubuntu 20.04 LTS
 * Updated Nagios Plugins to current latest (2.3.3)
 * Updated NRPE to current latest (4.0.2)
 
 ## Information
 
-Nagios Core 4.4.6 running on Ubuntu 18.04 LTS with NagiosGraph, NRPE, & NSCA.
+Nagios Core 4.4.6 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NSCA, & CheckMK.
+
+You can find the Docker Hub repository [HERE](https://hub.docker.com/r/tronyx/nagios).
 
 ### Configurations
 

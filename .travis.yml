@@ -22,8 +22,6 @@ script:
   - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker run -p 8080:80 ${IMAGE_NAME} apache2 -v; fi'
   - 'if [[ $TRAVIS_BRANCH != "master" ]]; then docker run -p 8080:80 ${IMAGE_NAME}:${TRAVIS_BRANCH} apache2 -v; fi'
 after_success:
-  # Login to Docker Hub
-  #- 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then echo -n ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin; fi'
   # Push image
   - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]] && [[ ${TRAVIS_BRANCH} == "master" ]]; then docker push ${IMAGE_NAME}; fi'
   - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]] && [[ ${TRAVIS_BRANCH} != "master" ]]; then docker push ${IMAGE_NAME}:${TRAVIS_BRANCH}; fi'
