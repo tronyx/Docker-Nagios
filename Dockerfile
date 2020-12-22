@@ -1,38 +1,28 @@
 FROM ubuntu:18.04
 
-# Args
-ARG VCS_REF
-ARG BUILD_DATE
-
-# Labels
 LABEL maintainer="Tronyx <tronyx@tronflix.app>"
-LABEL org.label-schema.name="tronyx/nagios"
-LABEL org.label-schema.description="Dockerized Nagios Core"
-LABEL org.label-schema.vcs-ref=$VCS_REF
-LABEL org.label-schema.build-date=$BUILD_DATE
-LABEL org.label-schema.vcs-url="https://github.com/tronyx/Docker-Nagios/"
 
 # Environment variables
-ENV NAGIOS_HOME            /opt/nagios
-ENV NAGIOS_USER            nagios
-ENV NAGIOS_GROUP           nagios
-ENV NAGIOS_CMDUSER         nagios
-ENV NAGIOS_CMDGROUP        nagios
-ENV NAGIOS_FQDN            nagios.example.com
-ENV NAGIOSADMIN_USER       nagiosadmin
-ENV NAGIOSADMIN_PASS       nagios
-ENV APACHE_RUN_USER        nagios
-ENV APACHE_RUN_GROUP       nagios
-ENV NAGIOS_TIMEZONE        UTC
-ENV DEBIAN_FRONTEND        noninteractive
-ENV NG_NAGIOS_CONFIG_FILE  ${NAGIOS_HOME}/etc/nagios.cfg
-ENV NG_CGI_DIR             ${NAGIOS_HOME}/sbin
-ENV NG_WWW_DIR             ${NAGIOS_HOME}/share/nagiosgraph
-ENV NG_CGI_URL             /cgi-bin
-ENV NAGIOS_BRANCH          nagios-4.4.6
-ENV NAGIOS_PLUGINS_BRANCH  release-2.3.3
-ENV NRPE_BRANCH            nrpe-4.0.2
-ENV NSCA_TAG               nsca-2.10.0
+ENV NAGIOS_HOME=/opt/nagios \
+    NAGIOS_USER=nagios \
+    NAGIOS_GROUP=nagios \
+    NAGIOS_CMDUSER=nagios \
+    NAGIOS_CMDGROUP=nagios \
+    NAGIOS_FQDN=nagios.example.com \
+    NAGIOSADMIN_USER=nagiosadmin \
+    NAGIOSADMIN_PASS=nagios \
+    APACHE_RUN_USER=nagios \
+    APACHE_RUN_GROUP=nagios \
+    NAGIOS_TIMEZONE=UTC \
+    DEBIAN_FRONTEND=noninteractive \
+    NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
+    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
+    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph \
+    NG_CGI_URL=/cgi-bin \
+    NAGIOS_BRANCH=nagios-4.4.6 \
+    NAGIOS_PLUGINS_BRANCH=release-2.3.3 \
+    NRPE_BRANCH=nrpe-4.0.2 \
+    NSCA_TAG=nsca-2.10.0
 
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \

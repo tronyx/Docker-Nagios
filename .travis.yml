@@ -1,16 +1,27 @@
-language: shell
 os: linux
-dist: bionic
+dist: focal
+language: shell
 services:
   - docker
+env:
+  global:
+    - IMAGE_NAME=tronyx/nagios
 install:
   - git clone https://github.com/tronyx/Docker-Nagios.git ~/Docker-Nagios
+before_script:
+  # Pull image for cache
+  - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker pull ${IMAGE_NAME} || true; fi'
+  - 'if [[ $TRAVIS_BRANCH != "master" ]]; then docker pull ${IMAGE_NAME}:${TRAVIS_BRANCH} || true; fi'
 script:
   # Build image
-  - docker build --no-cache=true --build-arg VCS_REF=`git rev-parse --short HEAD` --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') -t tronyx/nagios .
+  - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker build --pull --cache-from ${IMAGE_NAME} -t ${IMAGE_NAME} .; fi'
+  - 'if [[ $TRAVIS_BRANCH != "master" ]]; then docker build --pull --cache-from ${IMAGE_NAME}:${TRAVIS_BRANCH} -t ${IMAGE_NAME}:${TRAVIS_BRANCH} .; fi'
   # Test image
-  - docker run -p 8080:80 tronyx/nagios apache2 -v
+  - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker run -p 8080:80 ${IMAGE_NAME} apache2 -v; fi'
+  - 'if [[ $TRAVIS_BRANCH != "master" ]]; then docker run -p 8080:80 ${IMAGE_NAME}:${TRAVIS_BRANCH} apache2 -v; fi'
 after_success:
-  # Push image if not a PR
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker login -u "$DOCKER_USER" -p "$DOCKER_PASS" ${DOCKER_REGISTRY}; fi'
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker push tronyx/nagios; fi'
+  # Login to Docker Hub
+  - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then echo -n ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin; fi'
+  # Push image
+  - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]] && [[ ${TRAVIS_BRANCH} == "master" ]]; then docker push ${IMAGE_NAME}; fi'
+  - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]] && [[ ${TRAVIS_BRANCH} != "master" ]]; then docker push ${IMAGE_NAME}:${TRAVIS_BRANCH}; fi'
