@@ -28,9 +28,9 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
     echo postfix postfix/mailname string ${NAGIOS_FQDN} | debconf-set-selections && \
     apt-get -qq update && \
-    apt-get -qq -y install --no-install-recommends software-properties-common && \
+    apt-get -yqq install --no-install-recommends software-properties-common && \
     add-apt-repository universe && \
-    apt-get -qq -y install --no-install-recommends \
+    apt-get -yqq install --no-install-recommends \
         apache2 \
         apache2-utils \
         autoconf \
@@ -142,9 +142,6 @@ RUN cd /tmp && \
     mkdir -p /usr/lib/nagios/plugins && \
     ln -sf ${NAGIOS_HOME}/libexec/utils.pm /usr/lib/nagios/plugins
 
-#RUN wget -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
-#    chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py
-
 # Install NRPE
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nrpe.git -b ${NRPE_BRANCH} && \
@@ -253,8 +250,6 @@ RUN chmod +x /usr/local/bin/start_nagios && \
 RUN cd /opt/nagiosgraph/etc && \
     sh fix-nagiosgraph-multiple-selection.sh
 
-#RUN rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh
-
 # Enable all runit services
 RUN ln -s /etc/sv/* /etc/service
 
@@ -269,8 +264,16 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt-get -qq -y autoremove && \
-    apt-get -qq -y remove software-properties-common && \
+#RUN apt-get -yqq autoremove && \
+#    apt-get -yqq remove software-properties-common && \
+RUN apt-get purge -y --auto-remove gcc \
+    autoconf \
+    automake \
+    build-essential \
+    git \
+    jq \
+    software-properties-common \
+    unzip && \
     # Remove dirs from git clones
     cd /tmp && \
     rm -rf qstat \
