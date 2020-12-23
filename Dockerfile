@@ -19,6 +19,8 @@ ENV NAGIOS_HOME=/opt/nagios \
     NAGIOSADMIN_PASS=nagios \
     APACHE_RUN_USER=nagios \
     APACHE_RUN_GROUP=nagios \
+    APACHE_LOCK_DIR=/var/run \
+    APACHE_LOG_DIR=/var/log/apache2 \
     NAGIOS_TIMEZONE=UTC \
     DEBIAN_FRONTEND=noninteractive \
     NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
@@ -96,20 +98,15 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/* && \
     # Reduce unecesssary git output
-    git config --global advice.detachedHead false
-
-# Configure Nagios user and group
-RUN ( grep -Ei "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP ) && \
+    git config --global advice.detachedHead false && \
+    # Configure Nagios user and group
+    ( grep -Ei "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP ) && \
     ( grep -Ei "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP ) && \
     ( id -u $NAGIOS_USER    || useradd --system -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER ) && \
-    ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
-
-# Reduce unecesssary git output
-#RUN git config --global advice.detachedHead false
-
-# Install all the things
-# Nagios Core
-RUN cd /tmp && \
+    ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER ) && \
+    # Install all the things
+    # Nagios Core
+    cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nagioscore.git -b ${NAGIOS_BRANCH} && \
     cd nagioscore && \
     ./configure \
@@ -200,11 +197,10 @@ RUN cd /tmp && \
     chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py && \
     cp /opt/JE-Nagios-Plugins/check_mem/check_mem.pl ${NAGIOS_HOME}/libexec/ && \
     cp /opt/nagios-mssql/check_mssql_database.py ${NAGIOS_HOME}/libexec/ && \
-    cp /opt/nagios-mssql/check_mssql_server.py ${NAGIOS_HOME}/libexec/
-
-# Configure all the things
-# Apache2
-RUN sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars && \
+    cp /opt/nagios-mssql/check_mssql_server.py ${NAGIOS_HOME}/libexec/ && \
+    # Configure all the things
+    # Apache2
+    sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars && \
     export DOC_ROOT="DocumentRoot ${NAGIOS_HOME}/share" && \
     sed -i "s,DocumentRoot.*,${DOC_ROOT}," /etc/apache2/sites-enabled/000-default.conf && \
     sed -i "s,</VirtualHost>,<IfDefine ENABLE_USR_LIB_CGI_BIN>\nScriptAlias /cgi-bin/ ${NAGIOS_HOME}/sbin/\n</IfDefine>\n</VirtualHost>," /etc/apache2/sites-enabled/000-default.conf && \
@@ -253,23 +249,15 @@ RUN echo "use_timezone=${NAGIOS_TIMEZONE}" >> ${NAGIOS_HOME}/etc/nagios.cfg && \
     cd /opt/nagiosgraph/etc && \
     sh fix-nagiosgraph-multiple-selection.sh && \
     # Enable all runit services
-    ln -s /etc/sv/* /etc/service
-
-# Set Apache2 envs
-ENV APACHE_LOCK_DIR=/var/run \
-    APACHE_LOG_DIR=/var/log/apache2
-
-# Set ServerName and timezone for Apache
-RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.conf && \
+    ln -s /etc/sv/* /etc/service && \
+    # Set ServerName and timezone for Apache
+    echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.conf && \
     echo "PassEnv TZ" > /etc/apache2/conf-available/timezone.conf && \
     ln -s /etc/apache2/conf-available/servername.conf /etc/apache2/conf-enabled/servername.conf && \
-    ln -s /etc/apache2/conf-available/timezone.conf /etc/apache2/conf-enabled/timezone.conf
-
-# Cleanup
-# Remove unecessary packages after install/setup are complete
-#RUN apt-get -yqq autoremove && \
-#    apt-get -yqq remove software-properties-common && \
-RUN apt-get purge -y --auto-remove gcc \
+    ln -s /etc/apache2/conf-available/timezone.conf /etc/apache2/conf-enabled/timezone.conf && \
+    # Cleanup
+    # Remove unecessary packages after install/setup are complete
+    apt-get purge -y --auto-remove gcc \
     autoconf \
     automake \
     build-essential \
