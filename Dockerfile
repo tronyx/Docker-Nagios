@@ -3,6 +3,7 @@ FROM ubuntu:20.04
 LABEL maintainer="Tronyx <tronyx@tronflix.app>"
 
 # Environment variables
+# Environment variables
 ENV NAGIOS_HOME=/opt/nagios \
     NAGIOS_USER=nagios \
     NAGIOS_GROUP=nagios \
@@ -15,14 +16,15 @@ ENV NAGIOS_HOME=/opt/nagios \
     APACHE_RUN_GROUP=nagios \
     NAGIOS_TIMEZONE=UTC \
     DEBIAN_FRONTEND=noninteractive \
-    NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
-    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
-    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph \
     NG_CGI_URL=/cgi-bin \
     NAGIOS_BRANCH=nagios-4.4.6 \
     NAGIOS_PLUGINS_BRANCH=release-2.3.3 \
     NRPE_BRANCH=nrpe-4.0.2 \
     NSCA_TAG=nsca-2.10.0
+
+ENV NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
+    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
+    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
