@@ -195,9 +195,9 @@ RUN cd /tmp && \
 # Install additional plugins
 RUN cd /opt && \
     #wget -O get-pip.py https://bootstrap.pypa.io/get-pip.py && \
-    wget -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
+    wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
     python2 get-pip.py && \
-    pip install "pymssql<2.2.0" pywbem && \
+    pip install --no-cache-dir "pymssql<2.2.0" pywbem && \
     git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
     git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
