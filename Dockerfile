@@ -9,6 +9,7 @@ LABEL name="Nagios" \
     maintainer="Tronyx <tronyx@tronflix.app>"
 
 # Environment variables
+# Environment variables
 ENV NAGIOS_HOME=/opt/nagios \
     NAGIOS_USER=nagios \
     NAGIOS_GROUP=nagios \
@@ -23,14 +24,15 @@ ENV NAGIOS_HOME=/opt/nagios \
     APACHE_LOG_DIR=/var/log/apache2 \
     NAGIOS_TIMEZONE=UTC \
     DEBIAN_FRONTEND=noninteractive \
-    NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
-    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
-    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph \
     NG_CGI_URL=/cgi-bin \
     NAGIOS_BRANCH=nagios-4.4.6 \
     NAGIOS_PLUGINS_BRANCH=release-2.3.3 \
     NRPE_BRANCH=nrpe-4.0.2 \
     NSCA_TAG=nsca-2.10.0
+
+ENV NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
+    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
+    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
@@ -192,10 +194,10 @@ RUN cd /tmp && \
 
 # Install additional plugins
 RUN cd /opt && \
-    wget -O get-pip.py https://bootstrap.pypa.io/get-pip.py && \
+    #wget -O get-pip.py https://bootstrap.pypa.io/get-pip.py && \
+    wget -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
     python2 get-pip.py && \
-    pip install "pymssql<3.0" && \
-    pip3 install pywbem && \
+    pip install "pymssql<2.2.0" pywbem && \
     git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
     git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
