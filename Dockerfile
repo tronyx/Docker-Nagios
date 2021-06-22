@@ -1,8 +1,13 @@
 FROM ubuntu:20.04
 
-LABEL maintainer="Tronyx <tronyx@tronflix.app>"
+LABEL name="Nagios" \
+    nagiosVersion="4.4.6" \
+    nagiosPluginsVersion="2.3.3" \
+    nrpeVersion="4.0.2" \
+    nscaVersion="2.10.0" \
+    homepage="https://www.nagios.com/" \
+    maintainer="Tronyx <tronyx@tronflix.app>"
 
-# Environment variables
 # Environment variables
 ENV NAGIOS_HOME=/opt/nagios \
     NAGIOS_USER=nagios \
@@ -14,6 +19,8 @@ ENV NAGIOS_HOME=/opt/nagios \
     NAGIOSADMIN_PASS=nagios \
     APACHE_RUN_USER=nagios \
     APACHE_RUN_GROUP=nagios \
+    APACHE_LOCK_DIR=/var/run \
+    APACHE_LOG_DIR=/var/log/apache2 \
     NAGIOS_TIMEZONE=UTC \
     DEBIAN_FRONTEND=noninteractive \
     NG_CGI_URL=/cgi-bin \
@@ -74,6 +81,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libwww-perl \
         m4 \
         netcat \
+        openssh-client \
         parallel \
         php-cli \
         php-gd \
@@ -90,25 +98,14 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         unzip \
         xinetd && \
     apt-get -qq clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    # Reduce unecesssary git output
+    git config --global advice.detachedHead false
 
 RUN ( grep -Ei "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP ) && \
     ( grep -Ei "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
 RUN ( id -u $NAGIOS_USER    || useradd --system -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER ) && \
     ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
-
-# Reduce unecesssary git output
-RUN git config --global advice.detachedHead false
-
-# Install QStat
-RUN cd /tmp && \
-    git clone https://github.com/multiplay/qstat.git && \
-    cd qstat && \
-    ./autogen.sh && \
-    ./configure && \
-    make && \
-    make install && \
-    make clean
 
 # Install Nagios Core
 RUN cd /tmp && \
@@ -185,18 +182,27 @@ RUN cd /tmp && \
     cp sample-config/nsca.cfg ${NAGIOS_HOME}/etc/ && \
     cp sample-config/send_nsca.cfg ${NAGIOS_HOME}/etc/
 
+# Install QStat
+RUN cd /tmp && \
+    git clone https://github.com/multiplay/qstat.git && \
+    cd qstat && \
+    ./autogen.sh && \
+    ./configure && \
+    make && \
+    make install && \
+    make clean
+
 # Install additional plugins
 RUN cd /opt && \
-    #wget -O get-pip.py https://bootstrap.pypa.io/get-pip.py && \
-    wget -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
+    wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
     python2 get-pip.py && \
-    pip install "pymssql<3.0" && \
-    pip3 install pywbem && \
+    pip install --no-cache-dir "pymssql<2.2.0" && \
+    pip3 install --no-cache-dir pywbem && \
     git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
     git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
     git clone https://github.com/nagiosenterprises/check_mssql_collection.git nagios-mssql && \
-    wget -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
+    wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
     chmod +x /opt/WL-Nagios-Plugins/check* && \
     chmod +x /opt/JE-Nagios-Plugins/check_mem/check_mem.pl && \
     chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py && \
@@ -206,7 +212,6 @@ RUN cd /opt && \
 
 RUN sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars
 
-#RUN export DOC_ROOT="DocumentRoot $(echo ${NAGIOS_HOME}/share)" && \
 RUN export DOC_ROOT="DocumentRoot ${NAGIOS_HOME}/share" && \
     sed -i "s,DocumentRoot.*,${DOC_ROOT}," /etc/apache2/sites-enabled/000-default.conf && \
     sed -i "s,</VirtualHost>,<IfDefine ENABLE_USR_LIB_CGI_BIN>\nScriptAlias /cgi-bin/ ${NAGIOS_HOME}/sbin/\n</IfDefine>\n</VirtualHost>," /etc/apache2/sites-enabled/000-default.conf && \
@@ -256,13 +261,11 @@ RUN chmod +x /usr/local/bin/start_nagios && \
 RUN cd /opt/nagiosgraph/etc && \
     sh fix-nagiosgraph-multiple-selection.sh
 
-#RUN rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh
-
 # Enable all runit services
 RUN ln -s /etc/sv/* /etc/service
 
-ENV APACHE_LOCK_DIR=/var/run \
-    APACHE_LOG_DIR=/var/log/apache2
+#ENV APACHE_LOCK_DIR=/var/run \
+#    APACHE_LOG_DIR=/var/log/apache2
 
 # Set ServerName and timezone for Apache
 RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.conf && \
