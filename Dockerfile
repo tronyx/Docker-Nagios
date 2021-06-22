@@ -81,6 +81,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libwww-perl \
         m4 \
         netcat \
+        openssh-client \
         parallel \
         php-cli \
         php-gd \
@@ -196,7 +197,7 @@ RUN cd /opt && \
     wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
     python2 get-pip.py && \
     pip install --no-cache-dir "pymssql<2.2.0" && \
-    pip3 install pywbem && \
+    pip3 install --no-cache-dir pywbem && \
     git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
     git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
