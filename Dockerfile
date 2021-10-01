@@ -3,8 +3,9 @@ FROM ubuntu:20.04
 LABEL name="Nagios" \
     nagiosVersion="4.4.6" \
     nagiosPluginsVersion="2.3.3" \
-    nrpeVersion="4.0.2" \
+    nrpeVersion="4.0.3" \
     nscaVersion="2.10.0" \
+    ncpaVersion="2.3.1" \
     homepage="https://www.nagios.com/" \
     maintainer="Tronyx <tronyx@tronflix.app>"
 
@@ -26,8 +27,9 @@ ENV NAGIOS_HOME=/opt/nagios \
     NG_CGI_URL=/cgi-bin \
     NAGIOS_BRANCH=nagios-4.4.6 \
     NAGIOS_PLUGINS_BRANCH=release-2.3.3 \
-    NRPE_BRANCH=nrpe-4.0.2 \
-    NSCA_TAG=nsca-2.10.0
+    NRPE_BRANCH=nrpe-4.0.3 \
+    NSCA_TAG=nsca-2.10.0 \
+    NCPA_BRANCH=v2.3.1
 
 ENV NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
     NG_CGI_DIR=${NAGIOS_HOME}/sbin \
@@ -61,6 +63,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libdbd-mysql-perl \
         libdbi-dev \
         libdbi-perl \
+        libfreeradius-dev \
+        libgdchart-gd2-xpm-dev \
         libradsec-dev \
         libgd-dev \
         libgd-gd2-perl \
@@ -141,8 +145,9 @@ RUN cd /tmp && \
     mkdir -p /usr/lib/nagios/plugins && \
     ln -sf ${NAGIOS_HOME}/libexec/utils.pm /usr/lib/nagios/plugins
 
-#RUN wget -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
-#    chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py
+# Install NCPA
+RUN wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/${NCPA_BRANCH}/client/check_ncpa.py && \
+    chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py
 
 # Install NRPE
 RUN cd /tmp && \
@@ -180,7 +185,8 @@ RUN cd /tmp && \
     cp src/nsca ${NAGIOS_HOME}/bin/ && \
     cp src/send_nsca ${NAGIOS_HOME}/bin/ && \
     cp sample-config/nsca.cfg ${NAGIOS_HOME}/etc/ && \
-    cp sample-config/send_nsca.cfg ${NAGIOS_HOME}/etc/
+    cp sample-config/send_nsca.cfg ${NAGIOS_HOME}/etc/ && \
+    sed -i 's/^#server_address.*/server_address=0.0.0.0/'  ${NAGIOS_HOME}/etc/nsca.cfg
 
 # Install QStat
 RUN cd /tmp && \

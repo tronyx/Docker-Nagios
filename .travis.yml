@@ -6,6 +6,7 @@ services:
 env:
   global:
     - IMAGE_NAME=tronyx/nagios
+    - NAGIOS_VERSION=$(grep nagiosVersion Dockerfile | awk -F = '{print $2}' | tr -d '"\\')
 install:
   - git clone https://github.com/tronyx/Docker-Nagios.git ~/Docker-Nagios
 before_script:
@@ -17,11 +18,14 @@ before_script:
 script:
   # Build image
   - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker build --pull --cache-from ${IMAGE_NAME} -t ${IMAGE_NAME} .; fi'
+  - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker build --pull --cache-from ${IMAGE_NAME} -t ${IMAGE_NAME}:${NAGIOS_VERSION} .; fi'
   - 'if [[ $TRAVIS_BRANCH != "master" ]]; then docker build --pull --cache-from ${IMAGE_NAME}:${TRAVIS_BRANCH} -t ${IMAGE_NAME}:${TRAVIS_BRANCH} .; fi'
   # Test image
   - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker run -p 8080:80 ${IMAGE_NAME} apache2 -v; fi'
+  - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker run -p 8080:80 ${IMAGE_NAME}:${NAGIOS_VERSION} apache2 -v; fi'
   - 'if [[ $TRAVIS_BRANCH != "master" ]]; then docker run -p 8080:80 ${IMAGE_NAME}:${TRAVIS_BRANCH} apache2 -v; fi'
 after_success:
   # Push image
   - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]] && [[ ${TRAVIS_BRANCH} == "master" ]]; then docker push ${IMAGE_NAME}; fi'
+  - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]] && [[ ${TRAVIS_BRANCH} == "master" ]]; then docker push ${IMAGE_NAME}:${NAGIOS_VERSION}; fi'
   - 'if [[ ${TRAVIS_PULL_REQUEST} == "false" ]] && [[ ${TRAVIS_BRANCH} != "master" ]]; then docker push ${IMAGE_NAME}:${TRAVIS_BRANCH}; fi'
