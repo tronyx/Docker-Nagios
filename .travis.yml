@@ -6,6 +6,7 @@ services:
 env:
   global:
     - IMAGE_NAME=tronyx/nagios
+    - NAGIOS_VERSION=$(grep nagiosVersion Dockerfile | awk -F = '{print $2}' | tr -d '"\\')
 install:
   - git clone https://github.com/tronyx/Docker-Nagios.git ~/Docker-Nagios
 before_script:
@@ -15,8 +16,6 @@ before_script:
   - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker pull ${IMAGE_NAME} || true; fi'
   - 'if [[ $TRAVIS_BRANCH != "master" ]]; then docker pull ${IMAGE_NAME}:${TRAVIS_BRANCH} || true; fi'
 script:
-  # Get Nagios version
-  - NAGIOS_VERSION=$(grep nagiosVersion Dockerfile | awk -F = '{print $2}' | tr -d '"\\')
   # Build image
   - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker build --pull --cache-from ${IMAGE_NAME} -t ${IMAGE_NAME} .; fi'
   - 'if [[ $TRAVIS_BRANCH == "master" ]]; then docker build --pull --cache-from ${IMAGE_NAME} -t ${IMAGE_NAME}:${NAGIOS_VERSION} .; fi'
