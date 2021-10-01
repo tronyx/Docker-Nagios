@@ -25,14 +25,23 @@ Things that I have changed/updated so far:
 
 ## Information
 
-Nagios Core 4.4.6 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NSCA, & CheckMK.
+Nagios Core 4.4.6 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, & CheckMK.
+
+| Product | Version |
+| ------- | ------- |
+| Nagios Core | 4.4.6 |
+| Nagios Plugins | 2.3.3 |
+| NRPE | 4.0.3 |
+| NCPA | 2.3.1 |
+| NSCA | 2.10.0 |
 
 You can find the Docker Hub repository [HERE](https://hub.docker.com/r/tronyx/nagios).
 
 ### Configurations
 
-* Nagios Configuration lives in the `/opt/nagios/etc` directory.
+* Nagios configuration lives in the `/opt/nagios/etc` directory.
 * NagiosGraph configuration lives in the `/opt/nagiosgraph/etc` directory.
+* NSCA configuration lives in the `/opt/nagiosgraph/etc` directory.
 
 ### Install
 
@@ -82,6 +91,7 @@ The default credentials for the web interface are:
 ### Extra Plugins
 
 * Nagios NRPE [<http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details>]
+* Nagios NCPA [<https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details>]
 * Nagios NSCA [<https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details>]
 * Nagiosgraph [<http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details>]
 * JR-Nagios-Plugins -  custom plugins @JasonRivers created [<https://github.com/JasonRivers/nagios-plugins>]
