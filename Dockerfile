@@ -146,7 +146,7 @@ RUN cd /tmp && \
     ln -sf ${NAGIOS_HOME}/libexec/utils.pm /usr/lib/nagios/plugins
 
 # Install NCPA
-RUN -q wget -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/${NCPA_BRANCH}/client/check_ncpa.py && \
+RUN wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/${NCPA_BRANCH}/client/check_ncpa.py && \
     chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py
 
 # Install NRPE
