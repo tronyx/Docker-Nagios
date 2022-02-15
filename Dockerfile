@@ -4,8 +4,8 @@ LABEL name="Nagios" \
     nagiosVersion="4.4.6" \
     nagiosPluginsVersion="2.3.3" \
     nrpeVersion="4.0.3" \
-    nscaVersion="2.10.0" \
-    ncpaVersion="2.3.1" \
+    nscaVersion="2.10.1" \
+    ncpaVersion="2.4.0" \
     homepage="https://www.nagios.com/" \
     maintainer="Tronyx <tronyx@tronflix.app>"
 
@@ -28,8 +28,8 @@ ENV NAGIOS_HOME=/opt/nagios \
     NAGIOS_BRANCH=nagios-4.4.6 \
     NAGIOS_PLUGINS_BRANCH=release-2.3.3 \
     NRPE_BRANCH=nrpe-4.0.3 \
-    NSCA_TAG=nsca-2.10.0 \
-    NCPA_BRANCH=v2.3.1
+    NSCA_TAG=nsca-2.10.1 \
+    NCPA_BRANCH=v2.4.0
 
 ENV NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
     NG_CGI_DIR=${NAGIOS_HOME}/sbin \
@@ -60,6 +60,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libapache2-mod-php \
         libcache-memcached-perl \
         libcgi-pm-perl \
+        libcrypt-des-perl \
+        libcrypt-rijndael-perl \
         libdbd-mysql-perl \
         libdbi-dev \
         libdbi-perl \
@@ -93,6 +95,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         python2 \
         python3-pip \
         python3-nagiosplugin \
+        rsync \
         rsyslog \
         runit \
         smbclient \
