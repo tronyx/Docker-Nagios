@@ -13,7 +13,7 @@ Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-
 * [#116](https://github.com/JasonRivers/Docker-Nagios/pull/116) - Update Nagios to 4.4.6 (@mmerian)
 * [#120](https://github.com/JasonRivers/Docker-Nagios/pull/120) - Add NSCA (@mmerian)
 * [#132](https://github.com/JasonRivers/Docker-Nagios/issues/132) - Add rSync (@LutzLegu)
-* [#130](https://github.com/JasonRivers/Docker-Nagios/issues/130) - Add Perl encryption libraries (@https://github.com/rehashedsalt)
+* [#130](https://github.com/JasonRivers/Docker-Nagios/issues/130) - Add Perl encryption libraries (@rehashedsalt)
 
 Listing these as I wish to give the original users credit for their work.
 
