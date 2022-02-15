@@ -60,6 +60,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libapache2-mod-php \
         libcache-memcached-perl \
         libcgi-pm-perl \
+        libcrypt-des-perl \
+        libcrypt-rijndael-perl \
         libdbd-mysql-perl \
         libdbi-dev \
         libdbi-perl \
@@ -93,6 +95,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         python2 \
         python3-pip \
         python3-nagiosplugin \
+        rsync \
         rsyslog \
         runit \
         smbclient \
