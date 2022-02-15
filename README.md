@@ -24,6 +24,8 @@ Things that I have changed/updated so far:
 * Updated the image to Ubuntu 20.04 LTS
 * Updated Nagios Plugins to current latest (2.3.3)
 * Updated NRPE to current latest (4.0.3)
+* Updated NCPA to current latest (2.4.0)
+* Updated NSCA to current latest (2.10.1)
 
 ## Information
 
