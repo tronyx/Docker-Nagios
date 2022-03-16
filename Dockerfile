@@ -180,6 +180,7 @@ RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nsca.git && \
     cd nsca && \
     git checkout ${NSCA_TAG} && \
+    cp /usr/share/misc/config.* . && \
     ./configure \
         --prefix=${NAGIOS_HOME} \
         --with-nsca-user=${NAGIOS_USER} \
