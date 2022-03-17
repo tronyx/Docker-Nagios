@@ -80,6 +80,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libnet-tftp-perl \
         libnet-xmpp-perl \
         libpq-dev \
+        libpython2-dev \
+        libpython3-dev \
         libredis-perl \
         librrds-perl \
         libssl-dev \
