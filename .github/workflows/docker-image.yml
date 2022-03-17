@@ -24,9 +24,9 @@ jobs:
         with:
           install: true
 
-      - name: Build x86
-        run: |
-          docker buildx build --platform linux/386 .
+      #- name: Build x86
+      #  run: |
+      #    docker buildx build --platform linux/386 .
 
       - name: Build amd64
         run: |
