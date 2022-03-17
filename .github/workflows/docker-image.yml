@@ -24,6 +24,6 @@ jobs:
         with:
           install: true
 
-      - name: Build
+      - name: Build 
         run: |
-          docker build . # will run buildx
+          docker build --platform ${{ steps.buildx.outputs.platforms }} . # will run buildx
