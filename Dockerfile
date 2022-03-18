@@ -123,6 +123,7 @@ RUN update-ca-certificates -f
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nagioscore.git -b ${NAGIOS_BRANCH} && \
     cd nagioscore && \
+    cp /usr/share/misc/config.* . && \
     ./configure \
         --prefix=${NAGIOS_HOME} \
         --exec-prefix=${NAGIOS_HOME} \
