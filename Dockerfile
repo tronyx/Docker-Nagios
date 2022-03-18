@@ -161,9 +161,7 @@ RUN wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubuserconten
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nrpe.git -b ${NRPE_BRANCH} && \
     cd nrpe && \
-    ./configure \
-        --with-ssl=/usr/bin/openssl \
-        --with-ssl-lib=/usr/lib/$(uname -m)-linux-gnu && \
+    ./configure && \
     make check_nrpe > /dev/null && \
     cp src/check_nrpe ${NAGIOS_HOME}/libexec/ && \
     make clean
