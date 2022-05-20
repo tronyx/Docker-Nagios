@@ -180,7 +180,6 @@ RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nsca.git && \
     cd nsca && \
     git checkout ${NSCA_TAG} && \
-    cp /usr/share/misc/config.* . && \
     ./configure \
         --prefix=${NAGIOS_HOME} \
         --with-nsca-user=${NAGIOS_USER} \
@@ -212,13 +211,20 @@ RUN cd /opt && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
     git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
     git clone https://github.com/nagiosenterprises/check_mssql_collection.git nagios-mssql && \
+    git clone https://github.com/danfruehauf/nagios-plugins.git  DF-Nagios-Plugins  && \
     wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
     chmod +x /opt/WL-Nagios-Plugins/check* && \
     chmod +x /opt/JE-Nagios-Plugins/check_mem/check_mem.pl && \
     chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py && \
+    chmod +x /opt/DF-Nagios-Plugins/check_sql/check_sql && \
+    chmod +x /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins && \
+    chmod +x /opt/DF-Nagios-Plugins/check_vpn/check_vpn && \
     cp /opt/JE-Nagios-Plugins/check_mem/check_mem.pl ${NAGIOS_HOME}/libexec/ && \
     cp /opt/nagios-mssql/check_mssql_database.py ${NAGIOS_HOME}/libexec/ && \
-    cp /opt/nagios-mssql/check_mssql_server.py ${NAGIOS_HOME}/libexec/
+    cp /opt/nagios-mssql/check_mssql_server.py ${NAGIOS_HOME}/libexec/ && \
+    cp /opt/DF-Nagios-Plugins/check_sql/check_sql ${NAGIOS_HOME}/libexec/ && \
+    cp /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins ${NAGIOS_HOME}/libexec/ && \
+    cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/
 
 RUN sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars
 
