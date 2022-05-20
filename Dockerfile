@@ -1,8 +1,8 @@
 FROM ubuntu:20.04
 
 LABEL name="Nagios" \
-    nagiosVersion="4.4.6" \
-    nagiosPluginsVersion="2.3.3" \
+    nagiosVersion="4.4.7" \
+    nagiosPluginsVersion="2.4.0" \
     nrpeVersion="4.0.3" \
     nscaVersion="2.10.1" \
     ncpaVersion="2.4.0" \
@@ -25,8 +25,8 @@ ENV NAGIOS_HOME=/opt/nagios \
     NAGIOS_TIMEZONE=UTC \
     DEBIAN_FRONTEND=noninteractive \
     NG_CGI_URL=/cgi-bin \
-    NAGIOS_BRANCH=nagios-4.4.6 \
-    NAGIOS_PLUGINS_BRANCH=release-2.3.3 \
+    NAGIOS_BRANCH=nagios-4.4.7 \
+    NAGIOS_PLUGINS_BRANCH=release-2.4.0 \
     NRPE_BRANCH=nrpe-4.0.3 \
     NSCA_TAG=nsca-2.10.1 \
     NCPA_BRANCH=v2.4.0
