@@ -44,9 +44,4 @@ jobs:
       - name: Build riscv64
         run: |
           docker buildx build --platform linux/riscv64 .
-      
-      - name: Build every remaining arch
-        # This wont rebuild the privious images because of the build cache
-        run: |
-          docker buildx build --platform ${{ steps.buildx.outputs.platforms }} .
 
