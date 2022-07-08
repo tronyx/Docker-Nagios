@@ -49,6 +49,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         bc \
         bsd-mailx \
         build-essential \
+        ca-certificates \
         dnsutils \
         fping \
         freetds-dev \
@@ -80,6 +81,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libnet-tftp-perl \
         libnet-xmpp-perl \
         libpq-dev \
+        libpython2-dev \
+        libpython3-dev \
         libredis-perl \
         librrds-perl \
         libssl-dev \
@@ -114,10 +117,13 @@ RUN ( grep -Ei "^${NAGIOS_GROUP}"    /etc/group || groupadd $NAGIOS_GROUP ) && \
 RUN ( id -u $NAGIOS_USER    || useradd --system -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER ) && \
     ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
 
+RUN update-ca-certificates -f
+
 # Install Nagios Core
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nagioscore.git -b ${NAGIOS_BRANCH} && \
     cd nagioscore && \
+    cp /usr/share/misc/config.* . && \
     ./configure \
         --prefix=${NAGIOS_HOME} \
         --exec-prefix=${NAGIOS_HOME} \
@@ -156,9 +162,7 @@ RUN wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubuserconten
 RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nrpe.git -b ${NRPE_BRANCH} && \
     cd nrpe && \
-    ./configure \
-        --with-ssl=/usr/bin/openssl \
-        --with-ssl-lib=/usr/lib/$(uname -m)-linux-gnu && \
+    ./configure && \
     make check_nrpe > /dev/null && \
     cp src/check_nrpe ${NAGIOS_HOME}/libexec/ && \
     make clean
