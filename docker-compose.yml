@@ -24,10 +24,14 @@ services:
       - customplugins:/opt/Custom-Nagios-Plugins
       - nagiosgraphvar:/opt/nagiosgraph/var
       - nagiosgraphetc:/opt/nagiosgraph/etc
+      - nagiosa2logs:/var/log/apache2
 
 volumes:
+    # To change from Docker-managed volumes to bind mounts, add a driver_opts section as detailed here
+    # https://stackoverflow.com/questions/35841241/docker-compose-named-mounted-volume
     nagiosetc:
     nagiosvar:
     customplugins:
     nagiosgraphvar:
     nagiosgraphetc:
+    nagiosa2logs:
