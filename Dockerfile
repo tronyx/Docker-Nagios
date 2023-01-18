@@ -1,10 +1,10 @@
 FROM ubuntu:20.04
 
 LABEL name="Nagios" \
-    nagiosVersion="4.4.7" \
-    nagiosPluginsVersion="2.4.0" \
-    nrpeVersion="4.0.3" \
-    nscaVersion="2.10.1" \
+    nagiosVersion="4.4.10" \
+    nagiosPluginsVersion="2.4.3" \
+    nrpeVersion="4.1.0" \
+    nscaVersion="2.10.2" \
     ncpaVersion="2.4.0" \
     homepage="https://www.nagios.com/" \
     maintainer="Tronyx <tronyx@tronflix.app>"
@@ -25,10 +25,10 @@ ENV NAGIOS_HOME=/opt/nagios \
     NAGIOS_TIMEZONE=UTC \
     DEBIAN_FRONTEND=noninteractive \
     NG_CGI_URL=/cgi-bin \
-    NAGIOS_BRANCH=nagios-4.4.7 \
-    NAGIOS_PLUGINS_BRANCH=release-2.4.0 \
-    NRPE_BRANCH=nrpe-4.0.3 \
-    NSCA_TAG=nsca-2.10.1 \
+    NAGIOS_BRANCH=nagios-4.4.10 \
+    NAGIOS_PLUGINS_BRANCH=release-2.4.3 \
+    NRPE_BRANCH=nrpe-4.1.0 \
+    NSCA_TAG=nsca-2.10.2 \
     NCPA_BRANCH=v2.4.0
 
 ENV NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \

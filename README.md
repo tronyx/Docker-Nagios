@@ -22,10 +22,10 @@ Listing these as I wish to give the original users credit for their work.
 Things that I have changed/updated so far:
 
 * Updated the image to Ubuntu 20.04 LTS
-* Updated Nagios Plugins to current latest (2.4.0)
-* Updated NRPE to current latest (4.0.3)
+* Updated Nagios Plugins to current latest (2.4.3)
+* Updated NRPE to current latest (4.1.0)
 * Updated NCPA to current latest (2.4.0)
-* Updated NSCA to current latest (2.10.1)
+* Updated NSCA to current latest (2.10.2)
 
 ## Information
 
@@ -33,11 +33,11 @@ Nagios Core 4.4.6 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSCA
 
 | Product | Version |
 | ------- | ------- |
-| Nagios Core | 4.4.7 |
-| Nagios Plugins | 2.4.0 |
-| NRPE | 4.0.3 |
+| Nagios Core | 4.4.10 |
+| Nagios Plugins | 2.4.3 |
+| NRPE | 4.1.0 |
 | NCPA | 2.4.0 |
-| NSCA | 2.10.1 |
+| NSCA | 2.10.2 |
 
 You can find the Docker Hub repository [HERE](https://hub.docker.com/r/tronyx/nagios).
 
