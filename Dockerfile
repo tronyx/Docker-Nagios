@@ -151,8 +151,9 @@ RUN cd /tmp && \
     ./configure \
         --prefix=${NAGIOS_HOME} \
         --with-ipv6 \
-        --with-ping-command="/usr/bin/ping -n -U -W %d -c %d %s"  \
-        --with-ping6-command="/usr/bin/ping -6 -n -U -W %d -c %d %s"  \
+        --with-ping-command="/usr/bin/ping -n -U -W %d -c %d %s" \
+        --with-ping6-command="/usr/bin/ping -6 -n -U -W %d -c %d %s" \
+    && \
     make && \
     make install && \
     make clean && \
@@ -160,7 +161,7 @@ RUN cd /tmp && \
     ln -sf ${NAGIOS_HOME}/libexec/utils.pm /usr/lib/nagios/plugins && \
     chown root:root ${NAGIOS_HOME}/libexec/check_icmp && \
     chmod u+s ${NAGIOS_HOME}/libexec/check_icmp && \
-    cd /tmp && rm -Rf nagios-plugins
+    cd /tmp && rm -Rf nagios-plugins 
 
 # Install NCPA
 RUN wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/${NCPA_BRANCH}/client/check_ncpa.py && \
