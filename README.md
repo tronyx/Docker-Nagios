@@ -26,10 +26,11 @@ Things that I have changed/updated so far:
 * Updated NRPE to current latest (4.1.0)
 * Updated NCPA to current latest (2.4.0)
 * Updated NSCA to current latest (2.10.2)
+* Added NagiosTV (0.8.5)
 
 ## Information
 
-Nagios Core 4.4.10 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, & CheckMK.
+Nagios Core 4.4.10 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, CheckMK, and NagiosTV.
 
 | Product | Version |
 | ------- | ------- |
@@ -38,6 +39,7 @@ Nagios Core 4.4.10 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSC
 | NRPE | 4.1.0 |
 | NCPA | 2.4.0 |
 | NSCA | 2.10.2 |
+| NagiosTV | 0.8.5 |
 
 You can find the Docker Hub repository [HERE](https://hub.docker.com/r/tronyx/nagios).
 
