@@ -29,7 +29,7 @@ Things that I have changed/updated so far:
 
 ## Information
 
-Nagios Core 4.4.6 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, & CheckMK.
+Nagios Core 4.4.10 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, & CheckMK.
 
 | Product | Version |
 | ------- | ------- |
