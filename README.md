@@ -105,3 +105,4 @@ The default credentials for the web interface are:
 * JE-Nagios-Plugins - Custom plugins from Justin Ellison [<https://github.com/justintime/nagios-plugins>]
 * DF-Nagios-Plugins - Custom pluging for MSSQL monitoring from Dan Fruehauf [<https://github.com/danfruehauf/nagios-plugins>]
 * check-mqtt - Custom plugin for mqtt monitoring from Jan-Piet Mens [<https://github.com/jpmens/check-mqtt.git>]
+* NagiosTV [<https://github.com/chriscareycode/nagiostv-react>]
