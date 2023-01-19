@@ -141,10 +141,14 @@ RUN cd /tmp && \
     make install-webconf && \
     make clean
 
+# Copy patch file(s)
+ADD patches/nagios-plugins-2.4.0_check_ifstatus.patch /tmp/nagios-plugins-2.4.0_check_ifstatus.patch
+
 # Install Nagios Plugins
 RUN cd /tmp && \
     git clone https://github.com/nagios-plugins/nagios-plugins.git -b $NAGIOS_PLUGINS_BRANCH && \
     cd nagios-plugins && \
+    patch plugins-scripts/check_ifstatus.pl /tmp/nagios-plugins-2.4.0_check_ifstatus.patch && \
     ./tools/setup && \
     ./configure \
         --prefix=${NAGIOS_HOME} \
