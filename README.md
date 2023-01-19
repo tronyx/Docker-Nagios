@@ -41,9 +41,6 @@ Nagios Core 4.4.10 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSC
 | NSCA | 2.10.2 |
 | NagiosTV | 0.8.5 |
 
-# Patches
-* check_ifstatus-2.4.0 - https://github.com/nagios-plugins/nagios-plugins/issues/650
-
 You can find the Docker Hub repository [HERE](https://hub.docker.com/r/tronyx/nagios).
 
 ### Configurations
