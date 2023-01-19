@@ -25,18 +25,15 @@ ENV NAGIOS_HOME=/opt/nagios \
     NAGIOS_TIMEZONE=UTC \
     DEBIAN_FRONTEND=noninteractive \
     NG_CGI_URL=/cgi-bin \
+    NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
+    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
+    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph \
     NAGIOS_BRANCH=nagios-4.4.10 \
     NAGIOS_PLUGINS_BRANCH=release-2.4.3 \
     NRPE_BRANCH=nrpe-4.1.0 \
     NSCA_TAG=nsca-2.10.2 \
     NCPA_BRANCH=v2.4.0 \
     NAGIOSTV_VERSION=0.8.5
-
-
-
-ENV NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
-    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
-    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
@@ -220,13 +217,14 @@ RUN cd /opt && \
     wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
     python2 get-pip.py && \
     pip install --no-cache-dir "pymssql<2.2.0" && \
-    pip3 install --no-cache-dir pywbem paramiko pplogger && \
+    pip3 install --no-cache-dir pywbem paramiko pplogger paho-mqtt && \
     pip3 install --no-cache-dir --upgrade requests && \
     git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
     git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
     git clone https://github.com/nagiosenterprises/check_mssql_collection.git nagios-mssql && \
-    git clone https://github.com/danfruehauf/nagios-plugins.git  DF-Nagios-Plugins  && \
+    git clone https://github.com/danfruehauf/nagios-plugins.git DF-Nagios-Plugins && \
+    git clone https://github.com/jpmens/check-mqtt.git jpmens-mqtt && \
     wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
     chmod +x /opt/WL-Nagios-Plugins/check* && \
     chmod +x /opt/JE-Nagios-Plugins/check_mem/check_mem.pl && \
@@ -234,12 +232,14 @@ RUN cd /opt && \
     chmod +x /opt/DF-Nagios-Plugins/check_sql/check_sql && \
     chmod +x /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins && \
     chmod +x /opt/DF-Nagios-Plugins/check_vpn/check_vpn && \
+    chmod +x /opt/jpmens-mqtt/check-mqtt.py && \
     cp /opt/JE-Nagios-Plugins/check_mem/check_mem.pl ${NAGIOS_HOME}/libexec/ && \
     cp /opt/nagios-mssql/check_mssql_database.py ${NAGIOS_HOME}/libexec/ && \
     cp /opt/nagios-mssql/check_mssql_server.py ${NAGIOS_HOME}/libexec/ && \
     cp /opt/DF-Nagios-Plugins/check_sql/check_sql ${NAGIOS_HOME}/libexec/ && \
     cp /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins ${NAGIOS_HOME}/libexec/ && \
-    cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/
+    cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/ && \
+    cp /opt/jpmens-mqtt/check-mqtt.py ${NAGIOS_HOME}/libexec/
 
 # Install NagiosTV
 RUN cd /tmp && \
@@ -307,9 +307,6 @@ RUN ln -s /etc/sv/* /etc/service
 
 # Fix ping permissions for Nagios user
 RUN chmod u+s /usr/bin/ping
-
-ENV APACHE_LOCK_DIR=/var/run \
-    APACHE_LOG_DIR=/var/log/apache2
 
 # Set ServerName and timezone for Apache
 RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.conf && \
