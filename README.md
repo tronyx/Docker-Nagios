@@ -22,22 +22,24 @@ Listing these as I wish to give the original users credit for their work.
 Things that I have changed/updated so far:
 
 * Updated the image to Ubuntu 20.04 LTS
-* Updated Nagios Plugins to current latest (2.3.3)
-* Updated NRPE to current latest (4.0.3)
+* Updated Nagios Plugins to current latest (2.4.3)
+* Updated NRPE to current latest (4.1.0)
 * Updated NCPA to current latest (2.4.0)
-* Updated NSCA to current latest (2.10.1)
+* Updated NSCA to current latest (2.10.2)
+* Added NagiosTV (0.8.5)
 
 ## Information
 
-Nagios Core 4.4.6 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, & CheckMK.
+Nagios Core 4.4.10 running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, CheckMK, and NagiosTV.
 
 | Product | Version |
 | ------- | ------- |
-| Nagios Core | 4.4.6 |
-| Nagios Plugins | 2.3.3 |
-| NRPE | 4.0.3 |
+| Nagios Core | 4.4.10 |
+| Nagios Plugins | 2.4.3 |
+| NRPE | 4.1.0 |
 | NCPA | 2.4.0 |
-| NSCA | 2.10.1 |
+| NSCA | 2.10.2 |
+| NagiosTV | 0.8.5 |
 
 You can find the Docker Hub repository [HERE](https://hub.docker.com/r/tronyx/nagios).
 
@@ -98,6 +100,8 @@ The default credentials for the web interface are:
 * Nagios NCPA [<https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details>]
 * Nagios NSCA [<https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details>]
 * Nagiosgraph [<http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details>]
-* JR-Nagios-Plugins -  custom plugins @JasonRivers created [<https://github.com/JasonRivers/nagios-plugins>]
-* WL-Nagios-Plugins -  custom plugins from William Leibzon [<https://github.com/willixix/WL-NagiosPlugins>]
-* JE-Nagios-Plugins -  custom plugins from Justin Ellison [<https://github.com/justintime/nagios-plugins>]
+* JR-Nagios-Plugins - Custom plugins @JasonRivers created [<https://github.com/JasonRivers/nagios-plugins>]
+* WL-Nagios-Plugins - Custom plugins from William Leibzon [<https://github.com/willixix/WL-NagiosPlugins>]
+* JE-Nagios-Plugins - Custom plugins from Justin Ellison [<https://github.com/justintime/nagios-plugins>]
+* DF-Nagios-Plugins - Custom pluging for MSSQL monitoring from Dan Fruehauf [<https://github.com/danfruehauf/nagios-plugins>]
+* check-mqtt - Custom plugin for mqtt monitoring from Jan-Piet Mens [<https://github.com/jpmens/check-mqtt.git>]
