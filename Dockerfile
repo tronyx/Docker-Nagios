@@ -24,16 +24,17 @@ ENV NAGIOS_HOME=/opt/nagios \
     APACHE_LOG_DIR=/var/log/apache2 \
     NAGIOS_TIMEZONE=UTC \
     DEBIAN_FRONTEND=noninteractive \
-    NG_CGI_URL=/cgi-bin \
-    NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
-    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
-    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph \
     NAGIOS_BRANCH=nagios-4.4.10 \
     NAGIOS_PLUGINS_BRANCH=release-2.4.3 \
     NRPE_BRANCH=nrpe-4.1.0 \
     NSCA_TAG=nsca-2.10.2 \
     NCPA_BRANCH=v2.4.0 \
     NAGIOSTV_VERSION=0.8.5
+
+ENV NG_CGI_URL=/cgi-bin \
+    NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
+    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
+    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
@@ -243,7 +244,7 @@ RUN cd /opt && \
 
 # Install NagiosTV
 RUN cd /tmp && \
-    wget https://github.com/chriscareycode/nagiostv-react/releases/download/v${NAGIOSTV_VERSION}/nagiostv-${NAGIOSTV_VERSION}.tar.gz && \
+    wget -q https://github.com/chriscareycode/nagiostv-react/releases/download/v${NAGIOSTV_VERSION}/nagiostv-${NAGIOSTV_VERSION}.tar.gz && \
     tar xf nagiostv-${NAGIOSTV_VERSION}.tar.gz -C /opt/nagios/share/ && \
     rm /tmp/nagiostv-${NAGIOSTV_VERSION}.tar.gz
 
