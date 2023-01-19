@@ -150,8 +150,7 @@ RUN cd /tmp && \
         --prefix=${NAGIOS_HOME} \
         --with-ipv6 \
         --with-ping-command="/usr/bin/ping -n -U -W %d -c %d %s" \
-        --with-ping6-command="/usr/bin/ping -6 -n -U -W %d -c %d %s" \
-    && \
+        --with-ping6-command="/usr/bin/ping -6 -n -U -W %d -c %d %s" && \
     make && \
     make install && \
     make clean && \
