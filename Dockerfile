@@ -277,7 +277,9 @@ ADD overlay /
 RUN echo "use_timezone=${NAGIOS_TIMEZONE}" >> ${NAGIOS_HOME}/etc/nagios.cfg
 
 # Copy example config in-case the user has started with empty var or etc
-RUN mkdir -p /orig/{var,etc,xinetd.d} && \
+RUN mkdir -p /orig/var && \
+    mkdir -p /orig/etc && \
+    mkdir -p /orig/xinetd.d && \
     cp -Rp ${NAGIOS_HOME}/var/* /orig/var/ && \
     cp -Rp ${NAGIOS_HOME}/etc/* /orig/etc/ && \
     cp -Rp /etc/xinetd.d/* /orig/xinetd.d/
