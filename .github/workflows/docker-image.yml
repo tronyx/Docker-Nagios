@@ -61,7 +61,6 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           tags: |
             ${{ steps.vars.outputs.tag }}
-            ghcr.io/${{ steps.vars.outputs.tag }}
           labels: |
             org.opencontainers.image.created=${{ steps.vars.outputs.time }}
             org.opencontainers.image.title=${{ steps.vars.outputs.repo }}
