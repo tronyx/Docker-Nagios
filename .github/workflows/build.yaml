@@ -27,13 +27,13 @@ jobs:
         run: |
           {
             ARCHITECTURE=${{ matrix.architecture }}
-            echo "name=platform::${ARCHITECTURE//-/\/}"
-            echo "name=repo::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')"
+            echo "platform=${ARCHITECTURE//-/\/}"
+            echo "repo=$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')"
             echo "file=${ARCHITECTURE#*-}"
-            echo "name=time::$(date --utc +%Y-%m-%d_%H)"
-            echo "name=source::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//}"
-            echo "name=url::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"
-            echo "name=tag::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${{ matrix.architecture }}"
+            echo "time=$(date --utc +%Y-%m-%d_%H)"
+            echo "source=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//}"
+            echo "url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"
+            echo "tag=$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${{ matrix.architecture }}"
           } >> $GITHUB_OUTPUT
       
       - name: Set up QEMU
