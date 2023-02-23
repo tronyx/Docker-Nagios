@@ -25,14 +25,16 @@ jobs:
       - name: Create VARS
         id: vars
         run: |
-          ARCHITECTURE=${{ matrix.architecture }}
-          echo "name=platform::${ARCHITECTURE//-/\/}" >> $GITHUB_OUTPUT
-          echo "name=repo::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
-          echo "file=${ARCHITECTURE#*-}" >> $GITHUB_OUTPUT
-          echo "name=time::$(date --utc +%Y-%m-%d_%H)" >> $GITHUB_OUTPUT
-          echo "name=source::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//}" >> $GITHUB_OUTPUT
-          echo "name=url::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md" >> $GITHUB_OUTPUT
-          echo "name=tag::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${{ matrix.architecture }}" >> $GITHUB_OUTPUT
+          {
+            ARCHITECTURE=${{ matrix.architecture }}
+            echo "name=platform::${ARCHITECTURE//-/\/}"
+            echo "name=repo::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')"
+            echo "file=${ARCHITECTURE#*-}"
+            echo "name=time::$(date --utc +%Y-%m-%d_%H)"
+            echo "name=source::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//}"
+            echo "name=url::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"
+            echo "name=tag::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${{ matrix.architecture }}"
+          } >> $GITHUB_OUTPUT
       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2.1.0
