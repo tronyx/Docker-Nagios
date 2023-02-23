@@ -39,7 +39,7 @@ Nagios Core running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, Chec
 | [NRPE](https://github.com/NagiosEnterprises/nrpe) | 4.1.0 |
 | [NCPA](https://github.com/NagiosEnterprises/ncpa) | 2.4.0 |
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.2 |
-| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.8.5 |
+| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.8.6 |
 
 You can find the Docker Hub repository [HERE](https://hub.docker.com/r/tronyx/nagios).
 

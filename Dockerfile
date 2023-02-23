@@ -6,6 +6,7 @@ LABEL name="Nagios" \
     nrpeVersion="4.1.0" \
     nscaVersion="2.10.2" \
     ncpaVersion="2.4.0" \
+    nagiostvVersion="0.8.6" \
     homepage="https://www.nagios.com/" \
     maintainer="Tronyx <tronyx@tronflix.app>"
 
@@ -29,7 +30,7 @@ ENV NAGIOS_HOME=/opt/nagios \
     NRPE_BRANCH=nrpe-4.1.0 \
     NSCA_TAG=nsca-2.10.2 \
     NCPA_BRANCH=v2.4.0 \
-    NAGIOSTV_VERSION=0.8.5
+    NAGIOSTV_VERSION=0.8.6
 
 ENV NG_CGI_URL=/cgi-bin \
     NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
