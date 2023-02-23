@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Build Image
 
 on:
   push:
@@ -9,68 +9,92 @@ on:
     branches:
       - master
       - develop
-  workflow_dispatch:
 
 jobs:
   build:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        architecture: [linux-arm-v7, linux-arm64, linux-amd64]
+    outputs:
+      time: ${{ steps.vars.outputs.time }}
+
     steps:
-      - uses: actions/checkout@v2
-        name: Checkout
-
+      - uses: actions/checkout@v3
+      - name: Create VARS
+        id: vars
+        run: |
+          ARCHITECTURE=${{ matrix.architecture }}
+          echo "name=platform::${ARCHITECTURE//-/\/}" >> $GITHUB_OUTPUT
+          echo "name=repo::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+          echo "file=${ARCHITECTURE#*-}" >> $GITHUB_OUTPUT
+          echo "name=time::$(date --utc +%Y-%m-%d_%H)" >> $GITHUB_OUTPUT
+          echo "name=source::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//}" >> $GITHUB_OUTPUT
+          echo "name=url::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md" >> $GITHUB_OUTPUT
+          echo "name=tag::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${{ matrix.architecture }}" >> $GITHUB_OUTPUT
+      
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2.1.0
 
-      - uses: docker/setup-buildx-action@v1
-        id: buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2.4.1
         with:
           install: true
+          version: latest
+          driver-opts: image=moby/buildkit:master
 
-      - name: Extract Branch Name
-        run: echo "BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
+      - name: Login to DockerHub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: tronyx
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build amd64
-        env:
-          IMAGE_NAME: tronyx/nagios
-        run: |
-          docker buildx build --platform linux/amd64 -t ${IMAGE_NAME}:${BRANCH} .
-
-      - name: Build arm64
-        env:
-          IMAGE_NAME: tronyx/nagios
-        run: |
-          docker buildx build --platform linux/arm64 -t ${IMAGE_NAME}:${BRANCH} .
-
-      - name: Build armv7
-        env:
-          IMAGE_NAME: tronyx/nagios
-        run: |
-          docker buildx build --platform linux/arm/v7 -t ${IMAGE_NAME}:${BRANCH} .
-
-      - name: Build riscv64
-        env:
-          IMAGE_NAME: tronyx/nagios
-        run: |
-          docker buildx build --platform linux/riscv64 -t ${IMAGE_NAME}:${BRANCH} .
+      - name: Build and push
+        uses: docker/build-push-action@v4.0.0
+        with:
+          push: true
+          attests: type=sbom,generator=docker/buildkit-syft-scanner
+          provenance: true
+          platforms: ${{ steps.vars.outputs.platform }}
+          file: ./Dockerfile.${{ steps.vars.outputs.file }}
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: |
+            ${{ steps.vars.outputs.tag }}
+            ghcr.io/${{ steps.vars.outputs.tag }}
+          labels: |
+            org.opencontainers.image.created=${{ steps.vars.outputs.time }}
+            org.opencontainers.image.title=${{ steps.vars.outputs.repo }}
+            org.opencontainers.image.source=${{ steps.vars.outputs.source }}
+            org.opencontainers.image.url=${{ steps.vars.outputs.url }}
 
   publish:
+    runs-on: ubuntu-20.04
     needs: [build]
-    runs-on: ubuntu-latest
     steps:
-      - name: Extract Branch Name
-        run: echo "BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      - name: Login to DockerHub
+        uses: docker/login-action@v2.1.0
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: tronyx
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Create manifests for DockerHub
         env:
           DOCKER_CLI_EXPERIMENTAL: enabled
-          IMAGE_NAME: tronyx/nagios
         run: |
-          SOURCE=${IMAGE_NAME}
-          docker manifest create ${IMAGE}:${BRANCH}    --amend ${SOURCE}:linux-amd64 --amend ${SOURCE}:linux-arm64 --amend ${SOURCE}:linux-arm-v7 --amend ${SOURCE}:linux-riscv64 && docker manifest push ${IMAGE}:${BRANCH}
+          IMAGE=$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')
+          TAG=${GITHUB_REF//refs\/heads\//}
+          SOURCE=${IMAGE}:${GITHUB_REF//refs\/heads\//}
+          
+          docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.time }}    ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm-v7 ${SOURCE}-linux-arm64
+          
+          if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
+            docker buildx imagetools create -t ${IMAGE}:latest                           ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm-v7 ${SOURCE}-linux-arm64
+          fi
+
+          if [[ ${GITHUB_REF//refs\/heads\//} == develop ]]; then
+            docker buildx imagetools create -t ${IMAGE}:develop                          ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm-v7 ${SOURCE}-linux-arm64
+          fi
