@@ -192,6 +192,10 @@ RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nsca.git && \
     cd nsca && \
     git checkout ${NSCA_TAG} && \
+    mv config.guess config.guess.BAD && \
+    mv config.sub sonfig.sub.BAD && \
+    wget http://cvs.savannah.gnu.org/viewvc/*checkout*/config/config/config.guess && \
+    wget http://cvs.savannah.gnu.org/viewvc/*checkout*/config/config/config.sub && \
     ./configure \
         --prefix=${NAGIOS_HOME} \
         --with-nsca-user=${NAGIOS_USER} \
