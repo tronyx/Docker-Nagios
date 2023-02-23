@@ -35,7 +35,7 @@ jobs:
             echo "url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"
             echo "tag=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' | sed s/docker-//):${{ matrix.architecture }}"
           } >> $GITHUB_OUTPUT
-      
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2.1.0
 
@@ -89,9 +89,9 @@ jobs:
           IMAGE=$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')
           TAG=${GITHUB_REF//refs\/heads\//}
           SOURCE=${IMAGE}:${GITHUB_REF//refs\/heads\//}
-          
+
           docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.time }}    ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm-v7 ${SOURCE}-linux-arm64
-          
+
           if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
             docker buildx imagetools create -t ${IMAGE}:latest                           ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm-v7 ${SOURCE}-linux-arm64
           fi
