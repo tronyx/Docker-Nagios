@@ -225,7 +225,7 @@ RUN cd /tmp && \
 
 # Install additional plugins
 RUN cd /opt && \
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sed 's#/proc/self/exe#\/bin\/sh#g' | sh -s -- -y && \
     wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
     python2 get-pip.py && \
     pip install --no-cache-dir "pymssql<2.2.0" && \
