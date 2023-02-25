@@ -74,7 +74,7 @@ jobs:
             echo "tag=${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}-${{ matrix.architecture }}"
           } >> $GITHUB_OUTPUT
 
-          BRANCH=$(${GITHUB_REF//refs\/heads\//)
+          BRANCH="${GITHUB_REF//refs\/heads\//}"
           if [[ -n ${BRANCH} ]]; then
             echo "branch=-${BRANCH}" >> $GITHUB_OUTPUT
           fi
