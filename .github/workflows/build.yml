@@ -87,7 +87,7 @@ jobs:
         with:
           push: true
           platforms: ${{ steps.prep.outputs.platform }}
-          file: ./${{ matrix.architecture }}.Dockerfile
+          file: ./Dockerfile.${{ matrix.architecture }}
           cache-from: docker.io/${{ steps.prep.outputs.cache }}
           cache-to: docker.io/${{ steps.prep.outputs.cache }}
           tags: |
