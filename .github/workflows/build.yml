@@ -71,7 +71,7 @@ jobs:
             echo "url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"
             echo "platform=${ARCHITECTURE//-/\/}"
             echo "cache=${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-cache-${{ matrix.architecture }}"
-            echo "tag=${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}-${{ matrix.architecture }}"
+            echo "tag=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)"
           } >> $GITHUB_OUTPUT
 
           BRANCH="${GITHUB_REF//refs\/heads\//}"
