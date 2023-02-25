@@ -58,7 +58,8 @@ jobs:
           push: true
           attests: type=sbom,generator=docker/buildkit-syft-scanner
           provenance: true
-          platforms: ${{ steps.vars.outputs.platform }}
+          #platforms: ${{ steps.vars.outputs.platform }}
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           file: ./Dockerfile.${{ steps.vars.outputs.file }}
           builder: ${{ steps.buildx.outputs.name }}
           tags: |
