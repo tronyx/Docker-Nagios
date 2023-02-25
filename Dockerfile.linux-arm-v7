@@ -225,7 +225,7 @@ RUN cd /tmp && \
 
 # Install additional plugins
 RUN cd /opt && \
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sed 's#/proc/self/exe#\/bin\/sh#g' | sh -s -- -y && \
+    --mount=type=tmpfs,target=/root/.cargo curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sed 's#/proc/self/exe#\/bin\/sh#g' | sh -s -- -y && \
     . "$HOME/.cargo/env" && \
     wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
     python2 get-pip.py && \
@@ -340,6 +340,10 @@ RUN apt-get -qq -y autoremove && \
     nrpe \
     nagiosgraph \
     nsca && \
+    rm -rf /root/.cache \
+    /root/.cargo \
+    /tmp/* \
+    /var/lib/apt/lists/* && \
     # Remove some other files and dirs
     rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
     /opt/get-pip.py
