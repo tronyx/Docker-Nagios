@@ -28,7 +28,7 @@ jobs:
         id: arch_check
         run: |
           (test -f Dockerfile.${{ matrix.architecture }} && echo "check=passed" >> $GITHUB_OUTPUT) || echo "check=failed" >> $GITHUB_OUTPUT
-      
+
       - name: Set up QEMU
         if: "contains(steps.arch_check.outputs.check, 'passed')"
         uses: docker/setup-qemu-action@v2.1.0
@@ -78,7 +78,7 @@ jobs:
           if [[ -n ${BRANCH} ]]; then
             echo "branch=-${BRANCH}" >> $GITHUB_OUTPUT
           fi
-      
+
       - name: Build and push - Attempt 1
         continue-on-error: true
         if: "contains(steps.arch_check.outputs.check, 'passed')"
@@ -105,12 +105,12 @@ jobs:
             GITHUB_TOKEN=${{ secrets.GHCR_TOKEN }}
             BUILD_ARCHITECTURE=${{ matrix.architecture }}
             ${{ steps.prep.outputs.build-args }}
-      
+
       - name: Sleep
         if: (steps.build_attempt1.outcome == 'failure')
         run: |
           sleep 30
-      
+
       - name: Build and push - Attempt 2
         if: (steps.build_attempt1.outcome == 'failure')
         uses: docker/build-push-action@v4.0.0
@@ -186,12 +186,12 @@ jobs:
             docker manifest create ${IMAGE}:develop ${AMD64} ${ARM64} ${ARMV7}
             docker manifest push   ${IMAGE}:develop
           fi
-      
+
       - name: Sleep
         if: (steps.manifest_attempt1.outcome == 'failure')
         run: |
           sleep 30
-      
+
       - name: Create manifests - Attempt 2
         if: (steps.manifest_attempt1.outcome == 'failure')
         env:
