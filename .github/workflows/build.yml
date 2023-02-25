@@ -33,7 +33,7 @@ jobs:
         with:
           swap-size-gb: 10
       - run: |
-          # Workaround for https://github.com/rust-lang/cargo/issues/8719
+          # Workaround for Cargo issue: https://github.com/rust-lang/cargo/issues/8719
           sudo mkdir -p /var/lib/docker
           sudo mount -t tmpfs -o size=10G none /var/lib/docker
           sudo systemctl restart docker
