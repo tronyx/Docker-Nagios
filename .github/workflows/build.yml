@@ -64,13 +64,13 @@ jobs:
           {
             ARCHITECTURE=${{ matrix.architecture }}
             echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            echo "title=${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}"
+            echo "title=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//} | tr '[:upper:]' '[:lower:]')"
             echo "revision=${GITHUB_SHA}"
-            echo "source=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//}"
+            echo "source=$(echo ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//} | tr '[:upper:]' '[:lower:]')"
             echo "vendor=${{ github.repository_owner }}"
             echo "url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"
             echo "platform=${ARCHITECTURE//-/\/}"
-            echo "cache=${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-cache-${{ matrix.architecture }}"
+            echo "cache=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-cache-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]')"
             echo "tag=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)"
           } >> $GITHUB_OUTPUT
 
