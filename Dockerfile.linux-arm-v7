@@ -347,8 +347,8 @@ RUN apt-get -qq -y autoremove && \
     # Remove some other files and dirs
     rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
     /opt/get-pip.py && \
-    # Remove cargo/rust and all dependencies
-    apt-get -qq -y remove cargo && apt-get -qq -y autoremove && \
+    # Remove rust and all dependencies
+    rustup self uninstall && apt-get -qq -y autoremove && \
     # Remove bcrypt
     pip3 uninstall bcrypt
 
