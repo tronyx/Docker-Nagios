@@ -181,9 +181,9 @@ jobs:
           TAG=${{ needs.build.outputs.branch }}
           SOURCE=${IMAGE}:${TAG}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}
           BRANCH=${{ needs.build.outputs.branch }}
-          [[ -f Dockerfile.amd64 ]] && AMD64=${SOURCE}-linux-amd64
-          [[ -f Dockerfile.arm64 ]] && ARM64=${SOURCE}-linux-arm64
-          [[ -f Dockerfile.arm-v7 ]] && ARMV7=${SOURCE}-linux-arm-v7
+          [[ -f Dockerfile.linux-amd64 ]] && AMD64=${SOURCE}-linux-amd64
+          [[ -f Dockerfile.linux-arm64 ]] && ARM64=${SOURCE}-linux-arm64
+          [[ -f Dockerfile.linux-arm-v7 ]] && ARMV7=${SOURCE}-linux-arm-v7
           docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64} ${ARMV7}
           docker manifest push ${IMAGE}:${TAG}
           docker manifest create ${IMAGE}:${TAG}-${GITHUB_SHA:0:7} ${AMD64} ${ARM64} ${ARMV7}
@@ -210,9 +210,9 @@ jobs:
           TAG=${{ needs.build.outputs.branch }}
           SOURCE=${IMAGE}:${TAG}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}
           BRANCH=${{ needs.build.outputs.branch }}
-          [[ -f Dockerfile.amd64 ]] && AMD64=${SOURCE}-linux-amd64
-          [[ -f Dockerfile.arm64 ]] && ARM64=${SOURCE}-linux-arm64
-          [[ -f Dockerfile.arm-v7 ]] && ARMV7=${SOURCE}-linux-arm-v7
+          [[ -f Dockerfile.linux-amd64 ]] && AMD64=${SOURCE}-linux-amd64
+          [[ -f Dockerfile.linux-arm64 ]] && ARM64=${SOURCE}-linux-arm64
+          [[ -f Dockerfile.linux-arm-v7 ]] && ARMV7=${SOURCE}-linux-arm-v7
           docker manifest rm ${IMAGE}:${TAG} || true
           docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64} ${ARMV7}
           docker manifest push ${IMAGE}:${TAG}
