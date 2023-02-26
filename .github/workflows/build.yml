@@ -85,7 +85,7 @@ jobs:
 
           BRANCH="${GITHUB_REF//refs\/heads\//}"
           if [[ -n ${BRANCH} ]]; then
-            echo "branch=-${BRANCH}" >> $GITHUB_OUTPUT
+            echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
           fi
 
       - name: Build and push - Attempt 1
