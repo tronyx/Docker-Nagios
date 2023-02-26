@@ -348,7 +348,9 @@ RUN apt-get -qq -y autoremove && \
     rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
     /opt/get-pip.py && \
     # Remove cargo/rust and all dependencies
-    apt-get -qq -y remove cargo && apt-get -qq -y autoremove
+    apt-get -qq -y remove cargo && apt-get -qq -y autoremove && \
+    # Remove bcrypt
+    pip3 uninstall bcrypt
 
 # Expose port 80 for the web UI
 EXPOSE 80 5667
