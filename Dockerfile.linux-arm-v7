@@ -346,7 +346,9 @@ RUN apt-get -qq -y autoremove && \
     /var/lib/apt/lists/* && \
     # Remove some other files and dirs
     rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
-    /opt/get-pip.py
+    /opt/get-pip.py && \
+    # Remove cargo/rust and all dependencies
+    apt-get -qq -y remove cargo && apt-get -qq -y autoremove
 
 # Expose port 80 for the web UI
 EXPOSE 80 5667
