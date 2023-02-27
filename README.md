@@ -26,7 +26,8 @@ Things that I have changed/updated so far:
 * Updated NRPE to current latest (4.1.0)
 * Updated NCPA to current latest (2.4.0)
 * Updated NSCA to current latest (2.10.2)
-* Added NagiosTV (0.8.5)
+* Added NagiosTV (0.8.6)
+* Built multi-arch images
 
 ## Information
 
@@ -53,6 +54,7 @@ You can find the Docker Hub repository [HERE](https://hub.docker.com/r/tronyx/na
 
 ```bash
 docker pull tronyx/nagios
+docker pull ghcr.io/tronyx/nagios
 ```
 
 ### Running
@@ -61,6 +63,7 @@ Run with the example configuration with the following:
 
 ```bash
 docker run --name nagios -p 8080:80 tronyx/nagios
+docker run --name nagios -p 8080:80 ghcr.io/tronyx/nagios
 ```
 
 Alternatively you can use external Nagios configuration & log data with the following:
@@ -73,6 +76,14 @@ docker run --name nagios  \
   -v /path-to-nagiosgraph-var:/opt/nagiosgraph/var \
   -v /path-to-nagiosgraph-etc:/opt/nagiosgraph/etc \
   -p 8080:80 tronyx/nagios
+
+docker run --name nagios  \
+  -v /path-to-nagios/etc/:/opt/nagios/etc/ \
+  -v /path-to-nagios/var:/opt/nagios/var/ \
+  -v /path-to-custom-plugins:/opt/Custom-Nagios-Plugins \
+  -v /path-to-nagiosgraph-var:/opt/nagiosgraph/var \
+  -v /path-to-nagiosgraph-etc:/opt/nagiosgraph/etc \
+  -p 8080:80 ghcr.io/tronyx/nagios
 ```
 
 Note: The path for the custom plugins will be /opt/Custom-Nagios-Plugins, you will need to reference this directory in your configuration scripts.
