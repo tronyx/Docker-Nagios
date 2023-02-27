@@ -117,4 +117,4 @@ The default credentials for the web interface are:
 * DF-Nagios-Plugins - Custom pluging for MSSQL monitoring from Dan Fruehauf [<https://github.com/danfruehauf/nagios-plugins>]
 * check-mqtt - Custom plugin for mqtt monitoring from Jan-Piet Mens [<https://github.com/jpmens/check-mqtt.git>]
 * NagiosTV - Monitor your Nagios server on a wall mounted TV [<https://github.com/chriscareycode/nagiostv-react>]
-* check_apc - Check APC for status, heealth, and load [<https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apc-2Epl/details>]
+* check_apc - Check APC for status, health, and load [<https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apc-2Epl/details>]
