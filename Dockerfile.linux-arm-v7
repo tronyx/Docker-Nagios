@@ -225,7 +225,7 @@ RUN cd /tmp && \
 
 # Install additional plugins
 RUN cd /opt && \
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sed 's#/proc/self/exe#\/bin\/sh#g' | sh -s -- -y && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sed 's#/proc/self/exe#\/bin\/sh#g' | sh -s -- --profile=minimal -y && \
     . "$HOME/.cargo/env" && \
     export PATH="$HOME/.cargo/bin:$PATH" && \
     wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
@@ -256,6 +256,10 @@ RUN cd /opt && \
     cp /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins ${NAGIOS_HOME}/libexec/ && \
     cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/ && \
     cp /opt/jpmens-mqtt/check-mqtt.py ${NAGIOS_HOME}/libexec/
+
+# Add check_apc.pl check
+COPY plugins/check_apc.pl ${NAGIOS_HOME}/libexec/
+RUN chmod +x ${NAGIOS_HOME}/libexec/check_apc.pl
 
 # Install NagiosTV
 RUN cd /tmp && \
@@ -332,16 +336,9 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt-get -qq -y autoremove && \
-    apt-get -qq -y remove software-properties-common && \
-    # Remove dirs from git clones
-    cd /tmp && \
-    rm -rf qstat \
-    nagioscore \
-    nagios-plugins \
-    nrpe \
-    nagiosgraph \
-    nsca && \
+RUN apt-get -qq -y remove software-properties-common cargo && \
+    apt-get -qq -y autoremove && \
+    # Remove dirs from git clones, cache, rustup, etc.
     rm -rf /root/.cache \
     /root/.cargo \
     /tmp/* \

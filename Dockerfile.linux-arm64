@@ -234,7 +234,8 @@ RUN cd /opt && \
     git clone https://github.com/nagiosenterprises/check_mssql_collection.git nagios-mssql && \
     git clone https://github.com/danfruehauf/nagios-plugins.git DF-Nagios-Plugins && \
     git clone https://github.com/jpmens/check-mqtt.git jpmens-mqtt && \
-    wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
+    #wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
+    wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/master/client/check_ncpa.py && \
     chmod +x /opt/WL-Nagios-Plugins/check* && \
     chmod +x /opt/JE-Nagios-Plugins/check_mem/check_mem.pl && \
     chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py && \
@@ -249,6 +250,10 @@ RUN cd /opt && \
     cp /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins ${NAGIOS_HOME}/libexec/ && \
     cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/ && \
     cp /opt/jpmens-mqtt/check-mqtt.py ${NAGIOS_HOME}/libexec/
+
+# Add check_apc.pl check
+COPY plugins/check_apc.pl ${NAGIOS_HOME}/libexec/
+RUN chmod +x ${NAGIOS_HOME}/libexec/check_apc.pl
 
 # Install NagiosTV
 RUN cd /tmp && \
