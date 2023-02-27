@@ -224,7 +224,7 @@ jobs:
           docker manifest rm ${IMAGE}:${TAG} || true
           docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64} ${ARMV7}
           docker manifest push ${IMAGE}:${TAG}
-          docekr manifest rm ${IMAGE}:${TAG}-${VERSION//\~/-} || true
+          docker manifest rm ${IMAGE}:${TAG}-${VERSION//\~/-} || true
           docker manifest create ${IMAGE}:${TAG}-${VERSION//\~/-} ${AMD64} ${ARM64} ${ARMV7}
           docker manifest push ${IMAGE}:${TAG}-${VERSION//\~/-}
           docker manifest rm ${IMAGE}:${TAG}-${GITHUB_SHA:0:7} || true
