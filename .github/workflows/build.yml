@@ -93,6 +93,8 @@ jobs:
             echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
           fi
 
+          echo $GITHUB_OUTPUT
+
       - name: Build and push - Attempt 1
         continue-on-error: true
         if: "contains(steps.arch_check.outputs.check, 'passed')"
