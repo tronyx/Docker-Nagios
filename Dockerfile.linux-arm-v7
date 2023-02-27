@@ -336,7 +336,7 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt-get -qq -y remove software-properties-common cargo && \
+RUN apt-get -qq -y remove software-properties-common && \
     apt-get -qq -y autoremove && \
     # Remove dirs from git clones, cache, rustup, etc.
     rm -rf /root/.cache \
