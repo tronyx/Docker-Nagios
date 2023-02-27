@@ -82,6 +82,7 @@ jobs:
             echo "url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"
             echo "platform=${ARCHITECTURE//-/\/}"
             echo "cache=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-cache-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]')"
+            echo "tag=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)"
           } >> $GITHUB_OUTPUT
           VERSION=$(grep nagiosVersion Dockerfile.${{ matrix.architecture }} | awk -F= '{print $2}' | tr -d '" \\')
           if [[ -z ${VERSION} ]]; then
@@ -185,18 +186,19 @@ jobs:
           DOCKER_CLI_EXPERIMENTAL: enabled
         run: |
           IMAGE=${{ matrix.registry }}/$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)
-          SOURCE=${IMAGE}:${BRANCH}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}
+          TAG=${{ needs.build.outputs.branch }}
+          SOURCE=${IMAGE}:${TAG}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}
           VERSION=${{ needs.build.outputs.version }}
           BRANCH=${{ needs.build.outputs.branch }}
           [[ -f Dockerfile.linux-amd64 ]] && AMD64=${SOURCE}-linux-amd64
           [[ -f Dockerfile.linux-arm64 ]] && ARM64=${SOURCE}-linux-arm64
           [[ -f Dockerfile.linux-arm-v7 ]] && ARMV7=${SOURCE}-linux-arm-v7
-          docker manifest create ${IMAGE}:${BRANCH} ${AMD64} ${ARM64} ${ARMV7}
-          docker manifest push ${IMAGE}:${BRANCH}
-          docker manifest create ${IMAGE}:${BRANCH}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
-          docker manifest push ${IMAGE}:${BRANCH}-${VERSION}
-          docker manifest create ${IMAGE}:${BRANCH}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
-          docker manifest push ${IMAGE}:${BRANCH}-${VERSION}
+          docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest push ${IMAGE}:${TAG}
+          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest push ${IMAGE}:${TAG}-${VERSION}
+          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest push ${IMAGE}:${TAG}-${VERSION}
           if [[ ${BRANCH} == master ]]; then
             docker manifest create ${IMAGE}:latest ${AMD64} ${ARM64} ${ARMV7}
             docker manifest push ${IMAGE}:latest
@@ -213,21 +215,22 @@ jobs:
           DOCKER_CLI_EXPERIMENTAL: enabled
         run: |
           IMAGE=${{ matrix.registry }}/$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)
+          TAG=${{ needs.build.outputs.branch }}
           SOURCE=${IMAGE}:${TAG}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}
           VERSION=${{ needs.build.outputs.version }}
           BRANCH=${{ needs.build.outputs.branch }}
           [[ -f Dockerfile.linux-amd64 ]] && AMD64=${SOURCE}-linux-amd64
           [[ -f Dockerfile.linux-arm64 ]] && ARM64=${SOURCE}-linux-arm64
           [[ -f Dockerfile.linux-arm-v7 ]] && ARMV7=${SOURCE}-linux-arm-v7
-          docker manifest rm ${IMAGE}:${BRANCH} || true
-          docker manifest create ${IMAGE}:${BRANCH} ${AMD64} ${ARM64} ${ARMV7}
-          docker manifest push ${IMAGE}:${BRANCH}
-          docker manifest rm ${IMAGE}:${BRANCH}-${VERSION} || true
-          docker manifest create ${IMAGE}:${BRANCH}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
-          docker manifest push ${IMAGE}:${BRANCH}-${VERSION}
-          docker manifest rm ${IMAGE}:${BRANCH}-${VERSION} || true
-          docker manifest create ${IMAGE}:${BRANCH}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
-          docker manifest push ${IMAGE}:${BRANCH}-${VERSION}
+          docker manifest rm ${IMAGE}:${TAG} || true
+          docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest push ${IMAGE}:${TAG}
+          docker manifest rm ${IMAGE}:${TAG}-${VERSION} || true
+          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest push ${IMAGE}:${TAG}-${VERSION}
+          docker manifest rm ${IMAGE}:${TAG}-${VERSION} || true
+          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest push ${IMAGE}:${TAG}-${VERSION}
           if [[ ${BRANCH} == master ]]; then
             docker manifest rm ${IMAGE}:latest || true
             docker manifest create ${IMAGE}:latest ${AMD64} ${ARM64} ${ARMV7}
