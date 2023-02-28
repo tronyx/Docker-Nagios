@@ -24,7 +24,7 @@ Things that I have changed/updated so far:
 * Updated the image to Ubuntu 20.04 LTS
 * Updated Nagios Plugins to current latest (2.4.3)
 * Updated NRPE to current latest (4.1.0)
-* Updated NCPA to current latest (2.4.0)
+* Updated NCPA to current latest (2.4.1)
 * Updated NSCA to current latest (2.10.2)
 * Added NagiosTV (0.8.6)
 * Built multi-arch images
@@ -38,7 +38,7 @@ Nagios Core running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, Chec
 | [Nagios Core](https://www.nagios.org/projects/nagios-core/history/4x/) | 4.4.10 |
 | [Nagios Plugins](https://github.com/nagios-plugins/nagios-plugins) | 2.4.3 |
 | [NRPE](https://github.com/NagiosEnterprises/nrpe) | 4.1.0 |
-| [NCPA](https://github.com/NagiosEnterprises/ncpa) | 2.4.0 |
+| [NCPA](https://github.com/NagiosEnterprises/ncpa) | 2.4.1 |
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.2 |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.8.6 |
 
