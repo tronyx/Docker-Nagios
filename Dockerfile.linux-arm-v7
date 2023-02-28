@@ -241,10 +241,10 @@ RUN cd /opt && \
     git clone https://github.com/danfruehauf/nagios-plugins.git DF-Nagios-Plugins && \
     git clone https://github.com/jpmens/check-mqtt.git jpmens-mqtt && \
     #wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
-    wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/master/client/check_ncpa.py && \
+    #wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/master/client/check_ncpa.py && \
     chmod +x /opt/WL-Nagios-Plugins/check* && \
     chmod +x /opt/JE-Nagios-Plugins/check_mem/check_mem.pl && \
-    chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py && \
+    #chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py && \
     chmod +x /opt/DF-Nagios-Plugins/check_sql/check_sql && \
     chmod +x /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins && \
     chmod +x /opt/DF-Nagios-Plugins/check_vpn/check_vpn && \
