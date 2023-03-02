@@ -348,7 +348,7 @@ RUN apt-get -qq -y remove software-properties-common && \
     /opt/get-pip.py && \
     # Remove rust and all dependencies
     which rustup && \
-    "/$HOME/.cargo/bin/rustup" self uninstall
+    "$HOME/.cargo/bin/rustup" self uninstall
     # Remove bcrypt
     #pip3 uninstall bcrypt
 
