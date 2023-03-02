@@ -347,7 +347,7 @@ RUN apt-get -qq -y remove software-properties-common && \
     rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
     /opt/get-pip.py && \
     # Remove rust and all dependencies
-    /root/.cargo/bin/rustup self uninstall
+    "/$HOME/.cargo/bin/rustup" self uninstall
     # Remove bcrypt
     #pip3 uninstall bcrypt
 
