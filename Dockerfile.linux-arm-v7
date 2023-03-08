@@ -225,9 +225,11 @@ RUN cd /tmp && \
 
 # Install additional plugins
 RUN cd /opt && \
+    export RUSTUP_HOME=/root/.rustup && \
+    export CARGO_HOME=/root/.cargo && \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sed 's#/proc/self/exe#\/bin\/sh#g' | sh -s -- --profile minimal -y && \
-    . "$HOME/.cargo/env" && \
-    export PATH="$HOME/.cargo/bin:$PATH" && \
+    . "/root/.cargo/env" && \
+    export PATH="/root/.cargo/bin:$PATH" && \
     wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
     python2 get-pip.py && \
     pip install --no-cache-dir "pymssql<2.2.0" && \
@@ -345,7 +347,9 @@ RUN apt-get -qq -y remove software-properties-common && \
     /var/lib/apt/lists/* && \
     # Remove some other files and dirs
     rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
-    /opt/get-pip.py
+    /opt/get-pip.py && \
+    # Remove rust and all dependencies
+    echo y | /root/.cargo/bin/rustup self uninstall
 
 # Expose port 80 for the web UI
 EXPOSE 80 5667
