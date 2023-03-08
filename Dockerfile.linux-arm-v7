@@ -342,7 +342,6 @@ RUN apt-get -qq -y remove software-properties-common && \
     apt-get -qq -y autoremove && \
     # Remove dirs from git clones, cache, rustup, etc.
     rm -rf /root/.cache \
-    /root/.cargo \
     /tmp/* \
     /var/lib/apt/lists/* && \
     # Remove some other files and dirs
