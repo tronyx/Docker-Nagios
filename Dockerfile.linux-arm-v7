@@ -346,7 +346,11 @@ RUN apt-get -qq -y remove software-properties-common && \
     /var/lib/apt/lists/* && \
     # Remove some other files and dirs
     rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
-    /opt/get-pip.py && \
+    /opt/get-pip.py \
+    /var/lib/dpkg/status-old && \
+    true > /var/log/dpkg.log && \
+    true > /var/log/lastlog && \
+    true > /var/log/apt/term.log && \
     # Remove rust and all dependencies
     echo y | /root/.cargo/bin/rustup self uninstall
 

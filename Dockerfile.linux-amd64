@@ -328,17 +328,17 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 # Remove unecessary packages after install/setup are complete
 RUN apt-get -qq -y autoremove && \
     apt-get -qq -y remove software-properties-common && \
-    # Remove dirs from git clones
-    cd /tmp && \
-    rm -rf qstat \
-    nagioscore \
-    nagios-plugins \
-    nrpe \
-    nagiosgraph \
-    nsca && \
+    # Remove dirs from git clones, cache, etc.
+    rm -rf /root/.cache \
+    /tmp/* \
+    /var/lib/apt/lists/* && \
     # Remove some other files and dirs
     rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
-    /opt/get-pip.py
+    /opt/get-pip.py \
+    /var/lib/dpkg/status-old && \
+    true > /var/log/dpkg.log && \
+    true > /var/log/lastlog && \
+    true > /var/log/apt/term.log
 
 # Expose port 80 for the web UI
 EXPOSE 80 5667
