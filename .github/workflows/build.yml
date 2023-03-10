@@ -3,7 +3,12 @@ name: build
 on:
   push:
     branches:
-      - ubuntu-22.04
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
 
 jobs:
   build:
