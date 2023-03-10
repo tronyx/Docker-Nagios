@@ -13,7 +13,7 @@ on:
 jobs:
   build:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         architecture: [linux-amd64, linux-arm64, linux-arm-v7]
@@ -154,7 +154,7 @@ jobs:
             ${{ steps.prep.outputs.build-args }}
 
   publish:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         registry: [docker.io, ghcr.io]
