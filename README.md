@@ -21,7 +21,7 @@ Listing these as I wish to give the original users credit for their work.
 
 Things that I have changed/updated so far:
 
-* Updated the image to Ubuntu 20.04 LTS
+* Updated the image to Ubuntu 22.04 LTS
 * Updated Nagios Plugins to current latest (2.4.3)
 * Updated NRPE to current latest (4.1.0)
 * Updated NCPA to current latest (2.4.1)
