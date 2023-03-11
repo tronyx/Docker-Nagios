@@ -46,11 +46,11 @@ You can find the Docker Hub repository [HERE](https://hub.docker.com/r/tronyx/na
 
 ### Configurations
 
-* Nagios configuration lives in the `/opt/nagios/etc` directory.
-* NagiosGraph configuration lives in the `/opt/nagiosgraph/etc` directory.
-* NSCA configuration lives in the `/opt/nagiosgraph/etc` directory.
+* Nagios configuration is stored in the `/opt/nagios/etc` directory.
+* NagiosGraph configuration is stored in the `/opt/nagiosgraph/etc` directory.
+* NSCA configuration is stored in the `/opt/nagiosgraph/etc` directory.
 
-### Install
+### Pull the Image
 
 ```bash
 docker pull tronyx/nagios
@@ -59,7 +59,7 @@ docker pull ghcr.io/tronyx/nagios
 
 ### Running
 
-Run with the example configuration with the following:
+Run the container with the example configuration using the following `docker` commands:
 
 ```bash
 docker run --name nagios -p 8080:80 tronyx/nagios
@@ -86,15 +86,15 @@ docker run --name nagios  \
   -p 8080:80 ghcr.io/tronyx/nagios
 ```
 
-Note: The path for the custom plugins will be /opt/Custom-Nagios-Plugins, you will need to reference this directory in your configuration scripts.
+Note: The path for the custom plugins will be `/opt/Custom-Nagios-Plugins`, which you will need to reference in your configuration scripts.
 
 There are a number of environment variables that you can use to adjust the behaviour of the container:
 
-| Environamne Variable | Description |
+| Environment Variable | Description |
 |--------|--------|
 | MAIL_RELAY_HOST | Set Postfix relayhost |
-| MAIL_INET_PROTOCOLS | Set the inet_protocols in postfix |
-| NAGIOS_FQDN | Set the server Fully Qualified Domain Name in postfix |
+| MAIL_INET_PROTOCOLS | Set the inet_protocols in Postfix |
+| NAGIOS_FQDN | Set the server Fully Qualified Domain Name in Postfix |
 | NAGIOS_TIMEZONE | Set the timezone of the server |
 
 For the best results your Nagios container should have access to both IPv4 & IPv6 networks.
@@ -103,7 +103,9 @@ For the best results your Nagios container should have access to both IPv4 & IPv
 
 The default credentials for the web interface are:
 
-`nagiosadmin` // `nagios`
+| Username | Password |
+|--------|--------|
+| `nagiosadmin` | `nagios` |
 
 ### Extra Plugins
 
