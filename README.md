@@ -48,7 +48,7 @@ You can find the Docker Hub Registry [HERE](https://hub.docker.com/r/tronyx/nagi
 
 * Nagios configuration is stored in the `/opt/nagios/etc` directory.
 * NagiosGraph configuration is stored in the `/opt/nagiosgraph/etc` directory.
-* NSCA configuration is stored in the `/opt/nagiosgraph/etc` directory.
+* NSCA configuration is stored in the `/opt/nagios/etc` directory.
 
 ### Pull the Image
 
