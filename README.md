@@ -31,7 +31,7 @@ Things that I have changed/updated so far:
 
 ## Information
 
-Nagios Core running on Ubuntu 20.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, CheckMK, and NagiosTV.
+Nagios Core running on Ubuntu 22.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, CheckMK, and NagiosTV.
 
 | Product | Version |
 | ------- | ------- |
