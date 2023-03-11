@@ -42,7 +42,7 @@ Nagios Core running on Ubuntu 22.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, Chec
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.2 |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.8.6 |
 
-You can find the Docker Hub repository [HERE](https://hub.docker.com/r/tronyx/nagios) or the GitHub Registry [HERE](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
+You can find the Docker Hub Registry [HERE](https://hub.docker.com/r/tronyx/nagios) or the GitHub Registry [HERE](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
 
 ### Configurations
 
@@ -66,7 +66,7 @@ docker run --name nagios -p 8080:80 tronyx/nagios
 docker run --name nagios -p 8080:80 ghcr.io/tronyx/nagios
 ```
 
-Alternatively you can use external Nagios configuration & log data with the following:
+Alternatively you can use external Nagios configuration & log data with the following `docker` commands:
 
 ```bash
 docker run --name nagios  \
