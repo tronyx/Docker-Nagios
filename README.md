@@ -6,14 +6,14 @@
 
 Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-Nagios) to incorporate various improvements from the open PRs on his repo. I have incorporated the following PRs:
 
-* [#96](https://github.com/JasonRivers/Docker-Nagios/pull/96) - Fix issue with Nagiosgraph source (@fregge)
-* [#101](https://github.com/JasonRivers/Docker-Nagios/pull/101) - Fixes to allow building on ARM aarch64 architecture (@garethrandall)
-* [#110](https://github.com/JasonRivers/Docker-Nagios/pull/110) - Update to Ubuntu 18.04 LTS (@asimzeeshan)
-* [#112](https://github.com/JasonRivers/Docker-Nagios/pull/112) - Add python3-nagiosplugin for plugins that need it (@davralin)
-* [#116](https://github.com/JasonRivers/Docker-Nagios/pull/116) - Update Nagios to 4.4.6 (@mmerian)
-* [#120](https://github.com/JasonRivers/Docker-Nagios/pull/120) - Add NSCA (@mmerian)
-* [#130](https://github.com/JasonRivers/Docker-Nagios/issues/130) - Add Perl encryption libraries (@rehashedsalt)
-* [#132](https://github.com/JasonRivers/Docker-Nagios/issues/132) - Add rSync (@LutzLegu)
+* [#96](https://github.com/JasonRivers/Docker-Nagios/pull/96) - Fix issue with Nagiosgraph source ([fregge](https://github.com/fregge))
+* [#101](https://github.com/JasonRivers/Docker-Nagios/pull/101) - Fixes to allow building on ARM aarch64 architecture ([garethrandall](https://github.com/garethrandall))
+* [#110](https://github.com/JasonRivers/Docker-Nagios/pull/110) - Update to Ubuntu 18.04 LTS ([asimzeeshan](https://github.com/asimzeeshan))
+* [#112](https://github.com/JasonRivers/Docker-Nagios/pull/112) - Add python3-nagiosplugin for plugins that need it ([davralin](https://github.com/davralin))
+* [#116](https://github.com/JasonRivers/Docker-Nagios/pull/116) - Update Nagios to 4.4.6 ([mmerian](https://github.com/mmerian))
+* [#120](https://github.com/JasonRivers/Docker-Nagios/pull/120) - Add NSCA ([mmerian](https://github.com/mmerian))
+* [#130](https://github.com/JasonRivers/Docker-Nagios/issues/130) - Add Perl encryption libraries ([rehashedsalt](https://github.com/rehashedsalt))
+* [#132](https://github.com/JasonRivers/Docker-Nagios/issues/132) - Add rSync ([LutzLegu](https://github.com/LutzLegu))
 
 Listing these as I wish to give the original users credit for their work.
 
@@ -22,6 +22,7 @@ Listing these as I wish to give the original users credit for their work.
 Things that I have changed/updated so far:
 
 * Updated the image to Ubuntu 22.04 LTS
+* Updated Nagios Core to the current latest (4.4.10)
 * Updated Nagios Plugins to current latest (2.4.3)
 * Updated NRPE to current latest (4.1.0)
 * Updated NCPA to current latest (2.4.1)
