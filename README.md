@@ -22,12 +22,12 @@ Listing these as I wish to give the original users credit for their work.
 Things that I have changed/updated so far:
 
 * Updated the image to Ubuntu 22.04 LTS
-* Updated Nagios Core to the current latest (4.4.10)
-* Updated Nagios Plugins to current latest (2.4.3)
-* Updated NRPE to current latest (4.1.0)
-* Updated NCPA to current latest (2.4.1)
-* Updated NSCA to current latest (2.10.2)
-* Added NagiosTV (0.8.6)
+* Updated Nagios Core to the current latest
+* Updated Nagios Plugins to current latest
+* Updated NRPE to current latest
+* Updated NCPA to current latest
+* Updated NSCA to current latest
+* Added NagiosTV
 * Built multi-arch images
 
 ## Information
