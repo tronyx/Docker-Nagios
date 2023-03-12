@@ -110,14 +110,14 @@ The default credentials for the web interface are:
 
 ### Extra Plugins
 
-* Nagios NRPE [<http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details>]
-* Nagios NCPA [<https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details>]
-* Nagios NSCA [<https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details>]
-* Nagiosgraph [<http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details>]
-* JR-Nagios-Plugins - Custom plugins @JasonRivers created [<https://github.com/JasonRivers/nagios-plugins>]
-* WL-Nagios-Plugins - Custom plugins from William Leibzon [<https://github.com/willixix/WL-NagiosPlugins>]
-* JE-Nagios-Plugins - Custom plugins from Justin Ellison [<https://github.com/justintime/nagios-plugins>]
-* DF-Nagios-Plugins - Custom pluging for MSSQL monitoring from Dan Fruehauf [<https://github.com/danfruehauf/nagios-plugins>]
-* check-mqtt - Custom plugin for mqtt monitoring from Jan-Piet Mens [<https://github.com/jpmens/check-mqtt.git>]
-* NagiosTV - Monitor your Nagios server on a wall mounted TV [<https://github.com/chriscareycode/nagiostv-react>]
-* check_apc - Check APC for status, health, and load [<https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apc-2Epl/details>]
+* [Nagios NRPE](http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details)
+* [Nagios NCPA](https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details)
+* [Nagios NSCA](https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details)
+* [Nagiosgraph](http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details)
+* [JR-Nagios-Plugins](https://github.com/JasonRivers/nagios-plugins) - Custom plugins from Jason Rivers
+* [WL-Nagios-Plugins](https://github.com/willixix/WL-NagiosPlugins) - Custom plugins from William Leibzon
+* [JE-Nagios-Plugins](https://github.com/justintime/nagios-plugins) - Custom plugins from Justin Ellison
+* [DF-Nagios-Plugins](https://github.com/danfruehauf/nagios-plugins) - Custom pluging for MSSQL monitoring from Dan Fruehauf
+* [check-mqtt](https://github.com/jpmens/check-mqtt.git) - Custom plugin for mqtt monitoring from Jan-Piet Mens
+* [NagiosTV](https://github.com/chriscareycode/nagiostv-react) - Monitor your Nagios server on a wall-mounted TV
+* [check_apc](https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apc-2Epl/details) - Check APC for status, health, and load
