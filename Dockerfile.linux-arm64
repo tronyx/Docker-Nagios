@@ -1,11 +1,16 @@
-FROM ubuntu:20.04
+# syntax=docker/dockerfile:1
+ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
+ARG BUILDKIT_SBOM_SCAN_STAGE=true
+
+FROM ubuntu:22.04
 
 LABEL name="Nagios" \
     nagiosVersion="4.4.10" \
     nagiosPluginsVersion="2.4.3" \
     nrpeVersion="4.1.0" \
     nscaVersion="2.10.2" \
-    ncpaVersion="2.4.0" \
+    ncpaVersion="2.4.1" \
+    nagiostvVersion="0.8.6" \
     homepage="https://www.nagios.com/" \
     maintainer="Tronyx <tronyx@tronflix.app>"
 
@@ -28,8 +33,8 @@ ENV NAGIOS_HOME=/opt/nagios \
     NAGIOS_PLUGINS_BRANCH=release-2.4.3 \
     NRPE_BRANCH=nrpe-4.1.0 \
     NSCA_TAG=nsca-2.10.2 \
-    NCPA_BRANCH=v2.4.0 \
-    NAGIOSTV_VERSION=0.8.5
+    NCPA_BRANCH=v2.4.1 \
+    NAGIOSTV_VERSION=0.8.6
 
 ENV NG_CGI_URL=/cgi-bin \
     NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
@@ -191,6 +196,10 @@ RUN cd /tmp && \
     git clone https://github.com/NagiosEnterprises/nsca.git && \
     cd nsca && \
     git checkout ${NSCA_TAG} && \
+    mv config.guess config.guess.BAD && \
+    mv config.sub config.sub.BAD && \
+    wget http://cvs.savannah.gnu.org/viewvc/*checkout*/config/config/config.guess && \
+    wget http://cvs.savannah.gnu.org/viewvc/*checkout*/config/config/config.sub && \
     ./configure \
         --prefix=${NAGIOS_HOME} \
         --with-nsca-user=${NAGIOS_USER} \
@@ -217,18 +226,16 @@ RUN cd /opt && \
     wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
     python2 get-pip.py && \
     pip install --no-cache-dir "pymssql<2.2.0" && \
-    pip3 install --no-cache-dir pywbem paramiko pplogger paho-mqtt && \
-    pip3 install --no-cache-dir --upgrade requests && \
+    pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
+    pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
     git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
     git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
     git clone https://github.com/nagiosenterprises/check_mssql_collection.git nagios-mssql && \
     git clone https://github.com/danfruehauf/nagios-plugins.git DF-Nagios-Plugins && \
     git clone https://github.com/jpmens/check-mqtt.git jpmens-mqtt && \
-    wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v2.0.5/client/check_ncpa.py && \
     chmod +x /opt/WL-Nagios-Plugins/check* && \
     chmod +x /opt/JE-Nagios-Plugins/check_mem/check_mem.pl && \
-    chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py && \
     chmod +x /opt/DF-Nagios-Plugins/check_sql/check_sql && \
     chmod +x /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins && \
     chmod +x /opt/DF-Nagios-Plugins/check_vpn/check_vpn && \
@@ -240,6 +247,10 @@ RUN cd /opt && \
     cp /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins ${NAGIOS_HOME}/libexec/ && \
     cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/ && \
     cp /opt/jpmens-mqtt/check-mqtt.py ${NAGIOS_HOME}/libexec/
+
+# Add check_apc.pl check
+COPY plugins/check_apc.pl ${NAGIOS_HOME}/libexec/
+RUN chmod +x ${NAGIOS_HOME}/libexec/check_apc.pl
 
 # Install NagiosTV
 RUN cd /tmp && \
@@ -318,17 +329,17 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 # Remove unecessary packages after install/setup are complete
 RUN apt-get -qq -y autoremove && \
     apt-get -qq -y remove software-properties-common && \
-    # Remove dirs from git clones
-    cd /tmp && \
-    rm -rf qstat \
-    nagioscore \
-    nagios-plugins \
-    nrpe \
-    nagiosgraph \
-    nsca && \
+    # Remove dirs from git clones, cache, etc.
+    rm -rf /root/.cache \
+    /tmp/* \
+    /var/lib/apt/lists/* && \
     # Remove some other files and dirs
     rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
-    /opt/get-pip.py
+    /opt/get-pip.py \
+    /var/lib/dpkg/status-old && \
+    true > /var/log/dpkg.log && \
+    true > /var/log/lastlog && \
+    true > /var/log/apt/term.log
 
 # Expose port 80 for the web UI
 EXPOSE 80 5667
