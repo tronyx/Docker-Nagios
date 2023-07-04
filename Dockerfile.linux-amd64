@@ -2,7 +2,7 @@
 ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
 
-FROM ubuntu:22.04
+FROM ubuntu:22.10
 
 LABEL name="Nagios" \
     nagiosVersion="4.4.13" \
