@@ -225,7 +225,8 @@ RUN cd /tmp && \
 RUN cd /opt && \
     wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
     python2 get-pip.py && \
-    python3 -m pip install --upgrade pip setuptools wheel && \
+    echo "Cython==0.29.35" >> constraints.txt && \
+    export PIP_CONSTRAINT="$(pwd)/constraints.txt" && \
     pip install --no-cache-dir "pymssql<2.2.0" && \
     pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
     pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
