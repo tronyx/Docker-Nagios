@@ -9,7 +9,7 @@ LABEL name="Nagios" \
     nagiosPluginsVersion="2.4.7" \
     nrpeVersion="4.1.0" \
     nscaVersion="2.10.2" \
-    ncpaVersion="2.4.1" \
+    ncpaVersion="3.0.0" \
     nagiostvVersion="0.8.7" \
     homepage="https://www.nagios.com/" \
     maintainer="Tronyx <tronyx@tronflix.app>"
@@ -33,7 +33,7 @@ ENV NAGIOS_HOME=/opt/nagios \
     NAGIOS_PLUGINS_BRANCH=release-2.4.7 \
     NRPE_BRANCH=nrpe-4.1.0 \
     NSCA_TAG=nsca-2.10.2 \
-    NCPA_BRANCH=v2.4.1 \
+    NCPA_BRANCH=v3.0.0 \
     NAGIOSTV_VERSION=0.8.7
 
 ENV NG_CGI_URL=/cgi-bin \
