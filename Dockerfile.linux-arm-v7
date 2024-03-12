@@ -6,7 +6,7 @@ FROM ubuntu:22.04
 
 LABEL name="Nagios" \
     nagiosVersion="4.5.0" \
-    nagiosPluginsVersion="2.4.6" \
+    nagiosPluginsVersion="release-2.4.6" \
     nrpeVersion="4.1.0" \
     nscaVersion="2.10.2" \
     ncpaVersion="3.0.1" \
