@@ -36,10 +36,10 @@ Nagios Core running on Ubuntu 22.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, Chec
 
 | Product | Version |
 | ------- | ------- |
-| [Nagios Core](https://github.com/NagiosEnterprises/nagioscore/releases) | 4.4.14 |
-| [Nagios Plugins](https://github.com/nagios-plugins/nagios-plugins) | 2.4.6 |
+| [Nagios Core](https://github.com/NagiosEnterprises/nagioscore/releases) | 4.5.1 |
+| [Nagios Plugins](https://github.com/nagios-plugins/nagios-plugins) | 2.4.9 |
 | [NRPE](https://github.com/NagiosEnterprises/nrpe) | 4.1.0 |
-| [NCPA](https://github.com/NagiosEnterprises/ncpa) | 2.4.1 |
+| [NCPA](https://github.com/NagiosEnterprises/ncpa) | 3.0.2 |
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.2 |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.8.7 |
 
