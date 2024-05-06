@@ -4,42 +4,41 @@ ARG BUILDKIT_SBOM_SCAN_STAGE=true
 
 FROM ubuntu:24.04
 
-LABEL name="Nagios" \
-    nagiosVersion="4.5.1" \
-    nagiosPluginsVersion="2.4.9" \
-    nrpeVersion="4.1.0" \
-    nscaVersion="2.10.2" \
-    ncpaVersion="3.0.2" \
-    nagiostvVersion="0.8.7" \
-    homepage="https://www.nagios.com/" \
-    maintainer="Tronyx <tronyx@tronflix.app>"
+LABEL name="Nagios"
+LABEL nagiosVersion="4.5.2"
+LABEL nagiosPluginsVersion="2.4.10"
+LABEL nrpeVersion="4.1.0"
+LABEL nscaVersion="2.10.2"
+LABEL ncpaVersion="3.0.2"
+LABEL nagiostvVersion="0.8.7"
+LABEL homepage="https://www.nagios.com/"
+LABEL maintainer="Tronyx <tronyx@tronflix.app>"
 
 # Environment variables
-ENV NAGIOS_HOME=/opt/nagios \
-    NAGIOS_USER=nagios \
-    NAGIOS_GROUP=nagios \
-    NAGIOS_CMDUSER=nagios \
-    NAGIOS_CMDGROUP=nagios \
-    NAGIOS_FQDN=nagios.example.com \
-    NAGIOSADMIN_USER=nagiosadmin \
-    NAGIOSADMIN_PASS=nagios \
-    APACHE_RUN_USER=nagios \
-    APACHE_RUN_GROUP=nagios \
-    APACHE_LOCK_DIR=/var/run \
-    APACHE_LOG_DIR=/var/log/apache2 \
-    NAGIOS_TIMEZONE=UTC \
-    DEBIAN_FRONTEND=noninteractive \
-    NAGIOS_BRANCH=nagios-4.5.1 \
-    NAGIOS_PLUGINS_BRANCH=release-2.4.9 \
-    NRPE_BRANCH=nrpe-4.1.0 \
-    NSCA_TAG=nsca-2.10.2 \
-    NCPA_BRANCH=v3.0.2 \
-    NAGIOSTV_VERSION=0.8.7
-
-ENV NG_CGI_URL=/cgi-bin \
-    NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
-    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
-    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph
+ENV NAGIOS_HOME             /opt/nagios
+ENV NAGIOS_USER             nagios
+ENV NAGIOS_GROUP            nagios
+ENV NAGIOS_CMDUSER          nagios
+ENV NAGIOS_CMDGROUP         nagios
+ENV NAGIOS_FQDN             nagios.example.com
+ENV NAGIOSADMIN_USER        nagiosadmin
+ENV NAGIOSADMIN_PASS        nagios
+ENV APACHE_RUN_USER         nagios
+ENV APACHE_RUN_GROUP        nagios
+ENV APACHE_LOCK_DIR         /var/run
+ENV APACHE_LOG_DIR          /var/log/apache2
+ENV NAGIOS_TIMEZONE         UTC
+ENV DEBIAN_FRONTEND         noninteractive
+ENV NG_CGI_URL              /cgi-bin
+ENV NG_NAGIOS_CONFIG_FILE   ${NAGIOS_HOME}/etc/nagios.cfg
+ENV NG_CGI_DIR              ${NAGIOS_HOME}/sbin
+ENV NG_WWW_DIR              ${NAGIOS_HOME}/share/nagiosgraph
+ENV NAGIOS_BRANCH           nagios-4.5.2
+ENV NAGIOS_PLUGINS_BRANCH   release-2.4.10
+ENV NRPE_BRANCH             nrpe-4.1.0
+ENV NSCA_TAG                nsca-2.10.2
+ENV NCPA_BRANCH             v3.0.2
+ENV NAGIOSTV_VERSION        0.8.7
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
