@@ -19,7 +19,7 @@ Listing these as I wish to give the original users credit for their work.
 
 ## Changes That I've Made
 
-Things that I have changed/updated so far:
+Things that I have changed/updated/added to date:
 
 * Updated the image to Ubuntu 24.04 LTS
 * Updated Nagios Core to the current latest
