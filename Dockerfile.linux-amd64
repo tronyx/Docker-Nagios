@@ -87,7 +87,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libnet-tftp-perl \
         libnet-xmpp-perl \
         libpq-dev \
-        libpython2-dev \
+        #libpython2-dev \
         libpython3-dev \
         libredis-perl \
         librrds-perl \
@@ -95,13 +95,14 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libswitch-perl \
         libwww-perl \
         m4 \
-        netcat \
+        netcat-traditional \
         openssh-client \
         parallel \
         php-cli \
         php-gd \
         postfix \
-        python2 \
+        #python2 \
+        #python3 \
         python3-pip \
         python3-nagiosplugin \
         rsync \
