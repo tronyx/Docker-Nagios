@@ -223,8 +223,10 @@ RUN cd /tmp && \
 
 # Install additional plugins
 RUN cd /opt && \
-    wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
-    python2 get-pip.py && \
+    #wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
+    wget -q https://bootstrap.pypa.io/get-pip.py && \
+    #python2 get-pip.py && \
+    python get-pip.py && \
     echo "Cython==0.29.35" >> constraints.txt && \
     export PIP_CONSTRAINT="$(pwd)/constraints.txt" && \
     pip install --no-cache-dir "pymssql<2.2.0" && \
