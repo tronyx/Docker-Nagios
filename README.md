@@ -14,6 +14,7 @@ Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-
 * [#120](https://github.com/JasonRivers/Docker-Nagios/pull/120) - Add NSCA ([mmerian](https://github.com/mmerian))
 * [#130](https://github.com/JasonRivers/Docker-Nagios/issues/130) - Add Perl encryption libraries ([rehashedsalt](https://github.com/rehashedsalt))
 * [#132](https://github.com/JasonRivers/Docker-Nagios/issues/132) - Add rSync ([LutzLegu](https://github.com/LutzLegu))
+* [#165](https://github.com/JasonRivers/Docker-Nagios/pull/165) - Added libcrypt-x509-per and libtext-glob-perl modules ([Scott-Jones-COS](https://github.com/Scott-Jones-COS))
 
 Listing these as I wish to give the original users credit for their work.
 
@@ -32,7 +33,7 @@ Things that I have changed/updated/added to date:
 
 ## Information
 
-Nagios Core running on Ubuntu 24.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, CheckMK, and NagiosTV.
+Nagios Core running on Ubuntu 24.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and NagiosTV.
 
 | Product | Version |
 | ------- | ------- |
