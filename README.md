@@ -22,7 +22,7 @@ Listing these as I wish to give the original users credit for their work.
 
 Things that I have changed/updated/added to date:
 
-* Updated the image to Ubuntu 22.04 LTS
+* Updated the image to Ubuntu 24.04 LTS
 * Updated Nagios Core to the current latest
 * Updated Nagios Plugins to current latest
 * Updated NRPE to current latest
@@ -33,7 +33,7 @@ Things that I have changed/updated/added to date:
 
 ## Information
 
-Nagios Core running on Ubuntu 22.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and NagiosTV.
+Nagios Core running on Ubuntu 24.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and NagiosTV.
 
 | Product | Version |
 | ------- | ------- |
@@ -61,9 +61,12 @@ docker pull ghcr.io/tronyx/nagios
 
 #### Versions/Docker Tags
 
-* Master (:latest) - Master branch that is known to be stable.
-* Develop (:develop) - My testing/development branch for updates.
-* Ubuntu-22.04 (:ubuntu-22.04) - Older Ubuntu base version that still has Python 2 and the plugins that require it. Will keep this as up-to-date as possible.
+| Branch | Docker Tag | Notes |
+| ------- | ------- | ------- |
+| Master | `latest` | Master branch that is known to be stable. |
+| Develop | `develop` | My testing/development branch for base image and component updates. |
+| Ubuntu-22.04 | `ubuntu-22.04` | Older Ubuntu base version that still has Python 2 and the plugins that require it. Will keep this as up-to-date as possible. |
+
 
 ### Running
 
@@ -125,6 +128,5 @@ The default credentials for the web interface are:
 * [WL-Nagios-Plugins](https://github.com/willixix/WL-NagiosPlugins) - Custom plugins from William Leibzon
 * [JE-Nagios-Plugins](https://github.com/justintime/nagios-plugins) - Custom plugins from Justin Ellison
 * [DF-Nagios-Plugins](https://github.com/danfruehauf/nagios-plugins) - Custom pluging for MSSQL monitoring from Dan Fruehauf
-* [check-mqtt](https://github.com/jpmens/check-mqtt.git) - Custom plugin for mqtt monitoring from Jan-Piet Mens
 * [NagiosTV](https://github.com/chriscareycode/nagiostv-react) - Monitor your Nagios server on a wall-mounted TV
 * [check_apc](https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apc-2Epl/details) - Check APC for status, health, and load

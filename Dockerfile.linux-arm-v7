@@ -2,7 +2,7 @@
 ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 LABEL name="Nagios"
 LABEL nagiosVersion="4.5.2"
@@ -55,7 +55,6 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         bsd-mailx \
         build-essential \
         ca-certificates \
-        curl \
         dnsutils \
         fping \
         freetds-dev \
@@ -75,7 +74,6 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libdbi-dev \
         libdbi-perl \
         libdigest-hmac-perl \
-        libffi-dev \
         libfreeradius-dev \
         libgdchart-gd2-xpm-dev \
         libradsec-dev \
@@ -90,7 +88,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libnet-tftp-perl \
         libnet-xmpp-perl \
         libpq-dev \
-        libpython2-dev \
+        #libpython2-dev \
         libpython3-dev \
         libredis-perl \
         librrds-perl \
@@ -99,13 +97,14 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libtext-glob-perl \
         libwww-perl \
         m4 \
-        netcat \
+        netcat-traditional \
         openssh-client \
         parallel \
         php-cli \
         php-gd \
         postfix \
-        python2 \
+        #python2 \
+        python3-full \
         python3-pip \
         python3-nagiosplugin \
         rsync \
@@ -226,23 +225,26 @@ RUN cd /tmp && \
 
 # Install additional plugins
 RUN cd /opt && \
-    export RUSTUP_HOME=/root/.rustup && \
-    export CARGO_HOME=/root/.cargo && \
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sed 's#/proc/self/exe#\/bin\/sh#g' | sh -s -- --profile minimal -y && \
-    . "/root/.cargo/env" && \
-    export PATH="/root/.cargo/bin:$PATH" && \
-    wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
-    python2 get-pip.py && \
-    echo "Cython==0.29.35" >> constraints.txt && \
-    export PIP_CONSTRAINT="$(pwd)/constraints.txt" && \
-    pip install --no-cache-dir "pymssql<2.2.0" && \
-    python3 -m pip install --upgrade pip && \
-    pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt bcrypt && \
-    pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
+    #export RUSTUP_HOME=/root/.rustup && \
+    #export CARGO_HOME=/root/.cargo && \
+    #curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sed 's#/proc/self/exe#\/bin\/sh#g' | sh -s -- --profile minimal -y && \
+    #. "/root/.cargo/env" && \
+    #export PATH="/root/.cargo/bin:$PATH" && \
+    #wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
+    #wget -q https://bootstrap.pypa.io/get-pip.py && \
+    #python2 get-pip.py && \
+    #python3 get-pip.py && \
+    #echo "Cython==0.29.35" >> constraints.txt && \
+    #export PIP_CONSTRAINT="$(pwd)/constraints.txt" && \
+    #pip install --no-cache-dir "pymssql<2.2.0" && \
+    #pip3 install --no-cache-dir pymssql && \
+    #python3 -m pip install --upgrade pip && \
+    #pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt bcrypt && \
+    #pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
     git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
     git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
-    git clone https://github.com/nagiosenterprises/check_mssql_collection.git nagios-mssql && \
+    #git clone https://github.com/nagiosenterprises/check_mssql_collection.git nagios-mssql && \
     git clone https://github.com/danfruehauf/nagios-plugins.git DF-Nagios-Plugins && \
     git clone https://github.com/jpmens/check-mqtt.git jpmens-mqtt && \
     chmod +x /opt/WL-Nagios-Plugins/check* && \
@@ -250,14 +252,15 @@ RUN cd /opt && \
     chmod +x /opt/DF-Nagios-Plugins/check_sql/check_sql && \
     chmod +x /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins && \
     chmod +x /opt/DF-Nagios-Plugins/check_vpn/check_vpn && \
-    chmod +x /opt/jpmens-mqtt/check-mqtt.py && \
+    #chmod +x /opt/jpmens-mqtt/check-mqtt.py && \
     cp /opt/JE-Nagios-Plugins/check_mem/check_mem.pl ${NAGIOS_HOME}/libexec/ && \
-    cp /opt/nagios-mssql/check_mssql_database.py ${NAGIOS_HOME}/libexec/ && \
-    cp /opt/nagios-mssql/check_mssql_server.py ${NAGIOS_HOME}/libexec/ && \
+    #cp /opt/nagios-mssql/check_mssql_database.py ${NAGIOS_HOME}/libexec/ && \
+    #cp /opt/nagios-mssql/check_mssql_server.py ${NAGIOS_HOME}/libexec/ && \
     cp /opt/DF-Nagios-Plugins/check_sql/check_sql ${NAGIOS_HOME}/libexec/ && \
     cp /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins ${NAGIOS_HOME}/libexec/ && \
-    cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/ && \
-    cp /opt/jpmens-mqtt/check-mqtt.py ${NAGIOS_HOME}/libexec/
+    #######cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/ && \
+    cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/
+    #cp /opt/jpmens-mqtt/check-mqtt.py ${NAGIOS_HOME}/libexec/
 
 # Add check_apc.pl check
 COPY plugins/check_apc.pl ${NAGIOS_HOME}/libexec/
@@ -350,9 +353,10 @@ RUN apt-get -qq -y remove software-properties-common && \
     /var/lib/dpkg/status-old && \
     true > /var/log/dpkg.log && \
     true > /var/log/lastlog && \
-    true > /var/log/apt/term.log && \
+    ####true > /var/log/apt/term.log && \
+    true > /var/log/apt/term.log
     # Remove rust and all dependencies
-    echo y | /root/.cargo/bin/rustup self uninstall
+    #echo y | /root/.cargo/bin/rustup self uninstall
 
 # Expose port 80 for the web UI
 EXPOSE 80 5667
