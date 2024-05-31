@@ -226,7 +226,7 @@ RUN cd /opt && \
     #python2 get-pip.py && \
     #python3 get-pip.py && \
     #pip install --no-cache-dir "pymssql<2.2.0" && \
-    pip3 install --no-cache-dir pymssql && \
+    pip3 install --break-system-packages --no-cache-dir pymssql && \
     pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
     pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
     git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
