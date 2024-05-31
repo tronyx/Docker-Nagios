@@ -353,9 +353,10 @@ RUN apt-get -qq -y remove software-properties-common && \
     /var/lib/dpkg/status-old && \
     true > /var/log/dpkg.log && \
     true > /var/log/lastlog && \
-    true > /var/log/apt/term.log && \
+    ####true > /var/log/apt/term.log && \
+    true > /var/log/apt/term.log
     # Remove rust and all dependencies
-    echo y | /root/.cargo/bin/rustup self uninstall
+    #echo y | /root/.cargo/bin/rustup self uninstall
 
 # Expose port 80 for the web UI
 EXPOSE 80 5667
