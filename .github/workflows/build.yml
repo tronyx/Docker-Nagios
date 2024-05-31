@@ -5,12 +5,10 @@ on:
     branches:
       - master
       - develop
-      - ubuntu-24.04
   pull_request:
     branches:
       - master
       - develop
-      - ubuntu-24.04
 
 jobs:
   build:

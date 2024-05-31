@@ -235,8 +235,8 @@ RUN cd /opt && \
     #wget -q https://bootstrap.pypa.io/get-pip.py && \
     #python2 get-pip.py && \
     #python3 get-pip.py && \
-    echo "Cython==0.29.35" >> constraints.txt && \
-    export PIP_CONSTRAINT="$(pwd)/constraints.txt" && \
+    #echo "Cython==0.29.35" >> constraints.txt && \
+    #export PIP_CONSTRAINT="$(pwd)/constraints.txt" && \
     #pip install --no-cache-dir "pymssql<2.2.0" && \
     pip3 install --break-system-packages --no-cache-dir pymssql && \
     #python3 -m pip install --upgrade pip && \
