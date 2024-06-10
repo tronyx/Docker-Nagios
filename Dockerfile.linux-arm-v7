@@ -243,7 +243,8 @@ RUN cd /opt && \
     python3 -m venv .venv && \
     . .venv/bin/activate && \
     #pip3 install --break-system-packages --no-cache-dir pymssql && \
-    pip3 install --no-cache-dir krb5 pymssql && \
+    apt install libkrb5-dev krb5-config krb5-user && \
+    pip3 install --no-cache-dir pymssql && \
     #pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
     pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
     #pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
@@ -352,7 +353,7 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt-get -qq -y remove software-properties-common && \
+RUN apt-get -qq -y remove software-properties-common libkrb5-dev krb5-config krb5-user && \
     apt-get -qq -y autoremove && \
     # Remove dirs from git clones, cache, rustup, etc.
     rm -rf /root/.cache \
