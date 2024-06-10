@@ -228,6 +228,7 @@ RUN cd /tmp && \
 
 # Install additional plugins
 RUN cd /opt && \
+    apt install libkrb5-dev krb5-config krb5-user && \
     export RUSTUP_HOME=/root/.rustup && \
     export CARGO_HOME=/root/.cargo && \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sed 's#/proc/self/exe#\/bin\/sh#g' | sh -s -- --profile minimal -y && \
@@ -243,7 +244,6 @@ RUN cd /opt && \
     python3 -m venv .venv && \
     . .venv/bin/activate && \
     #pip3 install --break-system-packages --no-cache-dir pymssql && \
-    apt install libkrb5-dev krb5-config krb5-user && \
     pip3 install --no-cache-dir pymssql && \
     #pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
     pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
