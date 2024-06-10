@@ -82,7 +82,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libgd-gd2-perl \
         libjson-perl \
         libldap2-dev \
-        libmysqlclient-dev \
+        #libmysqlclient-dev \
+        libmariadb-dev \
         libnagios-object-perl \
         libmonitoring-plugin-perl \
         libnet-snmp-perl \
@@ -106,8 +107,9 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         postfix \
         #python2 \
         python3-full \
-        python3-pip \
         python3-nagiosplugin \
+        python3-pip \
+        python3-venv \
         rsync \
         rsyslog \
         runit \
@@ -227,9 +229,14 @@ RUN cd /opt && \
     #python2 get-pip.py && \
     #python3 get-pip.py && \
     #pip install --no-cache-dir "pymssql<2.2.0" && \
-    pip3 install --break-system-packages --no-cache-dir pymssql && \
-    pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
-    pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
+    python3 -m venv .venv && \
+    . .venv/bin/activate && \
+    #pip3 install --break-system-packages --no-cache-dir pymssql && \
+    pip3 install --no-cache-dir pymssql && \
+    #pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
+    pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
+    #pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
+    pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
     git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
     git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
@@ -321,7 +328,7 @@ RUN cd /opt/nagiosgraph/etc && \
     sh fix-nagiosgraph-multiple-selection.sh
 
 # Enable all runit services
-RUN ln -s /etc/sv/* /etc/service
+RUN ln -sf /etc/sv/* /etc/service
 
 # Fix ping permissions for Nagios user
 RUN chmod u+s /usr/bin/ping
