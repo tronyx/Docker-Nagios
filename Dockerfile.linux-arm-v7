@@ -60,6 +60,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         fping \
         freetds-dev \
         gcc \
+        gcc-arm* \
         gettext \
         git \
         gperf \
@@ -357,7 +358,7 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt-get -qq -y remove software-properties-common libkrb5-dev krb5-config krb5-user && \
+RUN apt-get -qq -y remove software-properties-common libkrb5-dev krb5-config krb5-user gcc-arm* && \
     apt-get -qq -y autoremove && \
     # Remove dirs from git clones, cache, rustup, etc.
     rm -rf /root/.cache \
