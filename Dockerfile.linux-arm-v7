@@ -88,7 +88,6 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libjson-perl \
         libkrb5-dev \
         libldap2-dev \
-        #libmysqlclient-dev \
         libmariadb-dev \
         libnagios-object-perl \
         libmonitoring-plugin-perl \
@@ -96,7 +95,6 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libnet-tftp-perl \
         libnet-xmpp-perl \
         libpq-dev \
-        #libpython2-dev \
         libpython3-dev \
         libredis-perl \
         librrds-perl \
@@ -111,7 +109,6 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         php-cli \
         php-gd \
         postfix \
-        #python2 \
         python3-full \
         python3-nagiosplugin \
         python3-pip \
@@ -248,11 +245,8 @@ RUN cd /opt && \
     #pip install --no-cache-dir "pymssql<2.2.0" && \
     python3 -m venv .venv && \
     . .venv/bin/activate && \
-    #pip3 install --break-system-packages --no-cache-dir pymssql && \
     pip3 install --no-cache-dir pymssql && \
-    #pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
     pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
-    #pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
     pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
     git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
@@ -272,7 +266,6 @@ RUN cd /opt && \
     cp /opt/DF-Nagios-Plugins/check_sql/check_sql ${NAGIOS_HOME}/libexec/ && \
     cp /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins ${NAGIOS_HOME}/libexec/ && \
     cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/ && \
-    #######cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/
     cp /opt/jpmens-mqtt/check-mqtt.py ${NAGIOS_HOME}/libexec/
 
 # Add check_apc.pl check
