@@ -22,7 +22,7 @@ Listing these as I wish to give the original users credit for their work.
 
 Things that I have changed/updated/added to date:
 
-* Updated the image to Ubuntu 22.04 LTS
+* Updated the image to Ubuntu 24.04 LTS
 * Updated Nagios Core to the current latest
 * Updated Nagios Plugins to current latest
 * Updated NRPE to current latest
@@ -33,7 +33,7 @@ Things that I have changed/updated/added to date:
 
 ## Information
 
-Nagios Core running on Ubuntu 22.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and NagiosTV.
+Nagios Core running on Ubuntu 24.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and NagiosTV.
 
 | Product | Version |
 | ------- | ------- |
