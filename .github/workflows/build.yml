@@ -22,7 +22,7 @@ jobs:
       branch: ${{ steps.prep.outputs.branch }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Check if architecture exists
         id: arch_check
@@ -161,7 +161,7 @@ jobs:
     needs: [build]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Login to docker.io
         if: matrix.registry == 'docker.io'
