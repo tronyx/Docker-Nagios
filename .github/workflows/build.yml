@@ -211,6 +211,7 @@ jobs:
           IMAGE=${{ matrix.registry }}/$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)
           TAG=${{ needs.build.outputs.branch }}
           SOURCE=${IMAGE}:${TAG}
+          VERSION=${{ needs.build.outputs.version }}
           docker buildx imagetools create -t ${IMAGE}:${TAG} ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           docker buildx imagetools create -t ${IMAGE}:${TAG}-${VERSION} ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           if [[ ${GITHUB_REF//refs\/heads\//} == main ]]; then
