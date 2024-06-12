@@ -21,6 +21,7 @@ jobs:
     outputs:
       version: ${{ steps.prep.outputs.version }}
       branch: ${{ steps.prep.outputs.branch }}
+      time: ${{ steps.vars.outputs.time }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -212,6 +213,7 @@ jobs:
           SOURCE=${IMAGE}:${TAG}
           docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.time }}     ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.branch }}   ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
+          docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.version }}   ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           if [[ ${GITHUB_REF//refs\/heads\//} == main ]]; then
           docker buildx imagetools create -t ${IMAGE}:latest                              ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           fi
