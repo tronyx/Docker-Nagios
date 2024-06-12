@@ -51,7 +51,7 @@ jobs:
           install: true
           version: latest
           # Fix for https://github.com/docker/buildx/issues/1509
-          #driver-opts: image=moby/buildkit:v0.10.5 #:master
+          #driver-opts: image=moby/buildkit:v0.10.5
           driver-opts: image=moby/buildkit:master
 
       - name: Login to docker.io
@@ -98,7 +98,8 @@ jobs:
 
           echo $GITHUB_OUTPUT
 
-      - name: Build and push - Attempt 1
+      #- name: Build and push - Attempt 1
+      - name: Build and push
         continue-on-error: true
         if: "contains(steps.arch_check.outputs.check, 'passed')"
         id: build_attempt1
@@ -125,35 +126,35 @@ jobs:
             BUILD_ARCHITECTURE=${{ matrix.architecture }}
             ${{ steps.prep.outputs.build-args }}
 
-      - name: Sleep
-        if: (steps.build_attempt1.outcome == 'failure')
-        run: |
-          sleep 30
-
-      - name: Build and push - Attempt 2
-        if: (steps.build_attempt1.outcome == 'failure')
-        uses: docker/build-push-action@v5.4.0
-        with:
-          push: true
-          platforms: ${{ steps.prep.outputs.platform }}
-          file: ./Dockerfile.${{ matrix.architecture }}
-          cache-from: docker.io/${{ steps.prep.outputs.cache }}
-          cache-to: docker.io/${{ steps.prep.outputs.cache }}
-          tags: |
-            docker.io/${{ steps.prep.outputs.tag }}
-            ghcr.io/${{ steps.prep.outputs.tag }}
-          labels: |
-            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
-            org.opencontainers.image.title=${{ steps.prep.outputs.title }}
-            org.opencontainers.image.revision=${{ steps.prep.outputs.revision }}
-            org.opencontainers.image.source=${{ steps.prep.outputs.source }}
-            org.opencontainers.image.vendor=${{ steps.prep.outputs.vendor }}
-            org.opencontainers.image.url=${{ steps.prep.outputs.url }}
-            org.opencontainers.image.version=${{ steps.prep.outputs.version }}
-          build-args: |
-            GITHUB_TOKEN=${{ secrets.GHCR_TOKEN }}
-            BUILD_ARCHITECTURE=${{ matrix.architecture }}
-            ${{ steps.prep.outputs.build-args }}
+#      - name: Sleep
+#        if: (steps.build_attempt1.outcome == 'failure')
+#        run: |
+#          sleep 30
+#
+#      - name: Build and push - Attempt 2
+#        if: (steps.build_attempt1.outcome == 'failure')
+#        uses: docker/build-push-action@v5.4.0
+#        with:
+#          push: true
+#          platforms: ${{ steps.prep.outputs.platform }}
+#          file: ./Dockerfile.${{ matrix.architecture }}
+#          cache-from: docker.io/${{ steps.prep.outputs.cache }}
+#          cache-to: docker.io/${{ steps.prep.outputs.cache }}
+#          tags: |
+#            docker.io/${{ steps.prep.outputs.tag }}
+#            ghcr.io/${{ steps.prep.outputs.tag }}
+#          labels: |
+#            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+#            org.opencontainers.image.title=${{ steps.prep.outputs.title }}
+#            org.opencontainers.image.revision=${{ steps.prep.outputs.revision }}
+#            org.opencontainers.image.source=${{ steps.prep.outputs.source }}
+#            org.opencontainers.image.vendor=${{ steps.prep.outputs.vendor }}
+#            org.opencontainers.image.url=${{ steps.prep.outputs.url }}
+#            org.opencontainers.image.version=${{ steps.prep.outputs.version }}
+#          build-args: |
+#            GITHUB_TOKEN=${{ secrets.GHCR_TOKEN }}
+#            BUILD_ARCHITECTURE=${{ matrix.architecture }}
+#            ${{ steps.prep.outputs.build-args }}
 
   publish:
     runs-on: ubuntu-24.04
@@ -181,58 +182,68 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Create manifests - Attempt 1
+      #- name: Create manifests - Attempt 1
+      - name: Create manifests
         continue-on-error: true
         id: manifest_attempt1
         env:
           DOCKER_CLI_EXPERIMENTAL: enabled
+        #run: |
+        #  IMAGE=${{ matrix.registry }}/$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)
+        #  TAG=${{ needs.build.outputs.branch }}
+        #  SOURCE=${IMAGE}:${TAG}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}
+        #  VERSION=${{ needs.build.outputs.version }}
+        #  BRANCH=${{ needs.build.outputs.branch }}
+        #  [[ -f Dockerfile.linux-amd64 ]] && AMD64=${SOURCE}-linux-amd64
+        #  [[ -f Dockerfile.linux-arm64 ]] && ARM64=${SOURCE}-linux-arm64
+        #  docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64}
+        #  docker manifest push ${IMAGE}:${TAG}
+        #  docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
+        #  docker manifest push ${IMAGE}:${TAG}-${VERSION}
+        #  docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
+        #  docker manifest push ${IMAGE}:${TAG}-${VERSION}
+        #  if [[ ${BRANCH} == master ]]; then
+        #    docker manifest create ${IMAGE}:latest ${AMD64} ${ARM64}
+        #    docker manifest push ${IMAGE}:latest
+        #  fi
         run: |
-          IMAGE=${{ matrix.registry }}/$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)
+          IMAGE=ghcr.io/$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')
           TAG=${{ needs.build.outputs.branch }}
-          SOURCE=${IMAGE}:${TAG}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}
-          VERSION=${{ needs.build.outputs.version }}
-          BRANCH=${{ needs.build.outputs.branch }}
-          [[ -f Dockerfile.linux-amd64 ]] && AMD64=${SOURCE}-linux-amd64
-          [[ -f Dockerfile.linux-arm64 ]] && ARM64=${SOURCE}-linux-arm64
-          docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64}
-          docker manifest push ${IMAGE}:${TAG}
-          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
-          docker manifest push ${IMAGE}:${TAG}-${VERSION}
-          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
-          docker manifest push ${IMAGE}:${TAG}-${VERSION}
-          if [[ ${BRANCH} == master ]]; then
-            docker manifest create ${IMAGE}:latest ${AMD64} ${ARM64}
-            docker manifest push ${IMAGE}:latest
+          SOURCE=${IMAGE}:${TAG}
+          docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.time }}     ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
+          docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.branch }}   ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
+          if [[ ${GITHUB_REF//refs\/heads\//} == main ]]; then
+          docker buildx imagetools create -t ${IMAGE}:latest                              ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           fi
-
-      - name: Sleep
-        if: (steps.manifest_attempt1.outcome == 'failure')
-        run: |
-          sleep 30
-
-      - name: Create manifests - Attempt 2
-        if: (steps.manifest_attempt1.outcome == 'failure')
-        env:
-          DOCKER_CLI_EXPERIMENTAL: enabled
-        run: |
-          IMAGE=${{ matrix.registry }}/$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)
-          TAG=${{ needs.build.outputs.branch }}
-          SOURCE=${IMAGE}:${TAG}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}
-          VERSION=${{ needs.build.outputs.version }}
-          BRANCH=${{ needs.build.outputs.branch }}
-          [[ -f Dockerfile.linux-amd64 ]] && AMD64=${SOURCE}-linux-amd64
-          [[ -f Dockerfile.linux-arm64 ]] && ARM64=${SOURCE}-linux-arm64
-          docker manifest rm ${IMAGE}:${TAG} || true
-          docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64}
-          docker manifest push ${IMAGE}:${TAG}
-          docker manifest rm ${IMAGE}:${TAG}-${VERSION} || true
-          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
-          docker manifest push ${IMAGE}:${TAG}-${VERSION}
-          docker manifest rm ${IMAGE}:${TAG}-${VERSION} || true
-          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
-          docker manifest push ${IMAGE}:${TAG}-${VERSION}
-          if [[ ${BRANCH} == master ]]; then
-            docker manifest rm ${IMAGE}:latest || true
-            docker manifest create ${IMAGE}:latest ${AMD64} ${ARM64}
-            docker manifest push ${IMAGE}:latest
-          fi
+#
+      #- name: Sleep
+      #  if: (steps.manifest_attempt1.outcome == 'failure')
+      #  run: |
+      #    sleep 30
+#
+      #- name: Create manifests - Attempt 2
+      #  if: (steps.manifest_attempt1.outcome == 'failure')
+      #  env:
+      #    DOCKER_CLI_EXPERIMENTAL: enabled
+      #  run: |
+      #    IMAGE=${{ matrix.registry }}/$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)
+      #    TAG=${{ needs.build.outputs.branch }}
+      #    SOURCE=${IMAGE}:${TAG}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}
+      #    VERSION=${{ needs.build.outputs.version }}
+      #    BRANCH=${{ needs.build.outputs.branch }}
+      #    [[ -f Dockerfile.linux-amd64 ]] && AMD64=${SOURCE}-linux-amd64
+      #    [[ -f Dockerfile.linux-arm64 ]] && ARM64=${SOURCE}-linux-arm64
+      #    docker manifest rm ${IMAGE}:${TAG} || true
+      #    docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64}
+      #    docker manifest push ${IMAGE}:${TAG}
+      #    docker manifest rm ${IMAGE}:${TAG}-${VERSION} || true
+      #    docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
+      #    docker manifest push ${IMAGE}:${TAG}-${VERSION}
+      #    docker manifest rm ${IMAGE}:${TAG}-${VERSION} || true
+      #    docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
+      #    docker manifest push ${IMAGE}:${TAG}-${VERSION}
+      #    if [[ ${BRANCH} == master ]]; then
+      #      docker manifest rm ${IMAGE}:latest || true
+      #      docker manifest create ${IMAGE}:latest ${AMD64} ${ARM64}
+      #      docker manifest push ${IMAGE}:latest
+      #    fi
