@@ -236,13 +236,6 @@ RUN cd /opt && \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sed 's#/proc/self/exe#\/bin\/sh#g' | sh -s -- --profile minimal -y && \
     . "/root/.cargo/env" && \
     export PATH="/root/.cargo/bin:$PATH" && \
-    #wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
-    #wget -q https://bootstrap.pypa.io/get-pip.py && \
-    #python2 get-pip.py && \
-    #python3 get-pip.py && \
-    #echo "Cython==0.29.35" >> constraints.txt && \
-    #export PIP_CONSTRAINT="$(pwd)/constraints.txt" && \
-    #pip install --no-cache-dir "pymssql<2.2.0" && \
     #python3 -m venv .venv && \
     #. .venv/bin/activate && \
     pip3 install --break-system-packages --no-cache-dir pymssql && \
