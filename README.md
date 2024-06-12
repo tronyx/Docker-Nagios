@@ -61,9 +61,11 @@ docker pull ghcr.io/tronyx/nagios
 
 #### Versions/Docker Tags
 
-* Master (:latest) - Master branch that is known to be stable.
-* Develop (:develop) - My testing/development branch for updates.
-* Ubuntu-22.04 (:ubuntu-22.04) - Older Ubuntu base version that still has Python 2 and the plugins that require it. Use this for arm-v7 hardware. Will keep this as up-to-date as possible.
+| Branch | Image Tag | Notes |
+| ------- | ------- | ------- |
+| Master | latest | Master branch that is known to be stable. |
+| Develop | develop | My testing/development branch for updates. |
+| Ubuntu-22.04 | ubuntu-22.04 | Older Ubuntu base version that still has Python 2 and the plugins that require it. Use this for arm-v7 hardware. Will keep this as up-to-date as possible. |
 
 ### Running
 
