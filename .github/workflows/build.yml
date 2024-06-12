@@ -52,7 +52,7 @@ jobs:
           version: latest
           # Fix for https://github.com/docker/buildx/issues/1509
           #driver-opts: image=moby/buildkit:v0.10.5 #:master
-          driver-opts: image=moby/buildkit:v0.14.0
+          driver-opts: image=moby/buildkit:master
 
       - name: Login to docker.io
         if: "contains(steps.arch_check.outputs.check, 'passed')"
