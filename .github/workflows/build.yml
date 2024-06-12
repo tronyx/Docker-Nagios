@@ -210,7 +210,7 @@ jobs:
         run: |
           IMAGE=${{ matrix.registry }}/$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)
           TAG=${{ needs.build.outputs.branch }}
-          SOURCE=${IMAGE}:${TAG}
+          SOURCE=${IMAGE}:${TAG}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}
           VERSION=${{ needs.build.outputs.version }}
           docker buildx imagetools create -t ${IMAGE}:${TAG} ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           docker buildx imagetools create -t ${IMAGE}:${TAG}-${VERSION} ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
