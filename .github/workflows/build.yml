@@ -208,14 +208,13 @@ jobs:
         #    docker manifest push ${IMAGE}:latest
         #  fi
         run: |
-          IMAGE=ghcr.io/$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')
+          IMAGE=${{ matrix.registry }}/$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)
           TAG=${{ needs.build.outputs.branch }}
           SOURCE=${IMAGE}:${TAG}
-          docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.time }}     ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
-          docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.branch }}   ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
-          docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.version }}   ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
+          docker buildx imagetools create -t ${IMAGE}:${TAG} ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
+          docker buildx imagetools create -t ${IMAGE}:${TAG}-${VERSION} ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           if [[ ${GITHUB_REF//refs\/heads\//} == main ]]; then
-          docker buildx imagetools create -t ${IMAGE}:latest                              ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
+          docker buildx imagetools create -t ${IMAGE}:latest ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           fi
 #
       #- name: Sleep
