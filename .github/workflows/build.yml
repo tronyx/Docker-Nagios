@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        architecture: [linux-amd64, linux-arm64, linux-arm-v7]
+        #architecture: [linux-amd64, linux-arm64, linux-arm-v7]
+        architecture: [linux-amd64, linux-arm64]
     outputs:
       version: ${{ steps.prep.outputs.version }}
       branch: ${{ steps.prep.outputs.branch }}
@@ -30,14 +31,14 @@ jobs:
           (test -f Dockerfile.${{ matrix.architecture }} && echo "check=passed" >> $GITHUB_OUTPUT) || echo "check=failed" >> $GITHUB_OUTPUT
 
       # Workaround for Cargo issue: https://github.com/rust-lang/cargo/issues/8719
-      - name: Set Swap Space
-        uses: pierotofy/set-swap-space@v1.0
-        with:
-          swap-size-gb: 20
-      - run: |
-          sudo mkdir -p /var/lib/docker
-          sudo mount -t tmpfs -o size=10G none /var/lib/docker
-          sudo systemctl restart docker
+      #- name: Set Swap Space
+      #  uses: pierotofy/set-swap-space@v1.0
+      #  with:
+      #    swap-size-gb: 10
+      #- run: |
+      #    sudo mkdir -p /var/lib/docker
+      #    sudo mount -t tmpfs -o size=10G none /var/lib/docker
+      #    sudo systemctl restart docker
 
       - name: Set up QEMU
         if: "contains(steps.arch_check.outputs.check, 'passed')"
@@ -193,15 +194,14 @@ jobs:
           BRANCH=${{ needs.build.outputs.branch }}
           [[ -f Dockerfile.linux-amd64 ]] && AMD64=${SOURCE}-linux-amd64
           [[ -f Dockerfile.linux-arm64 ]] && ARM64=${SOURCE}-linux-arm64
-          [[ -f Dockerfile.linux-arm-v7 ]] && ARMV7=${SOURCE}-linux-arm-v7
-          docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64}
           docker manifest push ${IMAGE}:${TAG}
-          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
           docker manifest push ${IMAGE}:${TAG}-${VERSION}
-          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
           docker manifest push ${IMAGE}:${TAG}-${VERSION}
           if [[ ${BRANCH} == master ]]; then
-            docker manifest create ${IMAGE}:latest ${AMD64} ${ARM64} ${ARMV7}
+            docker manifest create ${IMAGE}:latest ${AMD64} ${ARM64}
             docker manifest push ${IMAGE}:latest
           fi
 
@@ -222,18 +222,17 @@ jobs:
           BRANCH=${{ needs.build.outputs.branch }}
           [[ -f Dockerfile.linux-amd64 ]] && AMD64=${SOURCE}-linux-amd64
           [[ -f Dockerfile.linux-arm64 ]] && ARM64=${SOURCE}-linux-arm64
-          [[ -f Dockerfile.linux-arm-v7 ]] && ARMV7=${SOURCE}-linux-arm-v7
           docker manifest rm ${IMAGE}:${TAG} || true
-          docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest create ${IMAGE}:${TAG} ${AMD64} ${ARM64}
           docker manifest push ${IMAGE}:${TAG}
           docker manifest rm ${IMAGE}:${TAG}-${VERSION} || true
-          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
           docker manifest push ${IMAGE}:${TAG}-${VERSION}
           docker manifest rm ${IMAGE}:${TAG}-${VERSION} || true
-          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64} ${ARMV7}
+          docker manifest create ${IMAGE}:${TAG}-${VERSION} ${AMD64} ${ARM64}
           docker manifest push ${IMAGE}:${TAG}-${VERSION}
           if [[ ${BRANCH} == master ]]; then
             docker manifest rm ${IMAGE}:latest || true
-            docker manifest create ${IMAGE}:latest ${AMD64} ${ARM64} ${ARMV7}
+            docker manifest create ${IMAGE}:latest ${AMD64} ${ARM64}
             docker manifest push ${IMAGE}:latest
           fi
