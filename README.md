@@ -42,7 +42,7 @@ Nagios Core running on Ubuntu 22.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and 
 | [NRPE](https://github.com/NagiosEnterprises/nrpe) | 4.1.0 |
 | [NCPA](https://github.com/NagiosEnterprises/ncpa) | 3.1.0 |
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.2 |
-| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.9.0 |
+| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.9.2 |
 
 You can find the Docker Hub Registry [HERE](https://hub.docker.com/r/tronyx/nagios) or the GitHub Registry [HERE](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
 
