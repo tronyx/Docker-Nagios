@@ -28,6 +28,16 @@ jobs:
         run: |
           (test -f Dockerfile.${{ matrix.architecture }} && echo "check=passed" >> $GITHUB_OUTPUT) || echo "check=failed" >> $GITHUB_OUTPUT
 
+      # Workaround for Cargo issue: https://github.com/rust-lang/cargo/issues/8719
+      - name: Set Swap Space
+        uses: pierotofy/set-swap-space@v1.0
+        with:
+          swap-size-gb: 10
+      - run: |
+          sudo mkdir -p /var/lib/docker
+          sudo mount -t tmpfs -o size=10G none /var/lib/docker
+          sudo systemctl restart docker
+      
       - name: Set up QEMU
         if: "contains(steps.arch_check.outputs.check, 'passed')"
         uses: docker/setup-qemu-action@v3.0.0
