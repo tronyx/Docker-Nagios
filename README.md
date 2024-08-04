@@ -39,7 +39,7 @@ Nagios Core running on Ubuntu 24.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and 
 | ------- | ------- |
 | [Nagios Core](https://github.com/NagiosEnterprises/nagioscore/releases) | 4.5.3 |
 | [Nagios Plugins](https://github.com/nagios-plugins/nagios-plugins) | 2.4.11 |
-| [NRPE](https://github.com/NagiosEnterprises/nrpe) | 4.1.0 |
+| [NRPE](https://github.com/NagiosEnterprises/nrpe) | 4.1.1 |
 | [NCPA](https://github.com/NagiosEnterprises/ncpa) | 3.1.0 |
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.2 |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.9.2 |
