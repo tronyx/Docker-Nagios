@@ -151,6 +151,6 @@ jobs:
           VERSION=${{ needs.build.outputs.version }}
           docker buildx imagetools create -t ${IMAGE}:${TAG} ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           docker buildx imagetools create -t ${IMAGE}:${TAG}-${VERSION} ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
-          if [[ ${GITHUB_REF//refs\/heads\//} == main ]]; then
+          if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
           docker buildx imagetools create -t ${IMAGE}:latest ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           fi
