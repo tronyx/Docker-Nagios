@@ -1,6 +1,6 @@
 # Docker-Nagios
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tronyx/Docker-Nagios/build.yml) [![CodeFactor](https://www.codefactor.io/repository/github/tronyx/docker-nagios/badge)](https://www.codefactor.io/repository/github/tronyx/docker-nagios) [![Docker Pulls](https://img.shields.io/docker/pulls/tronyx/nagios.svg)](https://hub.docker.com/r/tronyx/nagios) ![Docker Image Size with architecture (latest by date/latest semver)](https://img.shields.io/docker/image-size/tronyx/nagios?arch=amd64&label=amd64) ![Docker Image Size with architecture (latest by date/latest semver)](https://img.shields.io/docker/image-size/tronyx/nagios?arch=arm64&label=arm64) ![Docker Image Size with architecture (latest by date/latest semver)](https://img.shields.io/docker/image-size/tronyx/nagios?arch=arm&label=arm-v7) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/tronyx/Docker-Nagios/blob/master/LICENSE.md)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tronyx/Docker-Nagios/build.yml) [![CodeFactor](https://www.codefactor.io/repository/github/tronyx/docker-nagios/badge)](https://www.codefactor.io/repository/github/tronyx/docker-nagios) [![Docker Pulls](https://img.shields.io/docker/pulls/tronyx/nagios.svg)](https://hub.docker.com/r/tronyx/nagios) ![Docker Image Size with architecture (latest by date/latest semver)](https://img.shields.io/docker/image-size/tronyx/nagios?arch=amd64&label=amd64) ![Docker Image Size with architecture (latest by date/latest semver)](https://img.shields.io/docker/image-size/tronyx/nagios?arch=arm64&label=arm64) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/tronyx/Docker-Nagios/blob/master/LICENSE.md)
 
 ## Notes
 
@@ -14,34 +14,35 @@ Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-
 * [#120](https://github.com/JasonRivers/Docker-Nagios/pull/120) - Add NSCA ([mmerian](https://github.com/mmerian))
 * [#130](https://github.com/JasonRivers/Docker-Nagios/issues/130) - Add Perl encryption libraries ([rehashedsalt](https://github.com/rehashedsalt))
 * [#132](https://github.com/JasonRivers/Docker-Nagios/issues/132) - Add rSync ([LutzLegu](https://github.com/LutzLegu))
+* [#165](https://github.com/JasonRivers/Docker-Nagios/pull/165) - Added libcrypt-x509-per and libtext-glob-perl modules ([Scott-Jones-COS](https://github.com/Scott-Jones-COS))
 
 Listing these as I wish to give the original users credit for their work.
 
 ## Changes That I've Made
 
-Things that I have changed/updated so far:
+Things that I have changed/updated/added to date:
 
-* Updated the image to Ubuntu 22.04 LTS
+* Updated the image to Ubuntu 24.04 LTS
 * Updated Nagios Core to the current latest
 * Updated Nagios Plugins to current latest
 * Updated NRPE to current latest
 * Updated NCPA to current latest
 * Updated NSCA to current latest
 * Added NagiosTV
-* Built multi-arch images
+* Built multi-arch images (amd64 & arm64)
 
 ## Information
 
-Nagios Core running on Ubuntu 22.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, CheckMK, and NagiosTV.
+Nagios Core running on Ubuntu 24.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and NagiosTV.
 
 | Product | Version |
 | ------- | ------- |
-| [Nagios Core](https://github.com/NagiosEnterprises/nagioscore/releases) | 4.5.1 |
-| [Nagios Plugins](https://github.com/nagios-plugins/nagios-plugins) | 2.4.9 |
-| [NRPE](https://github.com/NagiosEnterprises/nrpe) | 4.1.0 |
-| [NCPA](https://github.com/NagiosEnterprises/ncpa) | 3.0.2 |
-| [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.2 |
-| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.8.7 |
+| [Nagios Core](https://github.com/NagiosEnterprises/nagioscore/releases) | 4.5.4 |
+| [Nagios Plugins](https://github.com/nagios-plugins/nagios-plugins) | 2.4.11 |
+| [NRPE](https://github.com/NagiosEnterprises/nrpe) | 4.1.1 |
+| [NCPA](https://github.com/NagiosEnterprises/ncpa) | 3.1.0 |
+| [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.3 |
+| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.9.2 |
 
 You can find the Docker Hub Registry [HERE](https://hub.docker.com/r/tronyx/nagios) or the GitHub Registry [HERE](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
 
@@ -57,6 +58,14 @@ You can find the Docker Hub Registry [HERE](https://hub.docker.com/r/tronyx/nagi
 docker pull tronyx/nagios
 docker pull ghcr.io/tronyx/nagios
 ```
+
+#### Versions/Docker Tags
+
+| Branch | Image Tag | Notes |
+| ------- | ------- | ------- |
+| Master | latest | Master branch that is known to be stable. |
+| Develop | develop | My testing/development branch for updates. |
+| Ubuntu-22.04 | ubuntu-22.04 | Older Ubuntu base version that still has Python 2 and the plugins that require it. Use this for arm-v7 hardware. Will keep this as up-to-date as possible. |
 
 ### Running
 

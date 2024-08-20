@@ -2,44 +2,43 @@
 ARG BUILDKIT_SBOM_SCAN_CONTEXT=true
 ARG BUILDKIT_SBOM_SCAN_STAGE=true
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
-LABEL name="Nagios" \
-    nagiosVersion="4.5.1" \
-    nagiosPluginsVersion="2.4.9" \
-    nrpeVersion="4.1.0" \
-    nscaVersion="2.10.2" \
-    ncpaVersion="3.0.2" \
-    nagiostvVersion="0.8.7" \
-    homepage="https://www.nagios.com/" \
-    maintainer="Tronyx <tronyx@tronflix.app>"
+LABEL name="Nagios"
+LABEL nagiosVersion="4.5.2"
+LABEL nagiosPluginsVersion="2.4.10"
+LABEL nrpeVersion="4.1.0"
+LABEL nscaVersion="2.10.2"
+LABEL ncpaVersion="3.1.0"
+LABEL nagiostvVersion="0.9.2"
+LABEL homepage="https://www.nagios.com/"
+LABEL maintainer="Tronyx <tronyx@tronflix.app>"
 
 # Environment variables
-ENV NAGIOS_HOME=/opt/nagios \
-    NAGIOS_USER=nagios \
-    NAGIOS_GROUP=nagios \
-    NAGIOS_CMDUSER=nagios \
-    NAGIOS_CMDGROUP=nagios \
-    NAGIOS_FQDN=nagios.example.com \
-    NAGIOSADMIN_USER=nagiosadmin \
-    NAGIOSADMIN_PASS=nagios \
-    APACHE_RUN_USER=nagios \
-    APACHE_RUN_GROUP=nagios \
-    APACHE_LOCK_DIR=/var/run \
-    APACHE_LOG_DIR=/var/log/apache2 \
-    NAGIOS_TIMEZONE=UTC \
-    DEBIAN_FRONTEND=noninteractive \
-    NAGIOS_BRANCH=nagios-4.5.1 \
-    NAGIOS_PLUGINS_BRANCH=release-2.4.9 \
-    NRPE_BRANCH=nrpe-4.1.0 \
-    NSCA_TAG=nsca-2.10.2 \
-    NCPA_BRANCH=v3.0.2 \
-    NAGIOSTV_VERSION=0.8.7
-
-ENV NG_CGI_URL=/cgi-bin \
-    NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg \
-    NG_CGI_DIR=${NAGIOS_HOME}/sbin \
-    NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph
+ENV NAGIOS_HOME             /opt/nagios
+ENV NAGIOS_USER             nagios
+ENV NAGIOS_GROUP            nagios
+ENV NAGIOS_CMDUSER          nagios
+ENV NAGIOS_CMDGROUP         nagios
+ENV NAGIOS_FQDN             nagios.example.com
+ENV NAGIOSADMIN_USER        nagiosadmin
+ENV NAGIOSADMIN_PASS        nagios
+ENV APACHE_RUN_USER         nagios
+ENV APACHE_RUN_GROUP        nagios
+ENV APACHE_LOCK_DIR         /var/run
+ENV APACHE_LOG_DIR          /var/log/apache2
+ENV NAGIOS_TIMEZONE         UTC
+ENV DEBIAN_FRONTEND         noninteractive
+ENV NG_CGI_URL              /cgi-bin
+ENV NG_NAGIOS_CONFIG_FILE   ${NAGIOS_HOME}/etc/nagios.cfg
+ENV NG_CGI_DIR              ${NAGIOS_HOME}/sbin
+ENV NG_WWW_DIR              ${NAGIOS_HOME}/share/nagiosgraph
+ENV NAGIOS_BRANCH           nagios-4.5.2
+ENV NAGIOS_PLUGINS_BRANCH   release-2.4.10
+ENV NRPE_BRANCH             nrpe-4.1.0
+ENV NSCA_TAG                nsca-2.10.2
+ENV NCPA_BRANCH             v3.1.0
+ENV NAGIOSTV_VERSION        0.9.2
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
@@ -60,16 +59,21 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         dnsutils \
         fping \
         freetds-dev \
+        gcc \
+        gcc-arm* \
         gettext \
         git \
         gperf \
         iputils-ping \
         jq \
+        krb5-config \
+        krb5-user \
         libapache2-mod-php \
         libcache-memcached-perl \
         libcgi-pm-perl \
         libcrypt-des-perl \
         libcrypt-rijndael-perl \
+        libcrypt-x509-perl \
         libdbd-mysql-perl \
         libdbd-pg-perl \
         libdbi-dev \
@@ -82,31 +86,33 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libgd-dev \
         libgd-gd2-perl \
         libjson-perl \
+        libkrb5-dev \
         libldap2-dev \
-        libmysqlclient-dev \
+        libmariadb-dev \
         libnagios-object-perl \
         libmonitoring-plugin-perl \
         libnet-snmp-perl \
         libnet-tftp-perl \
         libnet-xmpp-perl \
         libpq-dev \
-        libpython2-dev \
         libpython3-dev \
         libredis-perl \
         librrds-perl \
         libssl-dev \
         libswitch-perl \
+        libtext-glob-perl \
         libwww-perl \
         m4 \
-        netcat \
+        netcat-traditional \
         openssh-client \
         parallel \
         php-cli \
         php-gd \
         postfix \
-        python2 \
-        python3-pip \
+        python3-full \
         python3-nagiosplugin \
+        python3-pip \
+        python3-venv \
         rsync \
         rsyslog \
         runit \
@@ -230,14 +236,11 @@ RUN cd /opt && \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sed 's#/proc/self/exe#\/bin\/sh#g' | sh -s -- --profile minimal -y && \
     . "/root/.cargo/env" && \
     export PATH="/root/.cargo/bin:$PATH" && \
-    wget -q -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
-    python2 get-pip.py && \
-    echo "Cython==0.29.35" >> constraints.txt && \
-    export PIP_CONSTRAINT="$(pwd)/constraints.txt" && \
-    pip install --no-cache-dir "pymssql<2.2.0" && \
-    python3 -m pip install --upgrade pip && \
-    pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt bcrypt && \
-    pip3 install --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
+    #python3 -m venv .venv && \
+    #. .venv/bin/activate && \
+    pip3 install --break-system-packages --no-cache-dir pymssql && \
+    pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
+    pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
     git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
     git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
     git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
@@ -300,9 +303,13 @@ RUN echo "use_timezone=${NAGIOS_TIMEZONE}" >> ${NAGIOS_HOME}/etc/nagios.cfg
 # Copy example config in-case the user has started with empty var or etc
 RUN mkdir -p /orig/var && \
     mkdir -p /orig/etc && \
+    mkdir -p /orig/graph-etc && \
+    mkdir -p /orig/graph-var && \
     mkdir -p /orig/xinetd.d && \
     cp -Rp ${NAGIOS_HOME}/var/* /orig/var/ && \
     cp -Rp ${NAGIOS_HOME}/etc/* /orig/etc/ && \
+    cp -Rp /opt/nagiosgraph/etc/* /orig/graph-etc && \
+    cp -Rp /opt/nagiosgraph/var/* /orig/graph-var && \
     cp -Rp /etc/xinetd.d/* /orig/xinetd.d/
 
 ## Set the permissions for example config
@@ -324,7 +331,7 @@ RUN cd /opt/nagiosgraph/etc && \
     sh fix-nagiosgraph-multiple-selection.sh
 
 # Enable all runit services
-RUN ln -s /etc/sv/* /etc/service
+RUN ln -sf /etc/sv/* /etc/service
 
 # Fix ping permissions for Nagios user
 RUN chmod u+s /usr/bin/ping
@@ -337,7 +344,7 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
-RUN apt-get -qq -y remove software-properties-common && \
+RUN apt-get -qq -y remove software-properties-common libkrb5-dev krb5-config krb5-user gcc-arm* && \
     apt-get -qq -y autoremove && \
     # Remove dirs from git clones, cache, rustup, etc.
     rm -rf /root/.cache \
@@ -349,9 +356,10 @@ RUN apt-get -qq -y remove software-properties-common && \
     /var/lib/dpkg/status-old && \
     true > /var/log/dpkg.log && \
     true > /var/log/lastlog && \
-    true > /var/log/apt/term.log && \
+    ####true > /var/log/apt/term.log && \
+    true > /var/log/apt/term.log
     # Remove rust and all dependencies
-    echo y | /root/.cargo/bin/rustup self uninstall
+    #echo y | /root/.cargo/bin/rustup self uninstall
 
 # Expose port 80 for the web UI
 EXPOSE 80 5667
