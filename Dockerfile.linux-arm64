@@ -202,8 +202,8 @@ RUN cd /tmp && \
     mv config.sub config.sub.BAD && \
     #wget http://cvs.savannah.gnu.org/viewvc/*checkout*/config/config/config.guess && \
     #wget http://cvs.savannah.gnu.org/viewvc/*checkout*/config/config/config.sub && \
-    wget -O config.guess 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' && \
-    wget -O config.sub 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD' && \
+    wget -O config.guess --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36" 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD' && \
+    wget -O config.sub --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36" 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD' && \
     ./configure \
         --prefix=${NAGIOS_HOME} \
         --with-nsca-user=${NAGIOS_USER} \
