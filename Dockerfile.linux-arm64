@@ -115,6 +115,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         snmpd \
         snmp-mibs-downloader \
         unzip \
+        wget \
         xinetd && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/* && \
