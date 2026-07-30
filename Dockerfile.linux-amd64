@@ -77,7 +77,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libdbi-perl \
         libdigest-hmac-perl \
         libfreeradius-dev \
-        libgdchart-gd2-xpm-dev \
+        libgdchart-gd2-noxpm-dev \
         libradsec-dev \
         libgd-dev \
         libgd-gd2-perl \
