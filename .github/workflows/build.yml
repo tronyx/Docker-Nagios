@@ -20,7 +20,7 @@ jobs:
     outputs:
       version: ${{ steps.prep.outputs.version }}
       branch: ${{ steps.prep.outputs.branch }}
-      time: ${{ steps.vars.outputs.time }}
+      #time: ${{ steps.vars.outputs.time }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
