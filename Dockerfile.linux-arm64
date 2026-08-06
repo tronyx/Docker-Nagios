@@ -47,6 +47,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
     apt-get -qq -y install --no-install-recommends software-properties-common && \
     add-apt-repository universe && \
     apt-get -qq update && \
+    apt-get -qq -y install --no-install-recommends \
         apache2 \
         apache2-utils \
         autoconf \
