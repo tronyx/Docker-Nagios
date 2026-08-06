@@ -284,7 +284,7 @@ RUN sed -i 's,/bin/mail,/usr/bin/mail,' ${NAGIOS_HOME}/etc/objects/commands.cfg 
 RUN echo "************************************************" && \
     echo "************************************************" && \
     echo "************************************************" && \
-    ls -la /var/spool/postfix/etc/
+    postfix check
 
 RUN cp /etc/services /var/spool/postfix/etc/ && \
     echo "smtp_address_preference = ipv4" >> /etc/postfix/main.cf
