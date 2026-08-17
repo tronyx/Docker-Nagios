@@ -53,7 +53,8 @@ RUN apt-get -qq update && \
         libxpm-dev \
         m4 \
         python3-full \
-        python3-pip && \
+        python3-pip \
+        unzip && \
     apt-get -qq -y purge --auto-remove software-properties-common && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/* && \
