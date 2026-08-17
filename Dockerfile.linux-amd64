@@ -33,12 +33,14 @@ ENV NG_CGI_URL=/cgi-bin
 ENV NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg
 ENV NG_CGI_DIR=${NAGIOS_HOME}/sbin
 ENV NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph
-ENV NAGIOS_BRANCH=nagios-4.5.14
-ENV NAGIOS_PLUGINS_BRANCH=release-2.5
-ENV NRPE_BRANCH=nrpe-4.1.3
-ENV NSCA_TAG=nsca-2.10.3
-ENV NCPA_BRANCH=v3.4.3
-ENV NAGIOSTV_VERSION=0.9.11
+
+# Build-only version pins; not needed at runtime
+ARG NAGIOS_BRANCH=nagios-4.5.14
+ARG NAGIOS_PLUGINS_BRANCH=release-2.5
+ARG NRPE_BRANCH=nrpe-4.1.3
+ARG NSCA_TAG=nsca-2.10.3
+ARG NCPA_BRANCH=v3.4.3
+ARG NAGIOSTV_VERSION=0.9.11
 
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
@@ -117,6 +119,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         snmp-mibs-downloader \
         unzip \
         xinetd && \
+    apt-get -qq -y purge --auto-remove software-properties-common && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/* && \
     # Reduce unecesssary git output
@@ -131,7 +134,7 @@ RUN update-ca-certificates -f
 
 # Install Nagios Core
 RUN cd /tmp && \
-    git clone https://github.com/NagiosEnterprises/nagioscore.git -b ${NAGIOS_BRANCH} && \
+    git clone --depth 1 https://github.com/NagiosEnterprises/nagioscore.git -b ${NAGIOS_BRANCH} && \
     cd nagioscore && \
     cp /usr/share/misc/config.* . && \
     ./configure \
@@ -147,11 +150,12 @@ RUN cd /tmp && \
     make install-config && \
     make install-commandmode && \
     make install-webconf && \
-    make clean
+    make clean && \
+    cd /tmp && rm -Rf nagioscore
 
 # Install Nagios Plugins
 RUN cd /tmp && \
-    git clone https://github.com/nagios-plugins/nagios-plugins.git -b $NAGIOS_PLUGINS_BRANCH && \
+    git clone --depth 1 https://github.com/nagios-plugins/nagios-plugins.git -b $NAGIOS_PLUGINS_BRANCH && \
     cd nagios-plugins && \
     ./tools/setup && \
     ./configure \
@@ -174,16 +178,17 @@ RUN wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubuserconten
 
 # Install NRPE
 RUN cd /tmp && \
-    git clone https://github.com/NagiosEnterprises/nrpe.git -b ${NRPE_BRANCH} && \
+    git clone --depth 1 https://github.com/NagiosEnterprises/nrpe.git -b ${NRPE_BRANCH} && \
     cd nrpe && \
     ./configure && \
     make check_nrpe > /dev/null && \
     cp src/check_nrpe ${NAGIOS_HOME}/libexec/ && \
-    make clean
+    make clean && \
+    cd /tmp && rm -Rf nrpe
 
 # Install NagiosGraph
 RUN cd /tmp && \
-    git clone https://git.code.sf.net/p/nagiosgraph/git nagiosgraph && \
+    git clone --depth 1 https://git.code.sf.net/p/nagiosgraph/git nagiosgraph && \
     cd nagiosgraph && \
     ./install.pl --install \
         --prefix /opt/nagiosgraph \
@@ -196,9 +201,8 @@ RUN cd /tmp && \
 
 # Install NSCA
 RUN cd /tmp && \
-    git clone https://github.com/NagiosEnterprises/nsca.git && \
+    git clone --depth 1 --branch ${NSCA_TAG} https://github.com/NagiosEnterprises/nsca.git && \
     cd nsca && \
-    git checkout ${NSCA_TAG} && \
     ./configure \
         --prefix=${NAGIOS_HOME} \
         --with-nsca-user=${NAGIOS_USER} \
@@ -208,31 +212,31 @@ RUN cd /tmp && \
     cp src/send_nsca ${NAGIOS_HOME}/bin/ && \
     cp sample-config/nsca.cfg ${NAGIOS_HOME}/etc/ && \
     cp sample-config/send_nsca.cfg ${NAGIOS_HOME}/etc/ && \
-    sed -i 's/^#server_address.*/server_address=0.0.0.0/'  ${NAGIOS_HOME}/etc/nsca.cfg
+    sed -i 's/^#server_address.*/server_address=0.0.0.0/'  ${NAGIOS_HOME}/etc/nsca.cfg && \
+    cd /tmp && rm -Rf nsca
 
 # Install QStat
 RUN cd /tmp && \
-    git clone https://github.com/multiplay/qstat.git && \
+    git clone --depth 1 https://github.com/multiplay/qstat.git && \
     cd qstat && \
     ./autogen.sh && \
     ./configure && \
     make && \
     make install && \
-    make clean
+    make clean && \
+    cd /tmp && rm -Rf qstat
 
 # Install additional plugins
 RUN cd /opt && \
-    #python3 -m venv .venv && \
-    #. .venv/bin/activate && \
     pip3 install --break-system-packages --no-cache-dir pymssql && \
     pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
     pip3 install --break-system-packages --no-cache-dir --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
-    git clone https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
-    git clone https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
-    git clone https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
-    git clone https://github.com/nagiosenterprises/check_mssql_collection.git nagios-mssql && \
-    git clone https://github.com/danfruehauf/nagios-plugins.git DF-Nagios-Plugins && \
-    git clone https://github.com/jpmens/check-mqtt.git jpmens-mqtt && \
+    git clone --depth 1 https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
+    git clone --depth 1 https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
+    git clone --depth 1 https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
+    git clone --depth 1 https://github.com/nagiosenterprises/check_mssql_collection.git nagios-mssql && \
+    git clone --depth 1 https://github.com/danfruehauf/nagios-plugins.git DF-Nagios-Plugins && \
+    git clone --depth 1 https://github.com/jpmens/check-mqtt.git jpmens-mqtt && \
     chmod +x /opt/WL-Nagios-Plugins/check* && \
     chmod +x /opt/JE-Nagios-Plugins/check_mem/check_mem.pl && \
     chmod +x /opt/DF-Nagios-Plugins/check_sql/check_sql && \
@@ -245,7 +249,8 @@ RUN cd /opt && \
     cp /opt/DF-Nagios-Plugins/check_sql/check_sql ${NAGIOS_HOME}/libexec/ && \
     cp /opt/DF-Nagios-Plugins/check_jenkins/check_jenkins ${NAGIOS_HOME}/libexec/ && \
     cp /opt/DF-Nagios-Plugins/check_vpn/check_vpn ${NAGIOS_HOME}/libexec/ && \
-    cp /opt/jpmens-mqtt/check-mqtt.py ${NAGIOS_HOME}/libexec/
+    cp /opt/jpmens-mqtt/check-mqtt.py ${NAGIOS_HOME}/libexec/ && \
+    find /opt -maxdepth 2 -type d -name .git -exec rm -rf {} +
 
 # Add check_apc.pl check
 COPY plugins/check_apc.pl ${NAGIOS_HOME}/libexec/
@@ -332,7 +337,6 @@ RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.co
 # Cleanup
 # Remove unecessary packages after install/setup are complete
 RUN apt-get -qq -y autoremove && \
-    apt-get -qq -y remove software-properties-common && \
     # Remove dirs from git clones, cache, etc.
     rm -rf /root/.cache \
     /tmp/* \
