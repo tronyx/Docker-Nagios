@@ -41,14 +41,18 @@ RUN apt-get -qq update && \
         gettext \
         git \
         gperf \
+        libcgi-pm-perl \
         libdbi-dev \
         libfreeradius-dev \
         libradsec-dev \
         libgd-dev \
+        libgd-gd2-perl \
         libldap2-dev \
         libmariadb-dev \
+        libnagios-object-perl \
         libpq-dev \
         libpython3-dev \
+        librrds-perl \
         libssl-dev \
         libxpm-dev \
         m4 \
