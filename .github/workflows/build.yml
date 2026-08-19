@@ -109,12 +109,14 @@ jobs:
             org.opencontainers.image.url=${{ steps.prep.outputs.url }}
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
           build-args: |
-            GITHUB_TOKEN=${{ secrets.GHCR_TOKEN }}
-            BUILD_ARCHITECTURE=${{ matrix.architecture }}
             ${{ steps.prep.outputs.build-args }}
 
+      - name: Fail if build failed
+        if: "contains(steps.arch_check.outputs.check, 'passed') && steps.build_attempt1.outcome == 'failure'"
+        run: exit 1
+
   publish:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         registry: [docker.io, ghcr.io]
@@ -154,3 +156,7 @@ jobs:
           if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
           docker buildx imagetools create -t ${IMAGE}:latest ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           fi
+
+      - name: Fail if manifest creation failed
+        if: steps.manifest_attempt1.outcome == 'failure'
+        run: exit 1
