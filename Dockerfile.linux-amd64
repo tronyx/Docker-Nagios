@@ -328,6 +328,14 @@ COPY --from=builder /opt/jpmens-mqtt /opt/jpmens-mqtt
 COPY --from=builder /usr/lib/nagios/plugins /usr/lib/nagios/plugins
 COPY --from=builder /usr/local/bin/qstat /usr/local/bin/qstat
 
+# `make install-webconf` (run in the builder stage) writes the Apache vhost snippet that
+# grants access to ${NAGIOS_HOME}/share and ${NAGIOS_HOME}/sbin (cgi-bin) under Apache 2.4's
+# Require-based access control. It never gets copied into this stage on its own, so without
+# it Apache's global default-deny applies to the Nagios docroot/cgi-bin and every request
+# comes back 403 Forbidden.
+COPY --from=builder /etc/apache2/sites-available/nagios.conf /etc/apache2/sites-available/nagios.conf
+RUN ln -s /etc/apache2/sites-available/nagios.conf /etc/apache2/sites-enabled/nagios.conf
+
 # Install NCPA
 RUN wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/${NCPA_BRANCH}/client/check_ncpa.py && \
     chmod +x ${NAGIOS_HOME}/libexec/check_ncpa.py
