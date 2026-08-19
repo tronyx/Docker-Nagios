@@ -58,6 +58,7 @@ RUN apt-get -qq update && \
         m4 \
         python3-full \
         python3-pip \
+        snmp \
         unzip && \
     apt-get -qq -y purge --auto-remove software-properties-common && \
     apt-get -qq clean && \
