@@ -166,7 +166,7 @@ RUN cd /tmp && \
 # Install additional plugins (pip packages land in a fixed path, independent of the Python version)
 RUN mkdir -p /opt/nagios-pyplugins && \
     cd /opt && \
-    pip3 install --break-system-packages --no-cache-dir --target=/opt/nagios-pyplugins pymssql && \
+    pip3 install --break-system-packages --no-cache-dir --target=/opt/nagios-pyplugins pymssql packaging && \
     pip3 install --break-system-packages --no-cache-dir --target=/opt/nagios-pyplugins --find-links https://wheel-index.linuxserver.io/ubuntu/ pywbem paramiko pplogger paho-mqtt && \
     pip3 install --break-system-packages --no-cache-dir --target=/opt/nagios-pyplugins --find-links https://wheel-index.linuxserver.io/ubuntu/ --upgrade requests && \
     git clone --depth 1 https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
