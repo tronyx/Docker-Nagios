@@ -119,6 +119,30 @@ The default credentials for the web interface are:
 | -------- | -------- |
 | `nagiosadmin` | `nagios` |
 
+`NAGIOSADMIN_USER`/`NAGIOSADMIN_PASS` only seed `/opt/nagios/etc/htpasswd.users` the first time the container starts (i.e. when that file doesn't already exist, such as on a fresh named volume). Changing these env vars on a container that already has a populated `etc` volume has no effect on the stored password.
+
+To change the password on an existing container:
+
+```bash
+docker exec -it nagios htpasswd -b /opt/nagios/etc/htpasswd.users nagiosadmin '<new-password>'
+```
+
+Then update `NAGIOSADMIN_PASS` to the same value for any future recreation of the container (see [Health Check](#health-check) below for why this matters).
+
+### Health Check
+
+The image defines a Docker `HEALTHCHECK` that reports unhealthy unless both of the following succeed:
+
+* An authenticated request to the Nagios web UI (`http://localhost/nagios/`), using the container's current `NAGIOSADMIN_USER`/`NAGIOSADMIN_PASS` env vars.
+* The Nagios core process itself is alive, checked via the PID recorded in `nagios.lock`.
+
+Because the healthcheck authenticates with the *env var* values rather than reading `htpasswd.users` directly, changing the admin password with the `htpasswd` command above (without also updating `NAGIOSADMIN_PASS`) will make the healthcheck start failing, even though the web UI itself still works fine with the new password.
+
+To keep the healthcheck in sync after changing the password:
+
+1. Update `htpasswd.users` as shown in [Credentials](#credentials).
+2. Recreate the container with `NAGIOSADMIN_PASS` set to the same new password, e.g. update your `docker run -e`/`docker-compose.yml` value, then `docker compose up -d` or `docker stop` + `docker run` again. A plain `docker restart` is **not** enough — it doesn't pick up changed environment variables, only a recreated container does.
+
 ### Extra Plugins
 
 * [Nagios NRPE](http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details) - Remotely execute Nagios plugins on other Linux/Unix machines
