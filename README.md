@@ -30,6 +30,7 @@ Things that I have changed/updated/added to date:
 * Updated NSCA to current latest
 * Added NagiosTV
 * Built multi-arch images (amd64 & arm64)
+* Implemented multi-stage build to reduce the final image size by nearly 50%
 
 ## Information
 
