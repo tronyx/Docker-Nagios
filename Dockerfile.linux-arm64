@@ -7,9 +7,7 @@ ARG NAGIOS_UID=5000
 ARG NAGIOS_GID=5000
 
 ############################
-# Builder: compiles Nagios Core/Plugins/NRPE/NSCA/QStat/NagiosGraph and installs
-# everything that needs build tooling. Only the finished artifacts and a computed
-# list of their runtime library dependencies are copied into the final stage.
+# Builder stage: build Nagios and its plugins from source
 ############################
 FROM ubuntu:26.04 AS builder
 
@@ -74,7 +72,6 @@ RUN apt-get -qq update && \
     apt-get -qq -y purge --auto-remove software-properties-common && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/* && \
-    # Reduce unecesssary git output
     git config --global advice.detachedHead false
 
 RUN ( grep -Ei "^${NAGIOS_GROUP}"    /etc/group || groupadd --gid ${NAGIOS_GID} $NAGIOS_GROUP ) && \
@@ -149,7 +146,7 @@ RUN cd /tmp && \
 
 # Install NSCA
 # aarch64 isn't recognized by the config.guess/config.sub shipped with this NSCA tag, so
-# they're replaced with current ones from a pinned, checksum-verified gnuconfig commit.
+# they're replaced with current ones from a pinned, checksum-verified gnuconfig commit
 RUN cd /tmp && \
     git clone --depth 1 --branch ${NSCA_TAG} https://github.com/NagiosEnterprises/nsca.git && \
     cd nsca && \
@@ -180,7 +177,7 @@ RUN cd /tmp && \
     make clean && \
     cd /tmp && rm -Rf qstat
 
-# Install additional plugins (pip packages land in a fixed path, independent of the Python version)
+# Install additional plugins
 RUN mkdir -p /opt/nagios-pyplugins && \
     cd /opt && \
     pip3 install --break-system-packages --no-cache-dir --target=/opt/nagios-pyplugins \
@@ -348,14 +345,8 @@ COPY --from=builder /opt/DF-Nagios-Plugins /opt/DF-Nagios-Plugins
 COPY --from=builder /opt/jpmens-mqtt /opt/jpmens-mqtt
 COPY --from=builder /usr/lib/nagios/plugins /usr/lib/nagios/plugins
 COPY --from=builder /usr/local/bin/qstat /usr/local/bin/qstat
-
-# `make install-webconf` (run in the builder stage) writes the Apache vhost snippet that
-# grants access to ${NAGIOS_HOME}/share and ${NAGIOS_HOME}/sbin (cgi-bin) under Apache 2.4's
-# Require-based access control. It never gets copied into this stage on its own, so without
-# it Apache's global default-deny applies to the Nagios docroot/cgi-bin and every request
-# comes back 403 Forbidden.
+# Apache 2.4 default-denies /share and /sbin (cgi-bin) unless this vhost is enabled, or every request 403s.
 COPY --from=builder /etc/apache2/sites-available/nagios.conf /etc/apache2/sites-available/nagios.conf
-RUN ln -s /etc/apache2/sites-available/nagios.conf /etc/apache2/sites-enabled/nagios.conf
 
 # Install NCPA
 ARG NCPA_CHECK_SHA256=7b8a2634b8ca1cdd9479e9d1841fd5c49f471097d2ed3006c89338bdeba04c50
@@ -437,11 +428,12 @@ RUN ln -sf /etc/sv/* /etc/service
 # Fix ping permissions for Nagios user
 RUN chmod u+s /usr/bin/ping
 
-# Set ServerName and timezone for Apache
+# Set ServerName and timezone for Apache, and enable the nagios vhost copied in above
 RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.conf && \
     echo "PassEnv TZ" > /etc/apache2/conf-available/timezone.conf && \
     ln -s /etc/apache2/conf-available/servername.conf /etc/apache2/conf-enabled/servername.conf && \
-    ln -s /etc/apache2/conf-available/timezone.conf /etc/apache2/conf-enabled/timezone.conf
+    ln -s /etc/apache2/conf-available/timezone.conf /etc/apache2/conf-enabled/timezone.conf && \
+    ln -s /etc/apache2/sites-available/nagios.conf /etc/apache2/sites-enabled/nagios.conf
 
 # Cleanup
 # Remove unecessary packages after install/setup are complete
@@ -463,6 +455,10 @@ EXPOSE 80 5667
 
 # Specify volumes
 VOLUME "${NAGIOS_HOME}/var" "${NAGIOS_HOME}/etc" "/var/log/apache2" "/opt/Custom-Nagios-Plugins" "/opt/nagiosgraph/var" "/opt/nagiosgraph/etc"
+
+# Fails unless Apache serves the authenticated Nagios UI and the nagios.lock PID is a live process.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=45s --retries=3 \
+    CMD curl -fso /dev/null -u "${NAGIOSADMIN_USER}:${NAGIOSADMIN_PASS}" http://localhost/nagios/ && kill -0 "$(cat ${NAGIOS_HOME}/var/nagios.lock 2>/dev/null)" 2>/dev/null || exit 1
 
 # Start command
 CMD [ "/usr/local/bin/start_nagios" ]
