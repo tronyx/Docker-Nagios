@@ -120,10 +120,10 @@ The default credentials for the web interface are:
 
 ### Extra Plugins
 
-* [Nagios NRPE](http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details)
-* [Nagios NCPA](https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details)
-* [Nagios NSCA](https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details)
-* [Nagiosgraph](http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details)
+* [Nagios NRPE](http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details) - Remotely execute Nagios plugins on other Linux/Unix machines
+* [Nagios NCPA](https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details) - Cross-platform monitoring agent
+* [Nagios NSCA](https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details) - Integrate passive alerts and checks from remote machines and applications
+* [Nagiosgraph](http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details) - Displays data in Nagios trends, as popups for hosts and services
 * [JR-Nagios-Plugins](https://github.com/JasonRivers/nagios-plugins) - Custom plugins from Jason Rivers
 * [WL-Nagios-Plugins](https://github.com/willixix/WL-NagiosPlugins) - Custom plugins from William Leibzon
 * [JE-Nagios-Plugins](https://github.com/justintime/nagios-plugins) - Custom plugins from Justin Ellison
