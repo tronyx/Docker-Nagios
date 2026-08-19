@@ -69,7 +69,8 @@ RUN apt-get -qq update && \
         python3-full \
         python3-pip \
         snmp \
-        unzip && \
+        unzip \
+        wget && \
     apt-get -qq -y purge --auto-remove software-properties-common && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/* && \
@@ -216,11 +217,11 @@ RUN chmod +x ${NAGIOS_HOME}/libexec/check_apc.pl
 # Discover the runtime shared-library packages actually linked by everything just
 # built, so the final stage can install those instead of the full -dev packages.
 RUN { find "${NAGIOS_HOME}/bin" "${NAGIOS_HOME}/sbin" "${NAGIOS_HOME}/libexec" -type f -perm -u+x; \
-      find /usr/local/bin -maxdepth 1 -type f -perm -u+x; \
-      find /opt/nagios-pyplugins -type f -name '*.so'; \
+        find /usr/local/bin -maxdepth 1 -type f -perm -u+x; \
+        find /opt/nagios-pyplugins -type f -name '*.so'; \
     } 2>/dev/null | sort -u | xargs -r -I{} ldd {} 2>/dev/null \
-      | awk '{print $3}' | grep '^/' | sort -u \
-      | xargs -r dpkg -S 2>/dev/null | cut -d: -f1 | sort -u > /runtime-packages.txt || true
+        | awk '{print $3}' | grep '^/' | sort -u \
+        | xargs -r dpkg -S 2>/dev/null | cut -d: -f1 | sort -u > /runtime-packages.txt || true
 
 ############################
 # Final image: runtime-only packages plus the artifacts copied from the builder
@@ -322,6 +323,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         snmpd \
         snmp-mibs-downloader \
         unzip \
+        wget \
         xinetd && \
     apt-get -qq -y purge --auto-remove software-properties-common && \
     apt-get -qq clean && \
