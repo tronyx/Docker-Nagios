@@ -45,7 +45,7 @@ Nagios Core running on Ubuntu 26.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and 
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.3 |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.9.11 |
 
-You can find the Docker Hub Registry [HERE](https://hub.docker.com/r/tronyx/nagios) or the GitHub Registry [HERE](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
+The images can be found on the [Docker Hub Registry](https://hub.docker.com/r/tronyx/nagios) or the [GitHub Registry](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
 
 ### Configurations
 
@@ -102,7 +102,7 @@ Note: The path for the custom plugins will be `/opt/Custom-Nagios-Plugins`, whic
 There are a number of environment variables that you can use to adjust the behaviour of the container:
 
 | Environment Variable | Description |
-|--------|--------|
+| -------- | -------- |
 | MAIL_RELAY_HOST | Set Postfix relayhost |
 | MAIL_INET_PROTOCOLS | Set the inet_protocols in Postfix |
 | NAGIOS_FQDN | Set the server Fully Qualified Domain Name in Postfix |
@@ -115,7 +115,7 @@ For the best results your Nagios container should have access to both IPv4 & IPv
 The default credentials for the web interface are:
 
 | Username | Password |
-|--------|--------|
+| -------- | -------- |
 | `nagiosadmin` | `nagios` |
 
 ### Extra Plugins
