@@ -13,10 +13,14 @@ on:
 jobs:
   build:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
-    runs-on: ubuntu-26.04
     strategy:
       matrix:
-        architecture: [linux-amd64, linux-arm64]
+        include:
+          - architecture: linux-amd64
+            runner: ubuntu-26.04
+          - architecture: linux-arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     outputs:
       version: ${{ steps.prep.outputs.version }}
       branch: ${{ steps.prep.outputs.branch }}
@@ -28,10 +32,6 @@ jobs:
         id: arch_check
         run: |
           (test -f Dockerfile.${{ matrix.architecture }} && echo "check=passed" >> $GITHUB_OUTPUT) || echo "check=failed" >> $GITHUB_OUTPUT
-
-      - name: Set up QEMU
-        if: "contains(steps.arch_check.outputs.check, 'passed')"
-        uses: docker/setup-qemu-action@v4.2.0
 
       - name: Set up Docker Buildx
         if: "contains(steps.arch_check.outputs.check, 'passed')"
@@ -94,8 +94,8 @@ jobs:
           push: true
           platforms: ${{ steps.prep.outputs.platform }}
           file: ./Dockerfile.${{ matrix.architecture }}
-          cache-from: docker.io/${{ steps.prep.outputs.cache }}
-          cache-to: docker.io/${{ steps.prep.outputs.cache }}
+          cache-from: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }}
+          cache-to: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }},mode=max
           tags: |
             docker.io/${{ steps.prep.outputs.tag }}
             ghcr.io/${{ steps.prep.outputs.tag }}
