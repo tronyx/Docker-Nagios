@@ -8,5 +8,5 @@ service nsca
     user        = nagios
     server      = /opt/nagios/bin/nsca
     server_args = -c /opt/nagios/etc/nsca.cfg --inetd
-    disable     = no
+    disable     = yes
 }

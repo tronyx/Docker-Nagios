@@ -3,24 +3,23 @@ name: build
 on:
   push:
     branches:
-      - master
       - develop
+      - ubuntu-26.04
   pull_request:
     branches:
-      - master
       - develop
+      - ubuntu-26.04
 
 jobs:
   build:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         architecture: [linux-amd64, linux-arm64]
     outputs:
       version: ${{ steps.prep.outputs.version }}
       branch: ${{ steps.prep.outputs.branch }}
-      time: ${{ steps.vars.outputs.time }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
@@ -109,12 +108,14 @@ jobs:
             org.opencontainers.image.url=${{ steps.prep.outputs.url }}
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
           build-args: |
-            GITHUB_TOKEN=${{ secrets.GHCR_TOKEN }}
-            BUILD_ARCHITECTURE=${{ matrix.architecture }}
             ${{ steps.prep.outputs.build-args }}
 
+      - name: Fail if build failed
+        if: "contains(steps.arch_check.outputs.check, 'passed') && steps.build_attempt1.outcome == 'failure'"
+        run: exit 1
+
   publish:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         registry: [docker.io, ghcr.io]
@@ -154,3 +155,7 @@ jobs:
           if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
           docker buildx imagetools create -t ${IMAGE}:latest ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
           fi
+
+      - name: Fail if manifest creation failed
+        if: steps.manifest_attempt1.outcome == 'failure'
+        run: exit 1
