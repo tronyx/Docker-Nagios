@@ -9,6 +9,6 @@ jobs:
     if: github.event.label.name == 'closed-no-issue-activity'
     runs-on: ubuntu-latest
     steps:
-      - uses: OSDKDev/lock-issues@v1.1.1
+      - uses: thisisnacho/lock-issues@v1.2
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
