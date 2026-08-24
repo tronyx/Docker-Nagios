@@ -131,8 +131,8 @@ docker exec -it nagios htpasswd -b /opt/nagios/etc/htpasswd.users nagiosadmin '<
 
 The image defines a Docker `HEALTHCHECK` that reports unhealthy unless both of the following succeed:
 
-* Apache answers an HTTP request on `http://localhost/` — any response counts, including a 401/403, since the check only cares that Apache itself is up and processing requests. It doesn't use Nagios credentials, so it isn't affected by password changes.
-* `runit` reports the `nagios` service as up (`sv check /etc/service/nagios`). Nagios's own `nagios.lock` isn't used for this, since the container runs it directly under `runit` without `-d`/`--daemon`, so Nagios never writes that file.
+* Apache answers an HTTP request on `http://localhost/` — any response counts, including a 401/403, since the check only cares that Apache itself is up and processing requests.
+* `runit` reports the `nagios` service as up (`sv check /etc/service/nagios`).
 
 ### Extra Plugins
 
