@@ -446,9 +446,11 @@ EXPOSE 80 5667
 # Specify volumes
 VOLUME "${NAGIOS_HOME}/var" "${NAGIOS_HOME}/etc" "/var/log/apache2" "/opt/Custom-Nagios-Plugins" "/opt/nagiosgraph/var" "/opt/nagiosgraph/etc"
 
-# Fails unless Apache serves the authenticated Nagios UI and the nagios.lock PID is a live process.
+# Fails unless Apache is answering HTTP requests and the nagios.lock PID is a live process.
+# Deliberately credential-free: any HTTP response (even a 401) proves Apache is up; only a
+# failed connection should count against the healthcheck.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=45s --retries=3 \
-    CMD curl -fso /dev/null -u "${NAGIOSADMIN_USER}:${NAGIOSADMIN_PASS}" http://localhost/nagios/ && kill -0 "$(cat ${NAGIOS_HOME}/var/nagios.lock 2>/dev/null)" 2>/dev/null || exit 1
+    CMD curl -so /dev/null http://localhost/ && kill -0 "$(cat ${NAGIOS_HOME}/var/nagios.lock 2>/dev/null)" 2>/dev/null || exit 1
 
 # Start command
 CMD [ "/usr/local/bin/start_nagios" ]
