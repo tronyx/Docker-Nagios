@@ -74,10 +74,10 @@ RUN apt-get -qq update && \
     rm -rf /var/lib/apt/lists/* && \
     git config --global advice.detachedHead false
 
-RUN ( grep -Ei "^${NAGIOS_GROUP}"    /etc/group || groupadd --gid ${NAGIOS_GID} $NAGIOS_GROUP ) && \
-    ( grep -Ei "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
-RUN ( id -u $NAGIOS_USER    || useradd --system --uid ${NAGIOS_UID} -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER ) && \
-    ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
+RUN ( grep -Ei "^${NAGIOS_GROUP}"    /etc/group || groupadd --gid ${NAGIOS_GID} ${NAGIOS_GROUP} ) && \
+    ( grep -Ei "^${NAGIOS_CMDGROUP}" /etc/group || groupadd ${NAGIOS_CMDGROUP} )
+RUN ( id -u ${NAGIOS_USER}    || useradd --system --uid ${NAGIOS_UID} -d ${NAGIOS_HOME} -g ${NAGIOS_GROUP}    ${NAGIOS_USER} ) && \
+    ( id -u ${NAGIOS_CMDUSER} || useradd --system -d ${NAGIOS_HOME} -g ${NAGIOS_CMDGROUP} ${NAGIOS_CMDUSER} )
 
 RUN update-ca-certificates -f
 
@@ -104,7 +104,7 @@ RUN cd /tmp && \
 
 # Install Nagios Plugins
 RUN cd /tmp && \
-    git clone --depth 1 https://github.com/nagios-plugins/nagios-plugins.git -b $NAGIOS_PLUGINS_BRANCH && \
+    git clone --depth 1 https://github.com/nagios-plugins/nagios-plugins.git -b ${NAGIOS_PLUGINS_BRANCH} && \
     cd nagios-plugins && \
     ./tools/setup && \
     ./configure \
@@ -326,10 +326,10 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/* /runtime-packages.txt
 
-RUN ( grep -Ei "^${NAGIOS_GROUP}"    /etc/group || groupadd --gid ${NAGIOS_GID} $NAGIOS_GROUP ) && \
-    ( grep -Ei "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
-RUN ( id -u $NAGIOS_USER    || useradd --system --uid ${NAGIOS_UID} -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER ) && \
-    ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
+RUN ( grep -Ei "^${NAGIOS_GROUP}"    /etc/group || groupadd --gid ${NAGIOS_GID} ${NAGIOS_GROUP} ) && \
+    ( grep -Ei "^${NAGIOS_CMDGROUP}" /etc/group || groupadd ${NAGIOS_CMDGROUP} )
+RUN ( id -u ${NAGIOS_USER}    || useradd --system --uid ${NAGIOS_UID} -d ${NAGIOS_HOME} -g ${NAGIOS_GROUP}    ${NAGIOS_USER} ) && \
+    ( id -u ${NAGIOS_CMDUSER} || useradd --system -d ${NAGIOS_HOME} -g ${NAGIOS_CMDGROUP} ${NAGIOS_CMDUSER} )
 
 RUN update-ca-certificates -f
 
