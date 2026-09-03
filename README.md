@@ -8,6 +8,8 @@ Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-
 
 ## Incorporated PRs
 
+Listing these as I wish to give the original users credit for their work.
+
 * [#96](https://github.com/JasonRivers/Docker-Nagios/pull/96) - Fix issue with Nagiosgraph source ([fregge](https://github.com/fregge))
 * [#101](https://github.com/JasonRivers/Docker-Nagios/pull/101) - Fixes to allow building on ARM aarch64 architecture ([garethrandall](https://github.com/garethrandall))
 * [#110](https://github.com/JasonRivers/Docker-Nagios/pull/110) - Update to Ubuntu 18.04 LTS ([asimzeeshan](https://github.com/asimzeeshan))
@@ -17,8 +19,6 @@ Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-
 * [#130](https://github.com/JasonRivers/Docker-Nagios/issues/130) - Add Perl encryption libraries ([rehashedsalt](https://github.com/rehashedsalt))
 * [#132](https://github.com/JasonRivers/Docker-Nagios/issues/132) - Add rSync ([LutzLegu](https://github.com/LutzLegu))
 * [#165](https://github.com/JasonRivers/Docker-Nagios/pull/165) - Added libcrypt-x509-per and libtext-glob-perl modules ([Scott-Jones-COS](https://github.com/Scott-Jones-COS))
-
-Listing these as I wish to give the original users credit for their work.
 
 ## Changes That I've Made
 
@@ -141,7 +141,7 @@ The image defines a Docker `HEALTHCHECK` that reports unhealthy unless both of t
 | Name/Link | Description |
 | -------- | -------- |
 | [Nagios NRPE](http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details) | Remotely execute Nagios plugins on other Linux/Unix machines |
-| [Nagios NCPA](https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details) - Cross-platform monitoring agent |
+| [Nagios NCPA](https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details) | Cross-platform monitoring agent |
 | [Nagios NSCA](https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details) | Integrate passive alerts and checks from remote machines and applications |
 | [Nagiosgraph](http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details) | Displays data in Nagios trends, as popups for hosts and services |
 | [JR-Nagios-Plugins](https://github.com/JasonRivers/nagios-plugins) | Custom plugins from Jason Rivers |
