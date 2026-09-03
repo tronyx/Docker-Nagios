@@ -4,7 +4,11 @@
 
 ## Notes
 
-Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-Nagios) to incorporate various improvements from the open PRs on his repo. I have incorporated the following PRs:
+Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-Nagios) to incorporate various improvements from the open PRs on his repo along with other updates and quality of life improvements.
+
+## Incorporated PRs
+
+Listing these as I wish to give the original users credit for their work.
 
 * [#96](https://github.com/JasonRivers/Docker-Nagios/pull/96) - Fix issue with Nagiosgraph source ([fregge](https://github.com/fregge))
 * [#101](https://github.com/JasonRivers/Docker-Nagios/pull/101) - Fixes to allow building on ARM aarch64 architecture ([garethrandall](https://github.com/garethrandall))
@@ -16,13 +20,11 @@ Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-
 * [#132](https://github.com/JasonRivers/Docker-Nagios/issues/132) - Add rSync ([LutzLegu](https://github.com/LutzLegu))
 * [#165](https://github.com/JasonRivers/Docker-Nagios/pull/165) - Added libcrypt-x509-per and libtext-glob-perl modules ([Scott-Jones-COS](https://github.com/Scott-Jones-COS))
 
-Listing these as I wish to give the original users credit for their work.
-
 ## Changes That I've Made
 
 Things that I have changed/updated/added to date:
 
-* Updated the image to Ubuntu 24.04 LTS
+* Updated the image to Ubuntu 26.04 LTS
 * Updated Nagios Core to the current latest
 * Updated Nagios Plugins to current latest
 * Updated NRPE to current latest
@@ -30,21 +32,22 @@ Things that I have changed/updated/added to date:
 * Updated NSCA to current latest
 * Added NagiosTV
 * Built multi-arch images (amd64 & arm64)
+* Implemented multi-stage build to reduce the final image size by nearly 50%
 
 ## Information
 
-Nagios Core running on Ubuntu 24.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and NagiosTV.
+Nagios Core running on Ubuntu 26.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and NagiosTV.
 
 | Product | Version |
 | ------- | ------- |
-| [Nagios Core](https://github.com/NagiosEnterprises/nagioscore/releases) | 4.5.9 |
-| [Nagios Plugins](https://github.com/nagios-plugins/nagios-plugins) | 2.4.12 |
+| [Nagios Core](https://github.com/NagiosEnterprises/nagioscore/releases) | 4.5.14 |
+| [Nagios Plugins](https://github.com/nagios-plugins/nagios-plugins) | 2.5 |
 | [NRPE](https://github.com/NagiosEnterprises/nrpe) | 4.1.3 |
-| [NCPA](https://github.com/NagiosEnterprises/ncpa) | 3.1.3 |
+| [NCPA](https://github.com/NagiosEnterprises/ncpa) | 3.4.3 |
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.3 |
-| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.9.5 |
+| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.9.11 |
 
-You can find the Docker Hub Registry [HERE](https://hub.docker.com/r/tronyx/nagios) or the GitHub Registry [HERE](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
+The images can be found on the [Docker Hub Registry](https://hub.docker.com/r/tronyx/nagios) or the [GitHub Registry](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
 
 ### Configurations
 
@@ -65,7 +68,8 @@ docker pull ghcr.io/tronyx/nagios
 | ------- | ------- | ------- |
 | Master | latest | Master branch that is known to be stable. |
 | Develop | develop | My testing/development branch for updates. |
-| Ubuntu-22.04 | ubuntu-22.04 | Older Ubuntu base version that still has Python 2 and the plugins that require it. Use this for arm-v7 hardware. Will keep this as up-to-date as possible. |
+
+I may spawn other branches for testing from time to time, IE: new Ubuntu LTS or something similar, but for the most part these are the main branches.
 
 ### Running
 
@@ -101,7 +105,7 @@ Note: The path for the custom plugins will be `/opt/Custom-Nagios-Plugins`, whic
 There are a number of environment variables that you can use to adjust the behaviour of the container:
 
 | Environment Variable | Description |
-|--------|--------|
+| -------- | -------- |
 | MAIL_RELAY_HOST | Set Postfix relayhost |
 | MAIL_INET_PROTOCOLS | Set the inet_protocols in Postfix |
 | NAGIOS_FQDN | Set the server Fully Qualified Domain Name in Postfix |
@@ -114,19 +118,36 @@ For the best results your Nagios container should have access to both IPv4 & IPv
 The default credentials for the web interface are:
 
 | Username | Password |
-|--------|--------|
+| -------- | -------- |
 | `nagiosadmin` | `nagios` |
+
+`NAGIOSADMIN_USER`/`NAGIOSADMIN_PASS` only seed `/opt/nagios/etc/htpasswd.users` the first time the container starts (i.e. when that file doesn't already exist, such as on a fresh named volume). Changing these env vars on a container that already has a populated `etc` volume has no effect on the stored password.
+
+To change the password on an existing container:
+
+```bash
+docker exec -it nagios htpasswd -b /opt/nagios/etc/htpasswd.users nagiosadmin '<new-password>'
+```
+
+### Health Check
+
+The image defines a Docker `HEALTHCHECK` that reports unhealthy unless both of the following succeed:
+
+* Apache answers an HTTP request on `http://localhost/` — any response counts, including a 401/403, since the check only cares that Apache itself is up and processing requests.
+* `runit` reports the `nagios` service as up (`sv check /etc/service/nagios`).
 
 ### Extra Plugins
 
-* [Nagios NRPE](http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details)
-* [Nagios NCPA](https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details)
-* [Nagios NSCA](https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details)
-* [Nagiosgraph](http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details)
-* [JR-Nagios-Plugins](https://github.com/JasonRivers/nagios-plugins) - Custom plugins from Jason Rivers
-* [WL-Nagios-Plugins](https://github.com/willixix/WL-NagiosPlugins) - Custom plugins from William Leibzon
-* [JE-Nagios-Plugins](https://github.com/justintime/nagios-plugins) - Custom plugins from Justin Ellison
-* [DF-Nagios-Plugins](https://github.com/danfruehauf/nagios-plugins) - Custom pluging for MSSQL monitoring from Dan Fruehauf
-* [check-mqtt](https://github.com/jpmens/check-mqtt.git) - Custom plugin for mqtt monitoring from Jan-Piet Mens
-* [NagiosTV](https://github.com/chriscareycode/nagiostv-react) - Monitor your Nagios server on a wall-mounted TV
-* [check_apc](https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apc-2Epl/details) - Check APC for status, health, and load
+| Name/Link | Description |
+| -------- | -------- |
+| [Nagios NRPE](http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details) | Remotely execute Nagios plugins on other Linux/Unix machines |
+| [Nagios NCPA](https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details) | Cross-platform monitoring agent |
+| [Nagios NSCA](https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details) | Integrate passive alerts and checks from remote machines and applications |
+| [Nagiosgraph](http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details) | Displays data in Nagios trends, as popups for hosts and services |
+| [JR-Nagios-Plugins](https://github.com/JasonRivers/nagios-plugins) | Custom plugins from Jason Rivers |
+| [WL-Nagios-Plugins](https://github.com/willixix/WL-NagiosPlugins) | Custom plugins from William Leibzon |
+| [JE-Nagios-Plugins](https://github.com/justintime/nagios-plugins) | Custom plugins from Justin Ellison |
+| [DF-Nagios-Plugins](https://github.com/danfruehauf/nagios-plugins) | Custom pluging for MSSQL monitoring from Dan Fruehauf |
+| [check-mqtt](https://github.com/jpmens/check-mqtt.git) | Custom plugin for mqtt monitoring from Jan-Piet Mens |
+| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | Monitor your Nagios server on a wall-mounted TV |
+| [check_apc](https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apc-2Epl/details) | Check APC for status, health, and load |
