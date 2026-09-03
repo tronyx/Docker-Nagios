@@ -136,14 +136,16 @@ The image defines a Docker `HEALTHCHECK` that reports unhealthy unless both of t
 
 ### Extra Plugins
 
-* [Nagios NRPE](http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details) - Remotely execute Nagios plugins on other Linux/Unix machines
-* [Nagios NCPA](https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details) - Cross-platform monitoring agent
-* [Nagios NSCA](https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details) - Integrate passive alerts and checks from remote machines and applications
-* [Nagiosgraph](http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details) - Displays data in Nagios trends, as popups for hosts and services
-* [JR-Nagios-Plugins](https://github.com/JasonRivers/nagios-plugins) - Custom plugins from Jason Rivers
-* [WL-Nagios-Plugins](https://github.com/willixix/WL-NagiosPlugins) - Custom plugins from William Leibzon
-* [JE-Nagios-Plugins](https://github.com/justintime/nagios-plugins) - Custom plugins from Justin Ellison
-* [DF-Nagios-Plugins](https://github.com/danfruehauf/nagios-plugins) - Custom pluging for MSSQL monitoring from Dan Fruehauf
-* [check-mqtt](https://github.com/jpmens/check-mqtt.git) - Custom plugin for mqtt monitoring from Jan-Piet Mens
-* [NagiosTV](https://github.com/chriscareycode/nagiostv-react) - Monitor your Nagios server on a wall-mounted TV
-* [check_apc](https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apc-2Epl/details) - Check APC for status, health, and load
+| Name/Link | Description |
+| -------- | -------- |
+| [Nagios NRPE](http://exchange.nagios.org/directory/Addons/Monitoring-Agents/NRPE--2D-Nagios-Remote-Plugin-Executor/details) | Remotely execute Nagios plugins on other Linux/Unix machines |
+| [Nagios NCPA](https://exchange.nagios.org/directory/Addons/Monitoring-Agents/NCPA/details) - Cross-platform monitoring agent |
+| [Nagios NSCA](https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details) | Integrate passive alerts and checks from remote machines and applications |
+| [Nagiosgraph](http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details) | Displays data in Nagios trends, as popups for hosts and services |
+| [JR-Nagios-Plugins](https://github.com/JasonRivers/nagios-plugins) | Custom plugins from Jason Rivers |
+| [WL-Nagios-Plugins](https://github.com/willixix/WL-NagiosPlugins) | Custom plugins from William Leibzon |
+| [JE-Nagios-Plugins](https://github.com/justintime/nagios-plugins) | Custom plugins from Justin Ellison |
+| [DF-Nagios-Plugins](https://github.com/danfruehauf/nagios-plugins) | Custom pluging for MSSQL monitoring from Dan Fruehauf |
+| [check-mqtt](https://github.com/jpmens/check-mqtt.git) | Custom plugin for mqtt monitoring from Jan-Piet Mens |
+| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | Monitor your Nagios server on a wall-mounted TV |
+| [check_apc](https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apc-2Epl/details) | Check APC for status, health, and load |
