@@ -4,7 +4,9 @@
 
 ## Notes
 
-Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-Nagios) to incorporate various improvements from the open PRs on his repo. I have incorporated the following PRs:
+Fork of [JasonRivers Docker Nagios image](https://github.com/JasonRivers/Docker-Nagios) to incorporate various improvements from the open PRs on his repo along with other updates and quality of life improvements.
+
+## Incorporated PRs
 
 * [#96](https://github.com/JasonRivers/Docker-Nagios/pull/96) - Fix issue with Nagiosgraph source ([fregge](https://github.com/fregge))
 * [#101](https://github.com/JasonRivers/Docker-Nagios/pull/101) - Fixes to allow building on ARM aarch64 architecture ([garethrandall](https://github.com/garethrandall))
