@@ -230,14 +230,14 @@ LABEL nagiosVersion="4.5.14"
 LABEL nagiosPluginsVersion="2.5"
 LABEL nrpeVersion="4.1.3"
 LABEL nscaVersion="2.10.3"
-LABEL ncpaVersion="3.4.3"
+LABEL ncpaVersion="3.5.0"
 LABEL nagiostvVersion="0.9.11"
 LABEL homepage="https://www.nagios.com/"
 LABEL maintainer="Tronyx <tronyx@tronflix.app>"
 
 ARG NAGIOS_UID
 ARG NAGIOS_GID
-ARG NCPA_BRANCH=v3.4.3
+ARG NCPA_BRANCH=v3.5.0
 ARG NAGIOSTV_VERSION=0.9.11
 
 # Environment variables
