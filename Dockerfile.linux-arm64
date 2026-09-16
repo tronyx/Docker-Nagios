@@ -307,7 +307,9 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libdbi-perl \
         libdigest-hmac-perl \
         libgd-gd2-perl \
+        libfile-slurp-perl \
         libjson-perl \
+        libjson-xs-perl \
         libnagios-object-perl \
         libmonitoring-plugin-perl \
         libnet-snmp-perl \
