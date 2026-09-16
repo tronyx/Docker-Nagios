@@ -52,6 +52,8 @@ RUN apt-get -qq update && \
         libradsec-dev \
         libgd-dev \
         libgd-gd2-perl \
+        libfile-slurp-perl \
+        libjson-xs-perl \
         libldap2-dev \
         libmariadb-dev \
         libnagios-object-perl \
