@@ -291,6 +291,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libnet-xmpp-perl \
         libredis-perl \
         librrds-perl \
+        libsasl2-modules \
         libswitch-perl \
         libtext-glob-perl \
         libwww-perl \

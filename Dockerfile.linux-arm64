@@ -61,6 +61,7 @@ RUN apt-get -qq update && \
         libpq-dev \
         libpython3-dev \
         librrds-perl \
+        libsasl2-modules \
         libssl-dev \
         libxpm-dev \
         m4 \
