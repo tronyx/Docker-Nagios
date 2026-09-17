@@ -109,7 +109,6 @@ There are a number of environment variables that you can use to adjust the behav
 | MAIL_RELAY_HOST | Set Postfix relayhost |
 | MAIL_RELAY_USERNAME | Set username for Postfix relayhost; if present, will force TLS on relayhost connections, remember to add port 587 to your MAIL_RELAY_HOST value if you are using the 'submission' port/service |
 | MAIL_RELAY_PASSWORD | Set password for Postfix relayhost |
-| MAIL_RELAY_HOST | Set Postfix relayhost |
 | MAIL_INET_PROTOCOLS | Set the inet_protocols in Postfix |
 | NAGIOS_FQDN | Set the server Fully Qualified Domain Name in Postfix |
 | NAGIOS_TIMEZONE | Set the timezone of the server |
