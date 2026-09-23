@@ -340,7 +340,6 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         net-tools \
         netcat-traditional \
         openssh-client \
-        parallel \
         php-cli \
         php-gd \
         postfix \

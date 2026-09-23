@@ -31,18 +31,21 @@ fi
 
 shutdown() {
     echo 'Shutting down...'
-    ls /etc/service | SHELL=/bin/sh parallel --no-notice sv force-stop {}
+    # Kept under Docker's default 10s stop timeout
+    sv -w 7 force-stop /etc/service/*
     if [ -e "/proc/${RUNSVDIR}" ]; then
         kill -HUP "${RUNSVDIR}"
         wait "${RUNSVDIR}"
     fi
 
-    # Give stuff a bit of time to finish
-    sleep 5
-
-    ORPHANS=$(ps -eo pid= | tr -d ' ' | grep -Fxv 1)
-    SHELL=/bin/bash parallel --no-notice 'timeout 5 /bin/bash -c "kill {} && wait {}" || kill -9 {}' ::: "${ORPHANS}" 2> /dev/null
-    exit
+    # As PID 1, "kill -1" signals every other process; kill -0 -1 fails once none are left
+    kill -TERM -1 2>/dev/null
+    for _ in 1 2 3 4 5 6 7 8 9 10; do
+        kill -0 -1 2>/dev/null || break
+        sleep 0.2
+    done
+    kill -KILL -1 2>/dev/null
+    exit 0
 }
 
 exec runsvdir -P /etc/service &
