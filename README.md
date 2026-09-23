@@ -66,8 +66,8 @@ docker pull ghcr.io/tronyx/nagios
 
 | Branch | Image Tag | Notes |
 | ------- | ------- | ------- |
-| Master | latest | Master branch that is known to be stable. |
-| Develop | develop | My testing/development branch for updates. |
+| Master | `latest`, `master`, `master-<nagios version>` | Master branch that is known to be stable. |
+| Develop | `develop`, `develop-<nagios version>` | My testing/development branch for updates. |
 
 I may spawn other branches for testing from time to time, IE: new Ubuntu LTS or something similar, but for the most part these are the main branches.
 
@@ -102,16 +102,28 @@ docker run --name nagios  \
 
 Note: The path for the custom plugins will be `/opt/Custom-Nagios-Plugins`, which you will need to reference in your configuration scripts.
 
+When bind mounting host directories, empty `etc`/`var` directories are populated with the default configuration on first start, and the Nagios and NagiosGraph directories are chowned to the container's `nagios` user (UID/GID `5000`) on every start.
+
+### Using Docker Compose
+
+An example [docker-compose.yml](docker-compose.yml) is included that uses named volumes by default, with a commented-out bind mount alternative:
+
+```bash
+docker compose up -d
+```
+
 There are a number of environment variables that you can use to adjust the behaviour of the container:
 
 | Environment Variable | Description |
 | -------- | -------- |
 | MAIL_RELAY_HOST | Set Postfix relayhost |
-| MAIL_RELAY_USERNAME | Set username for Postfix relayhost; if present, will force TLS on relayhost connections, remember to add port 587 to your MAIL_RELAY_HOST value if you are using the 'submission' port/service |
+| MAIL_RELAY_USERNAME | Set username for Postfix relayhost (requires `MAIL_RELAY_HOST`); if present, will force TLS on relayhost connections, remember to add port 587 to your MAIL_RELAY_HOST value if you are using the 'submission' port/service |
 | MAIL_RELAY_PASSWORD | Set password for Postfix relayhost |
 | MAIL_INET_PROTOCOLS | Set the inet_protocols in Postfix |
 | NAGIOS_FQDN | Set the server Fully Qualified Domain Name in Postfix |
-| NAGIOS_TIMEZONE | Set the timezone of the server |
+| NAGIOS_TIMEZONE | Set the timezone of the server (default `UTC`). Written to `use_timezone` in `nagios.cfg` on every start, so it overrides any manual edit of that setting |
+| NAGIOSADMIN_USER | Web interface admin username, used only when `htpasswd.users` is first created (default `nagiosadmin`) |
+| NAGIOSADMIN_PASS | Web interface admin password, used only when `htpasswd.users` is first created (default `nagios`) |
 
 For the best results your Nagios container should have access to both IPv4 & IPv6 networks.
 
@@ -123,7 +135,7 @@ The default credentials for the web interface are:
 | -------- | -------- |
 | `nagiosadmin` | `nagios` |
 
-`NAGIOSADMIN_USER`/`NAGIOSADMIN_PASS` only seed `/opt/nagios/etc/htpasswd.users` the first time the container starts (i.e. when that file doesn't already exist, such as on a fresh named volume). Changing these env vars on a container that already has a populated `etc` volume has no effect on the stored password.
+`NAGIOSADMIN_USER`/`NAGIOSADMIN_PASS` only seed `/opt/nagios/etc/htpasswd.users` the first time the container starts (i.e. when that file doesn't already exist, such as on a fresh named volume or empty bind mount). Changing these env vars on a container that already has a populated `etc` volume has no effect on the stored password.
 
 To change the password on an existing container:
 
@@ -149,8 +161,10 @@ The image defines a Docker `HEALTHCHECK` that reports unhealthy unless both of t
 | [JR-Nagios-Plugins](https://github.com/JasonRivers/nagios-plugins) | Custom plugins from Jason Rivers |
 | [WL-Nagios-Plugins](https://github.com/willixix/WL-NagiosPlugins) | Custom plugins from William Leibzon |
 | [JE-Nagios-Plugins](https://github.com/justintime/nagios-plugins) | Custom plugins from Justin Ellison |
-| [DF-Nagios-Plugins](https://github.com/danfruehauf/nagios-plugins) | Custom pluging for MSSQL monitoring from Dan Fruehauf |
+| [DF-Nagios-Plugins](https://github.com/danfruehauf/nagios-plugins) | Custom plugins from Dan Fruehauf (`check_sql`, `check_jenkins`, `check_vpn`) |
+| [check_mssql_collection](https://github.com/NagiosEnterprises/check_mssql_collection) | MSSQL database and server checks from Nagios Enterprises |
+| [check_nwc_health](https://github.com/lausser/check_nwc_health) | Network component (switch, router, firewall) checks from Gerhard Lausser |
+| [check_apc.pl](plugins/check_apc.pl) | APC UPS checks via SNMP |
+| [QStat](https://github.com/multiplay/qstat) | Game server status query tool, installed at `/usr/local/bin/qstat` |
 | [check-mqtt](https://github.com/jpmens/check-mqtt.git) | Custom plugin for mqtt monitoring from Jan-Piet Mens |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | Monitor your Nagios server on a wall-mounted TV |
-| [check_apc](https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apc-2Epl/details) | Check APC for status, health, and load |
-| [check_nwc_health](https://github.com/lausser/check_nwc_health) | Swiss-army-knife plugin for checking many status and health aspects of network components |
