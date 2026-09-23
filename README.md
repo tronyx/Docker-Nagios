@@ -165,6 +165,6 @@ The image defines a Docker `HEALTHCHECK` that reports unhealthy unless both of t
 | [check_mssql_collection](https://github.com/NagiosEnterprises/check_mssql_collection) | MSSQL database and server checks from Nagios Enterprises |
 | [check_nwc_health](https://github.com/lausser/check_nwc_health) | Network component (switch, router, firewall) checks from Gerhard Lausser |
 | [check_apc.pl](plugins/check_apc.pl) | APC UPS checks via SNMP |
-| [QStat](https://github.com/multiplay/qstat) | Game server status query tool, installed at `/usr/local/bin/qstat` |
+| [QStat](https://github.com/multiplay/qstat) | Game server status query tool, installed at `/usr/local/bin/qstat` and used by the `check_game` plugin |
 | [check-mqtt](https://github.com/jpmens/check-mqtt.git) | Custom plugin for mqtt monitoring from Jan-Piet Mens |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | Monitor your Nagios server on a wall-mounted TV |

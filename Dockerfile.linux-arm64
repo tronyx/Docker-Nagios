@@ -108,6 +108,17 @@ RUN cd /tmp && \
     make clean && \
     cd /tmp && rm -Rf nagioscore
 
+# Install QStat (must precede Nagios Plugins, whose configure only builds check_game if qstat is found)
+RUN cd /tmp && \
+    git clone --depth 1 https://github.com/multiplay/qstat.git && \
+    cd qstat && \
+    ./autogen.sh && \
+    ./configure && \
+    make && \
+    make install && \
+    make clean && \
+    cd /tmp && rm -Rf qstat
+
 # Install Nagios Plugins
 RUN cd /tmp && \
     git clone --depth 1 https://github.com/nagios-plugins/nagios-plugins.git -b ${NAGIOS_PLUGINS_BRANCH} && \
@@ -171,17 +182,6 @@ RUN cd /tmp && \
     cp sample-config/send_nsca.cfg ${NAGIOS_HOME}/etc/ && \
     sed -i 's/^#server_address.*/server_address=0.0.0.0/'  ${NAGIOS_HOME}/etc/nsca.cfg && \
     cd /tmp && rm -Rf nsca
-
-# Install QStat
-RUN cd /tmp && \
-    git clone --depth 1 https://github.com/multiplay/qstat.git && \
-    cd qstat && \
-    ./autogen.sh && \
-    ./configure && \
-    make && \
-    make install && \
-    make clean && \
-    cd /tmp && rm -Rf qstat
 
 # Install additional plugins
 RUN mkdir -p /opt/nagios-pyplugins && \
