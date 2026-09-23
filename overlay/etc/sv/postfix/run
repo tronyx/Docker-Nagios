@@ -2,7 +2,7 @@
 
 
 if ! [ "${MAIL_RELAY_HOST}" = "" ]; then
-    sed -i "s/relayhost =.*/relayhost = ${MAIL_RELAY_HOST}/" /etc/postfix/main.cf
+    postconf -e "relayhost = ${MAIL_RELAY_HOST}"
 fi
 if ! [ "${MAIL_RELAY_USERNAME}" = "" ]; then
     # Keyed on the exact relayhost value; kept out of the world-readable main.cf
@@ -18,12 +18,12 @@ if ! [ "${MAIL_RELAY_USERNAME}" = "" ]; then
     postconf -e "smtp_sasl_tls_security_options = noanonymous"
 fi
 if ! [ "${MAIL_INET_PROTOCOLS}" = "" ]; then 
-    sed -i "s/inet_protocols =.*/inet_protocols = ${MAIL_INET_PROTOCOLS}/" /etc/postfix/main.cf
+    postconf -e "inet_protocols = ${MAIL_INET_PROTOCOLS}"
 fi
-sed -i "s/myhostname =.*/myhostname = $(hostname)/" /etc/postfix/main.cf
-sed -i "s/mydestination =.*/mydestination = ${NAGIOS_FQDN}, \$myhostname, localhost.localdomain, localhost/" /etc/postfix/main.cf
+postconf -e "myhostname = $(hostname)"
+postconf -e "mydestination = ${NAGIOS_FQDN}, \$myhostname, localhost.localdomain, localhost"
 
-sed -i "/^myorigin =.*/d" /etc/postfix/main.cf
+postconf -X myorigin
 echo "${NAGIOS_FQDN}" > /etc/mailname
 
 #postfix runs in a chroot and needs resolv.conf to resolve hostnames
