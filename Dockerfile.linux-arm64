@@ -34,6 +34,10 @@ ENV NAGIOS_GROUP=nagios
 ENV NAGIOS_CMDUSER=nagios
 ENV NAGIOS_CMDGROUP=nagios
 ENV DEBIAN_FRONTEND=noninteractive
+ENV NG_CGI_URL=/cgi-bin
+ENV NG_NAGIOS_CONFIG_FILE=${NAGIOS_HOME}/etc/nagios.cfg
+ENV NG_CGI_DIR=${NAGIOS_HOME}/sbin
+ENV NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph
 
 RUN apt-get -qq update && \
     apt-get -qq -y install --no-install-recommends software-properties-common && \
