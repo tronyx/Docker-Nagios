@@ -38,7 +38,7 @@ for dockerfile in "${dockerfiles[@]}"; do
 
     ncpa_branch=$(arg_value "$dockerfile" NCPA_BRANCH)
     echo "Fetching check_ncpa.py @ ${ncpa_branch}..."
-    curl -sL -o "$tmpdir/check_ncpa.py" \
+    curl -fsSL -o "$tmpdir/check_ncpa.py" \
         "https://raw.githubusercontent.com/NagiosEnterprises/ncpa/${ncpa_branch}/client/check_ncpa.py"
     ncpa_sha=$(sha256 "$tmpdir/check_ncpa.py")
     set_arg_value "$dockerfile" NCPA_CHECK_SHA256 "$ncpa_sha"
@@ -46,7 +46,7 @@ for dockerfile in "${dockerfiles[@]}"; do
 
     nagiostv_version=$(arg_value "$dockerfile" NAGIOSTV_VERSION)
     echo "Fetching nagiostv-${nagiostv_version}.tar.gz..."
-    curl -sL -o "$tmpdir/nagiostv.tar.gz" \
+    curl -fsSL -o "$tmpdir/nagiostv.tar.gz" \
         "https://github.com/chriscareycode/nagiostv-react/releases/download/v${nagiostv_version}/nagiostv-${nagiostv_version}.tar.gz"
     nagiostv_sha=$(sha256 "$tmpdir/nagiostv.tar.gz")
     set_arg_value "$dockerfile" NAGIOSTV_SHA256 "$nagiostv_sha"
@@ -56,9 +56,9 @@ for dockerfile in "${dockerfiles[@]}"; do
     if has_arg "$dockerfile" GNUCONFIG_COMMIT; then
         gnuconfig_commit=$(arg_value "$dockerfile" GNUCONFIG_COMMIT)
         echo "Fetching gnuconfig @ ${gnuconfig_commit}..."
-        curl -sL -o "$tmpdir/config.guess" \
+        curl -fsSL -o "$tmpdir/config.guess" \
             "https://raw.githubusercontent.com/spack/gnuconfig/${gnuconfig_commit}/config.guess"
-        curl -sL -o "$tmpdir/config.sub" \
+        curl -fsSL -o "$tmpdir/config.sub" \
             "https://raw.githubusercontent.com/spack/gnuconfig/${gnuconfig_commit}/config.sub"
         guess_sha=$(sha256 "$tmpdir/config.guess")
         sub_sha=$(sha256 "$tmpdir/config.sub")
