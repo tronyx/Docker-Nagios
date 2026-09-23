@@ -81,7 +81,7 @@ jobs:
             echo "cache=$(echo ${GITHUB_REPOSITORY}:${CACHE_REF_NAME}-cache-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]')"
             echo "tag=$(echo ${GITHUB_REPOSITORY}:${REF_NAME}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)"
           } >> $GITHUB_OUTPUT
-          VERSION=$(grep nagiosVersion Dockerfile.${{ matrix.architecture }} | awk -F= '{print $2}' | tr -d '" \\')
+          VERSION=$(grep -m1 '^ARG NAGIOS_VERSION=' Dockerfile.${{ matrix.architecture }} | cut -d= -f2)
           if [[ -z ${VERSION} ]]; then
             VERSION=$(date --utc --date=@$(git show -s --format=%ct $(git rev-parse --short HEAD)) +'%Y%m%d%H%M%S')
           fi

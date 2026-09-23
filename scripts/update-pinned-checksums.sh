@@ -36,10 +36,10 @@ trap 'rm -rf "$tmpdir"' EXIT
 for dockerfile in "${dockerfiles[@]}"; do
     echo "== ${dockerfile} =="
 
-    ncpa_branch=$(arg_value "$dockerfile" NCPA_BRANCH)
-    echo "Fetching check_ncpa.py @ ${ncpa_branch}..."
+    ncpa_version=$(arg_value "$dockerfile" NCPA_VERSION)
+    echo "Fetching check_ncpa.py @ v${ncpa_version}..."
     curl -fsSL -o "$tmpdir/check_ncpa.py" \
-        "https://raw.githubusercontent.com/NagiosEnterprises/ncpa/${ncpa_branch}/client/check_ncpa.py"
+        "https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v${ncpa_version}/client/check_ncpa.py"
     ncpa_sha=$(sha256 "$tmpdir/check_ncpa.py")
     set_arg_value "$dockerfile" NCPA_CHECK_SHA256 "$ncpa_sha"
     echo "  NCPA_CHECK_SHA256=${ncpa_sha}"
