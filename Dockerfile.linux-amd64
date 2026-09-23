@@ -37,9 +37,6 @@ ENV NG_CGI_DIR=${NAGIOS_HOME}/sbin
 ENV NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph
 
 RUN apt-get -qq update && \
-    apt-get -qq -y install --no-install-recommends software-properties-common && \
-    add-apt-repository universe && \
-    apt-get -qq update && \
     apt-get -qq -y install --no-install-recommends \
         apache2 \
         autoconf \
@@ -71,7 +68,6 @@ RUN apt-get -qq update && \
         python3-pip \
         snmp \
         unzip && \
-    apt-get -qq -y purge --auto-remove software-properties-common && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/* && \
     git config --global advice.detachedHead false
@@ -274,9 +270,6 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
     echo postfix postfix/mailname string ${NAGIOS_FQDN} | debconf-set-selections && \
     apt-get -qq update && \
-    apt-get -qq -y install --no-install-recommends software-properties-common && \
-    add-apt-repository universe && \
-    apt-get -qq update && \
     apt-get -qq -y install --no-install-recommends \
         $(cat /runtime-packages.txt) \
         apache2 \
@@ -333,7 +326,6 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         unzip \
         wget \
         xinetd && \
-    apt-get -qq -y purge --auto-remove software-properties-common && \
     apt-get -qq clean && \
     rm -rf /var/lib/apt/lists/* /runtime-packages.txt
 
