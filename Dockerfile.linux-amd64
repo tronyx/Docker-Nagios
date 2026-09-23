@@ -435,9 +435,6 @@ RUN chmod +x /usr/local/bin/start_nagios && \
 # Enable all runit services
 RUN ln -sf /etc/sv/* /etc/service
 
-# Fix ping permissions for Nagios user
-RUN chmod u+s /usr/bin/ping
-
 # Set ServerName and timezone for Apache, and enable the nagios vhost copied in above
 RUN echo "ServerName ${NAGIOS_FQDN}" > /etc/apache2/conf-available/servername.conf && \
     echo "PassEnv TZ" > /etc/apache2/conf-available/timezone.conf && \
