@@ -1,7 +1,8 @@
 #!/bin/bash
 
 echo 'Checking permissions for nagios & nagiosgraph...'
-find /opt/nagios \! -user "${NAGIOS_USER}" -exec chown "${NAGIOS_USER}":"${NAGIOS_GROUP}" '{}' +
+# libexec is skipped so chown doesn't strip the setuid root bit from check_icmp
+find /opt/nagios -path /opt/nagios/libexec -prune -o \! -user "${NAGIOS_USER}" -exec chown "${NAGIOS_USER}":"${NAGIOS_GROUP}" '{}' +
 find /opt/nagiosgraph \! -user "${NAGIOS_USER}" -exec chown "${NAGIOS_USER}":"${NAGIOS_GROUP}" '{}' +
 
 if ! [ -f /opt/nagiosgraph/etc/ngshared.pm ]; then
