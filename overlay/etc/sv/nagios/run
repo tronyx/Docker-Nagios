@@ -6,19 +6,8 @@ find /opt/nagios -path /opt/nagios/libexec -prune -o \! -user "${NAGIOS_USER}" -
 find /opt/nagiosgraph \! -user "${NAGIOS_USER}" -exec chown "${NAGIOS_USER}":"${NAGIOS_GROUP}" '{}' +
 
 if ! [ -f /opt/nagiosgraph/etc/ngshared.pm ]; then
-    echo "Configuring Nagiosgraph..."
-    cd /tmp && \
-    git clone https://git.code.sf.net/p/nagiosgraph/git nagiosgraph && \
-    cd nagiosgraph && \
-    ./install.pl --install \
-        --prefix /opt/nagiosgraph \
-        --nagios-user "${NAGIOS_USER}" \
-        --www-user "${NAGIOS_USER}" \
-        --nagios-perfdata-file "${NAGIOS_HOME}"/var/perfdata.log \
-        --nagios-cgi-url /cgi-bin >/dev/null && \
-    cp share/nagiosgraph.ssi "${NAGIOS_HOME}"/share/ssi/common-header.ssi && \
-    cd /tmp && rm -Rf nagiosgraph
-    echo "Done!"
+    echo "ngshared.pm missing from /opt/nagiosgraph/etc, restoring the image default..."
+    cp -p /orig/graph-etc/ngshared.pm /opt/nagiosgraph/etc/
 fi
 
 exec "${NAGIOS_HOME}/bin/nagios" "${NAGIOS_HOME}/etc/nagios.cfg"
