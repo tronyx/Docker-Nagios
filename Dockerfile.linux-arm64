@@ -67,7 +67,7 @@ RUN apt-get -qq update && \
         libssl-dev \
         libxpm-dev \
         m4 \
-        python3-full \
+        python3 \
         python3-pip \
         snmp \
         unzip \
@@ -318,13 +318,14 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         libswitch-perl \
         libtext-glob-perl \
         libwww-perl \
+        net-tools \
         netcat-traditional \
         openssh-client \
         parallel \
         php-cli \
         php-gd \
         postfix \
-        python3-full \
+        python3 \
         python3-nagiosplugin \
         rsync \
         rsyslog \
