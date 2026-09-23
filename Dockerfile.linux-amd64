@@ -408,9 +408,18 @@ RUN mkdir -p /orig/var && \
     cp -Rp /opt/nagiosgraph/etc/* /orig/graph-etc && \
     cp -Rp /opt/nagiosgraph/var/* /orig/graph-var
 
-# Set the permissions for example config
-RUN find /opt/nagios/etc \! -user ${NAGIOS_USER} -exec chown ${NAGIOS_USER}:${NAGIOS_GROUP} '{}' + && \
-    find /orig/etc \! -user ${NAGIOS_USER} -exec chown ${NAGIOS_USER}:${NAGIOS_GROUP} '{}' +
+# nagios also runs Apache/PHP, so it only gets write access to its data, not binaries, CGIs or web files.
+# chown clears setuid bits, so check_icmp's and check_dhcp's are re-applied afterwards.
+RUN chown -R root:${NAGIOS_GROUP} ${NAGIOS_HOME} /opt/nagiosgraph && \
+    find ${NAGIOS_HOME} /opt/nagiosgraph -mindepth 1 -maxdepth 1 \! -name etc \! -name var \! -name .ssh \
+        -exec chmod -R go-w '{}' + && \
+    chmod u+s ${NAGIOS_HOME}/libexec/check_icmp ${NAGIOS_HOME}/libexec/check_dhcp && \
+    echo '{}' > ${NAGIOS_HOME}/share/nagiostv/client-settings.json && \
+    chown -R ${NAGIOS_USER}:${NAGIOS_GROUP} \
+        ${NAGIOS_HOME}/etc ${NAGIOS_HOME}/var ${NAGIOS_HOME}/.ssh \
+        /opt/nagiosgraph/etc /opt/nagiosgraph/var \
+        /orig/etc /orig/var /orig/graph-etc /orig/graph-var \
+        ${NAGIOS_HOME}/share/nagiostv/client-settings.json
 
 RUN a2enmod session && \
     a2enmod session_cookie && \
