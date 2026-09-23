@@ -402,6 +402,11 @@ COPY overlay /
 
 RUN echo "use_timezone=${NAGIOS_TIMEZONE}" >> ${NAGIOS_HOME}/etc/nagios.cfg
 
+# Must run before /orig/graph-etc is seeded below so fresh bind mounts get the patched ngshared.pm
+RUN cd /opt/nagiosgraph/etc && \
+    sh fix-nagiosgraph-multiple-selection.sh && \
+    rm fix-nagiosgraph-multiple-selection.sh
+
 # Copy example config in-case the user has started with empty var or etc
 RUN mkdir -p /orig/var && \
     mkdir -p /orig/etc && \
@@ -427,11 +432,7 @@ RUN a2enmod session && \
 
 # Make scripts executable
 RUN chmod +x /usr/local/bin/start_nagios && \
-    chmod +x /etc/sv/*/run && \
-    chmod +x /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh
-
-RUN cd /opt/nagiosgraph/etc && \
-    sh fix-nagiosgraph-multiple-selection.sh
+    chmod +x /etc/sv/*/run
 
 # Enable all runit services
 RUN ln -sf /etc/sv/* /etc/service
@@ -454,8 +455,7 @@ RUN apt-get -qq -y autoremove && \
     /tmp/* \
     /var/lib/apt/lists/* && \
     # Remove some other files and dirs
-    rm -f /opt/nagiosgraph/etc/fix-nagiosgraph-multiple-selection.sh \
-    /opt/get-pip.py \
+    rm -f /opt/get-pip.py \
     /var/lib/dpkg/status-old && \
     true > /var/log/dpkg.log && \
     true > /var/log/lastlog && \
