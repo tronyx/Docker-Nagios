@@ -4,6 +4,15 @@
 if ! [ "${MAIL_RELAY_HOST}" = "" ]; then
     sed -i "s/relayhost =.*/relayhost = ${MAIL_RELAY_HOST}/" /etc/postfix/main.cf
 fi
+if ! [ "${MAIL_RELAY_USERNAME}" = "" ]; then
+    postconf -e "smtp_tls_security_level = encrypt"
+    postconf -e "smtp_sasl_auth_enable = yes"
+    postconf -e "smtp_sasl_password_maps = static:{${MAIL_RELAY_USERNAME}:${MAIL_RELAY_PASSWORD}}" 
+    postconf -e "# Security and TLS encryption settings" 
+    postconf -e "smtp_sasl_security_options = noanonymous" 
+    postconf -e "smtp_sasl_auth_enable = yes" 
+    postconf -e "smtp_sasl_tls_security_options = noanonymous" 
+fi
 if ! [ "${MAIL_INET_PROTOCOLS}" = "" ]; then 
     sed -i "s/inet_protocols =.*/inet_protocols = ${MAIL_INET_PROTOCOLS}/" /etc/postfix/main.cf
 fi
