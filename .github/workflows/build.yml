@@ -42,7 +42,7 @@ jobs:
           driver-opts: image=moby/buildkit:master
 
       - name: Login to docker.io
-        if: "contains(steps.arch_check.outputs.check, 'passed')"
+        if: "contains(steps.arch_check.outputs.check, 'passed') && github.event_name != 'pull_request'"
         uses: docker/login-action@v4.4.0
         with:
           registry: docker.io
@@ -50,7 +50,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Login to ghcr.io
-        if: "contains(steps.arch_check.outputs.check, 'passed')"
+        if: "contains(steps.arch_check.outputs.check, 'passed') && github.event_name != 'pull_request'"
         uses: docker/login-action@v4.4.0
         with:
           registry: ghcr.io
@@ -61,27 +61,32 @@ jobs:
         if: "contains(steps.arch_check.outputs.check, 'passed')"
         id: prep
         run: |
+          # GITHUB_REF is refs/pull/N/merge on PRs, which isn't a valid tag and has no cache of its own
+          if [[ "${GITHUB_EVENT_NAME}" == pull_request ]]; then
+            REF_NAME="pr-${{ github.event.number }}"
+            CACHE_REF_NAME="${GITHUB_BASE_REF}"
+          else
+            REF_NAME="${GITHUB_REF_NAME}"
+            CACHE_REF_NAME="${GITHUB_REF_NAME}"
+          fi
           {
             ARCHITECTURE=${{ matrix.architecture }}
             echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            echo "title=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//} | tr '[:upper:]' '[:lower:]')"
+            echo "title=$(echo ${GITHUB_REPOSITORY}:${REF_NAME} | tr '[:upper:]' '[:lower:]')"
             echo "revision=${GITHUB_SHA}"
-            echo "source=$(echo ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//} | tr '[:upper:]' '[:lower:]')"
+            echo "source=$(echo ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${REF_NAME} | tr '[:upper:]' '[:lower:]')"
             echo "vendor=${{ github.repository_owner }}"
             echo "url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"
             echo "platform=${ARCHITECTURE//-/\/}"
-            echo "cache=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-cache-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]')"
-            echo "tag=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)"
+            echo "cache=$(echo ${GITHUB_REPOSITORY}:${CACHE_REF_NAME}-cache-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]')"
+            echo "tag=$(echo ${GITHUB_REPOSITORY}:${REF_NAME}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)"
           } >> $GITHUB_OUTPUT
           VERSION=$(grep nagiosVersion Dockerfile.${{ matrix.architecture }} | awk -F= '{print $2}' | tr -d '" \\')
           if [[ -z ${VERSION} ]]; then
             VERSION=$(date --utc --date=@$(git show -s --format=%ct $(git rev-parse --short HEAD)) +'%Y%m%d%H%M%S')
           fi
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          BRANCH="${GITHUB_REF//refs\/heads\//}"
-          if [[ -n ${BRANCH} ]]; then
-            echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
-          fi
+          echo "branch=${REF_NAME}" >> $GITHUB_OUTPUT
 
           echo $GITHUB_OUTPUT
 
@@ -91,11 +96,11 @@ jobs:
         id: build_attempt1
         uses: docker/build-push-action@v7.3.0
         with:
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           platforms: ${{ steps.prep.outputs.platform }}
           file: ./Dockerfile.${{ matrix.architecture }}
           cache-from: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }}
-          cache-to: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }},mode=max
+          cache-to: ${{ github.event_name != 'pull_request' && format('type=registry,ref=docker.io/{0},mode=max', steps.prep.outputs.cache) || '' }}
           tags: |
             docker.io/${{ steps.prep.outputs.tag }}
             ghcr.io/${{ steps.prep.outputs.tag }}
@@ -115,6 +120,7 @@ jobs:
         run: exit 1
 
   publish:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-26.04
     strategy:
       matrix:
