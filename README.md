@@ -120,7 +120,7 @@ There are a number of environment variables that you can use to adjust the behav
 | MAIL_RELAY_USERNAME | Set username for Postfix relayhost (requires `MAIL_RELAY_HOST`); if present, will force TLS on relayhost connections, remember to add port 587 to your MAIL_RELAY_HOST value if you are using the 'submission' port/service |
 | MAIL_RELAY_PASSWORD | Set password for Postfix relayhost |
 | MAIL_INET_PROTOCOLS | Set the inet_protocols in Postfix |
-| NAGIOS_FQDN | Set the server Fully Qualified Domain Name in Postfix |
+| NAGIOS_FQDN | Set the server Fully Qualified Domain Name used by Postfix and as Apache's `ServerName` (default `nagios.example.com`) |
 | NAGIOS_TIMEZONE | Set the timezone of the server (default `UTC`). Written to `use_timezone` in `nagios.cfg` on every start, so it overrides any manual edit of that setting |
 | NAGIOSADMIN_USER | Web interface admin username, used only when `htpasswd.users` is first created (default `nagiosadmin`) |
 | NAGIOSADMIN_PASS | Web interface admin password, used only when `htpasswd.users` is first created (default `nagios`) |
