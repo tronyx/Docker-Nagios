@@ -325,6 +325,7 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         php-cli \
         php-gd \
         postfix \
+        python-is-python3 \
         python3 \
         python3-nagiosplugin \
         rsync \
