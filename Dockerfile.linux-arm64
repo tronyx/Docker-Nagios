@@ -410,8 +410,6 @@ RUN rm -rf /etc/rsyslog.d /etc/rsyslog.conf /etc/sv/getty-5
 
 COPY overlay /
 
-RUN echo "use_timezone=${NAGIOS_TIMEZONE}" >> ${NAGIOS_HOME}/etc/nagios.cfg
-
 # Must run before /orig/graph-etc is seeded below so fresh bind mounts get the patched ngshared.pm
 RUN cd /opt/nagiosgraph/etc && \
     sh fix-nagiosgraph-multiple-selection.sh && \

@@ -10,4 +10,17 @@ if ! [ -f /opt/nagiosgraph/etc/ngshared.pm ]; then
     cp -p /orig/graph-etc/ngshared.pm /opt/nagiosgraph/etc/
 fi
 
+NAGIOS_CFG="${NAGIOS_HOME}/etc/nagios.cfg"
+if [ -n "${NAGIOS_TIMEZONE}" ]; then
+    if [ -f "/usr/share/zoneinfo/${NAGIOS_TIMEZONE}" ]; then
+        if grep -q '^use_timezone=' "${NAGIOS_CFG}"; then
+            sed -i "s|^use_timezone=.*|use_timezone=${NAGIOS_TIMEZONE}|" "${NAGIOS_CFG}"
+        else
+            echo "use_timezone=${NAGIOS_TIMEZONE}" >> "${NAGIOS_CFG}"
+        fi
+    else
+        echo "Unknown NAGIOS_TIMEZONE '${NAGIOS_TIMEZONE}', leaving use_timezone unchanged."
+    fi
+fi
+
 exec "${NAGIOS_HOME}/bin/nagios" "${NAGIOS_HOME}/etc/nagios.cfg"
