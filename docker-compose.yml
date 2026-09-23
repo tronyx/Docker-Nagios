@@ -1,34 +1,42 @@
 ---
 
-# This compose file acts as an example on using docker volumes for nagios
+# This compose file acts as an example on using docker volumes or bind mounts for nagios
 # configuration. As nagios configurations are different for each site they are
 # not considered part of the container image. The best way to deal with the
 # configurations is to store them in a volume allowing the user to upgrade the
 # image without the need to extract the site configuration from the container.
 
-version: '3'
 services:
   nagios:
     image: tronyx/nagios:latest
+    #image: tronyx/nagios:develop
     container_name: nagios
-    restart: on-failure
+    restart: unless-stopped
     ports:
       - "8080:80"
     environment:
       NAGIOS_TIMEZONE: America/New_York
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
-      - "/etc/localtime:/etc/timezone:ro"
+      # Named volumes (declared at the bottom of this file)
       - nagiosetc:/opt/nagios/etc
       - nagiosvar:/opt/nagios/var
       - customplugins:/opt/Custom-Nagios-Plugins
       - nagiosgraphvar:/opt/nagiosgraph/var
       - nagiosgraphetc:/opt/nagiosgraph/etc
       - nagiosa2logs:/var/log/apache2
+      # Bind mounts: use these instead of the named volumes above to keep the data in host
+      # directories. Empty directories are seeded with the default config on first start and
+      # chowned to the container's nagios user (UID/GID 5000).
+      #- ./data/nagios/etc:/opt/nagios/etc
+      #- ./data/nagios/var:/opt/nagios/var
+      #- ./data/custom-plugins:/opt/Custom-Nagios-Plugins
+      #- ./data/nagiosgraph/var:/opt/nagiosgraph/var
+      #- ./data/nagiosgraph/etc:/opt/nagiosgraph/etc
+      #- ./data/apache2-logs:/var/log/apache2
 
+# Only needed for the named volumes; remove this section when using bind mounts
 volumes:
-    # To change from Docker-managed volumes to bind mounts, add a driver_opts section as detailed here
-    # https://stackoverflow.com/questions/35841241/docker-compose-named-mounted-volume
     nagiosetc:
     nagiosvar:
     customplugins:
