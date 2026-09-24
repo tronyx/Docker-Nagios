@@ -1,10 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-
-if ! [ "${MAIL_RELAY_HOST}" = "" ]; then
+if [[ -n ${MAIL_RELAY_HOST} ]]; then
     postconf -e "relayhost = ${MAIL_RELAY_HOST}"
 fi
-if ! [ "${MAIL_RELAY_USERNAME}" = "" ]; then
+if [[ -n ${MAIL_RELAY_USERNAME} ]]; then
     # Keyed on the exact relayhost value; kept out of the world-readable main.cf
     SASL_DB_TYPE=$(postconf -h default_database_type)
     umask 077
@@ -17,7 +16,7 @@ if ! [ "${MAIL_RELAY_USERNAME}" = "" ]; then
     postconf -e "smtp_sasl_security_options = noanonymous"
     postconf -e "smtp_sasl_tls_security_options = noanonymous"
 fi
-if ! [ "${MAIL_INET_PROTOCOLS}" = "" ]; then 
+if [[ -n ${MAIL_INET_PROTOCOLS} ]]; then
     postconf -e "inet_protocols = ${MAIL_INET_PROTOCOLS}"
 fi
 postconf -e "myhostname = $(hostname)"

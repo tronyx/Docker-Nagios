@@ -1,30 +1,30 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Adapted from https://github.com/discourse/discourse_docker/blob/master/image/base/boot
 # This script becomes PID 1 inside the container, catches termination signals, and stops
 # processes managed by runit
 
-if [ -z "$(ls -A /opt/nagios/etc)" ]; then
-    echo "Started with empty ETC, copying example data in-place"
+if [[ -z $(ls -A /opt/nagios/etc) ]]; then
+    echo 'Started with empty ETC, copying example data in-place'
     cp -Rp /orig/etc/* /opt/nagios/etc/
 fi
 
-if [ -z "$(ls -A /opt/nagios/var)" ]; then
-    echo "Started with empty VAR, copying example data in-place"
+if [[ -z $(ls -A /opt/nagios/var) ]]; then
+    echo 'Started with empty VAR, copying example data in-place'
     cp -Rp /orig/var/* /opt/nagios/var/
 fi
 
-if [ -z "$(ls -A /opt/nagiosgraph/etc)" ]; then
-    echo "Started with empty /opt/nagiosgraph/etc, copying example data in-place"
+if [[ -z $(ls -A /opt/nagiosgraph/etc) ]]; then
+    echo 'Started with empty /opt/nagiosgraph/etc, copying example data in-place'
     cp -Rp /orig/graph-etc/* /opt/nagiosgraph/etc/
 fi
 
-if [ -z "$(ls -A /opt/nagiosgraph/var)" ]; then
-    echo "Started with empty /opt/nagiosgraph/var, copying example data in-place"
+if [[ -z $(ls -A /opt/nagiosgraph/var) ]]; then
+    echo 'Started with empty /opt/nagiosgraph/var, copying example data in-place'
     cp -Rp /orig/graph-var/* /opt/nagiosgraph/var/
 fi
 
-if [ ! -f "${NAGIOS_HOME}/etc/htpasswd.users" ] ; then
+if [[ ! -f ${NAGIOS_HOME}/etc/htpasswd.users ]]; then
     htpasswd -c -b -s "${NAGIOS_HOME}/etc/htpasswd.users" "${NAGIOSADMIN_USER}" "${NAGIOSADMIN_PASS}"
     chown "${NAGIOS_USER}:${NAGIOS_GROUP}" "${NAGIOS_HOME}/etc/htpasswd.users"
 fi
@@ -33,7 +33,7 @@ shutdown() {
     echo 'Shutting down...'
     # Kept under Docker's default 10s stop timeout
     sv -w 7 force-stop /etc/service/*
-    if [ -e "/proc/${RUNSVDIR}" ]; then
+    if [[ -e /proc/${RUNSVDIR} ]]; then
         kill -HUP "${RUNSVDIR}"
         wait "${RUNSVDIR}"
     fi

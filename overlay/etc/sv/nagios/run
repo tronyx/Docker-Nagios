@@ -1,18 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo 'Checking permissions for nagios & nagiosgraph...'
 for dir in "${NAGIOS_HOME}/etc" "${NAGIOS_HOME}/var" /opt/nagiosgraph/etc /opt/nagiosgraph/var; do
     find "${dir}" \! -user "${NAGIOS_USER}" -exec chown "${NAGIOS_USER}":"${NAGIOS_GROUP}" '{}' +
 done
 
-if ! [ -f /opt/nagiosgraph/etc/ngshared.pm ]; then
-    echo "ngshared.pm missing from /opt/nagiosgraph/etc, restoring the image default..."
+if [[ ! -f /opt/nagiosgraph/etc/ngshared.pm ]]; then
+    echo 'ngshared.pm missing from /opt/nagiosgraph/etc, restoring the image default...'
     cp -p /orig/graph-etc/ngshared.pm /opt/nagiosgraph/etc/
 fi
 
 NAGIOS_CFG="${NAGIOS_HOME}/etc/nagios.cfg"
-if [ -n "${NAGIOS_TIMEZONE}" ]; then
-    if [ -f "/usr/share/zoneinfo/${NAGIOS_TIMEZONE}" ]; then
+if [[ -n ${NAGIOS_TIMEZONE} ]]; then
+    if [[ -f /usr/share/zoneinfo/${NAGIOS_TIMEZONE} ]]; then
         if grep -q '^use_timezone=' "${NAGIOS_CFG}"; then
             sed -i "s|^use_timezone=.*|use_timezone=${NAGIOS_TIMEZONE}|" "${NAGIOS_CFG}"
         else
