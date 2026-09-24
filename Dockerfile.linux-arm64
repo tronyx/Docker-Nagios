@@ -85,6 +85,7 @@ RUN apt-get -qq update && \
         libjson-xs-perl \
         libldap2-dev \
         libmariadb-dev \
+        libmariadb-dev-compat \
         libnagios-object-perl \
         libpq-dev \
         libpython3-dev \

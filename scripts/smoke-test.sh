@@ -58,6 +58,8 @@ check "NagiosTV loads" http_is 200 -u "nagiosadmin:$password" http://localhost/n
 check "check_icmp works as nagios" as_nagios '/opt/nagios/libexec/check_icmp -H 127.0.0.1'
 check "check_ping works as nagios" as_nagios '/opt/nagios/libexec/check_ping -H 127.0.0.1 -w 100,20% -c 200,50%'
 check "check_game is built" as_nagios '/opt/nagios/libexec/check_game --version | grep -q nagios-plugins'
+check "check_mysql and check_mysql_query are built" as_nagios \
+    '/opt/nagios/libexec/check_mysql --version | grep -q nagios-plugins && /opt/nagios/libexec/check_mysql_query --version | grep -q nagios-plugins'
 check "check_nrpe runs" as_nagios '/opt/nagios/libexec/check_nrpe --help | grep -q NRPE'
 check "check_ncpa.py runs" as_nagios '/opt/nagios/libexec/check_ncpa.py --help'
 check "check_mssql_server.py runs" as_nagios '/opt/nagios/libexec/check_mssql_server.py --help'
