@@ -83,14 +83,29 @@ jobs:
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
 
-      - name: Build and push
+      - name: Build for testing
         uses: docker/build-push-action@v7.3.0
         with:
-          push: ${{ github.event_name != 'pull_request' }}
+          load: true
           platforms: ${{ steps.prep.outputs.platform }}
           file: ./Dockerfile.${{ matrix.architecture }}
           cache-from: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }}
-          cache-to: ${{ github.event_name != 'pull_request' && format('type=registry,ref=docker.io/{0},mode=max', steps.prep.outputs.cache) || '' }}
+          tags: nagios-smoke-test:${{ matrix.architecture }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Smoke test
+        run: bash scripts/smoke-test.sh nagios-smoke-test:${{ matrix.architecture }}
+
+      # Reuses the layers built above, so this only exports and pushes
+      - name: Build and push
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v7.3.0
+        with:
+          push: true
+          platforms: ${{ steps.prep.outputs.platform }}
+          file: ./Dockerfile.${{ matrix.architecture }}
+          cache-from: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }}
+          cache-to: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }},mode=max
           tags: |
             docker.io/${{ steps.prep.outputs.tag }}
             ghcr.io/${{ steps.prep.outputs.tag }}
