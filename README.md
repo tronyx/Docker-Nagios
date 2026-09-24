@@ -47,6 +47,8 @@ Nagios Core running on Ubuntu 26.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and 
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.3 |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.9.11 |
 
+All of the standard Nagios Plugins are included, including `check_mysql` and `check_mysql_query`, except `check_radius`: it needs a RADIUS client library (`freeradius-client` or `radiusclient`) that isn't packaged for Ubuntu 26.04.
+
 The images can be found on the [Docker Hub Registry](https://hub.docker.com/r/tronyx/nagios) or the [GitHub Registry](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
 
 ### Configurations
@@ -168,3 +170,11 @@ The image defines a Docker `HEALTHCHECK` that reports unhealthy unless both of t
 | [QStat](https://github.com/multiplay/qstat) | Game server status query tool, installed at `/usr/local/bin/qstat` and used by the `check_game` plugin |
 | [check-mqtt](https://github.com/jpmens/check-mqtt.git) | Custom plugin for mqtt monitoring from Jan-Piet Mens |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | Monitor your Nagios server on a wall-mounted TV |
+
+## Maintaining the Image
+
+Every upstream source is pinned: git repositories to an exact commit (the `*_COMMIT` build args), the Ubuntu base image to a digest (`BASE_IMAGE`), and downloaded files to a SHA-256 checksum. Tagged releases are also checked at build time, so the build fails if a tag no longer points at its pinned commit.
+
+* **Updating pins:** [scripts/update-pinned-checksums.sh](scripts/update-pinned-checksums.sh) refreshes every pin in both Dockerfiles and prints a summary of what changed. It needs `git`, `curl` and `docker buildx`. Review the diff before committing. The `update-pins` workflow runs it every other week and opens a pull request against `develop` when anything has changed.
+* **Bumping a component:** Change its `*_VERSION` build arg (e.g. `NAGIOS_VERSION`) in both Dockerfiles, then run the script to re-pin its commit and checksums.
+* **Testing an image:** `scripts/smoke-test.sh <image>` starts the image and checks the web UI, key plugins, file permissions and a clean shutdown. CI runs it on every build before anything is pushed.
