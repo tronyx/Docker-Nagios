@@ -1,0 +1,63 @@
+name: update-pins
+
+on:
+  schedule:
+    # Mondays; the gate job skips odd ISO weeks so this effectively runs every other week
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-26.04
+    outputs:
+      run: ${{ steps.week.outputs.run }}
+    steps:
+      - name: Only run on even ISO weeks (manual runs always go ahead)
+        id: week
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" != schedule ]] || (( 10#$(date -u +%V) % 2 == 0 )); then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  update:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: develop
+
+      - name: Refresh pins
+        run: |
+          bash scripts/update-pinned-checksums.sh | tee "$RUNNER_TEMP/update.log"
+          {
+            echo "Automated refresh by \`scripts/update-pinned-checksums.sh\`. Review the upstream changes before merging."
+            echo
+            echo '```'
+            sed -n '/^$/,$p' "$RUNNER_TEMP/update.log" | sed '/^Review with:/d; /^$/d'
+            echo '```'
+          } > "$RUNNER_TEMP/pr-body.md"
+
+      # PRs opened with the default token don't trigger other workflows, so CI only builds
+      # this PR when PIN_UPDATE_TOKEN (a fine-grained PAT or GitHub App token) is set.
+      - name: Open or update pull request
+        uses: peter-evans/create-pull-request@v8.1.1
+        with:
+          token: ${{ secrets.PIN_UPDATE_TOKEN || github.token }}
+          base: develop
+          branch: automation/update-pins
+          delete-branch: true
+          add-paths: |
+            Dockerfile.linux-amd64
+            Dockerfile.linux-arm64
+          commit-message: Refresh pinned commits, base image digest and checksums
+          title: Refresh pinned upstream sources
+          body-path: ${{ runner.temp }}/pr-body.md
