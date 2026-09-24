@@ -1,0 +1,36 @@
+name: lint
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: hadolint
+        run: |
+          for f in Dockerfile.linux-*; do
+            echo "== $f"
+            docker run --rm -i -v "$PWD/.hadolint.yaml:/.config/hadolint.yaml:ro" hadolint/hadolint:v2.15.1 < "$f"
+          done
+
+      - name: shellcheck
+        run: |
+          docker run --rm -v "$PWD:/repo:ro" -w /repo --entrypoint sh koalaman/shellcheck-alpine:v0.11.0 -c \
+            'shellcheck --severity=warning overlay/usr/local/bin/start_nagios overlay/etc/sv/*/run overlay/opt/nagiosgraph/etc/*.sh scripts/*.sh'
+
+      - name: actionlint
+        run: docker run --rm -v "$PWD:/repo:ro" -w /repo rhysd/actionlint:1.7.12 -color

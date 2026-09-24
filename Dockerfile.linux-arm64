@@ -342,6 +342,8 @@ ENV NG_WWW_DIR=${NAGIOS_HOME}/share/nagiosgraph
 ENV PYTHONPATH=/opt/nagios-pyplugins
 
 COPY --from=builder /runtime-packages.txt /runtime-packages.txt
+# $(cat /runtime-packages.txt) is split into package names on purpose
+# hadolint ignore=SC2046
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
     echo postfix postfix/mailname string ${NAGIOS_FQDN} | debconf-set-selections && \
@@ -456,14 +458,13 @@ RUN sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars && \
     ln -s /etc/apache2/conf-available/servername.conf /etc/apache2/conf-enabled/servername.conf && \
     ln -s /etc/apache2/conf-available/timezone.conf /etc/apache2/conf-enabled/timezone.conf && \
     ln -s /etc/apache2/sites-available/nagios.conf /etc/apache2/sites-enabled/nagios.conf && \
-    mkdir -p -m 0755 /usr/share/snmp/mibs && \
+    install -d -m 0755 /usr/share/snmp/mibs && \
     touch /usr/share/snmp/mibs/.foo && \
     ln -s /usr/share/snmp/mibs ${NAGIOS_HOME}/libexec/mibs && \
     download-mibs && echo "mibs +ALL" > /etc/snmp/snmp.conf && \
     ln -s ${NAGIOS_HOME}/bin/nagios /usr/local/bin/nagios && \
     mkdir -p ${NAGIOS_HOME}/etc/conf.d ${NAGIOS_HOME}/etc/monitor && \
-    mkdir -p -m 700 ${NAGIOS_HOME}/.ssh && \
-    chown ${NAGIOS_USER}:${NAGIOS_GROUP} ${NAGIOS_HOME}/.ssh && \
+    install -d -m 700 -o ${NAGIOS_USER} -g ${NAGIOS_GROUP} ${NAGIOS_HOME}/.ssh && \
     postfix check && \
     cp /etc/services /var/spool/postfix/etc/ && \
     echo "smtp_address_preference = ipv4" >> /etc/postfix/main.cf && \
@@ -494,6 +495,7 @@ VOLUME "${NAGIOS_HOME}/var" "${NAGIOS_HOME}/etc" "/var/log/apache2" "/opt/Custom
 # Deliberately credential-free: any HTTP response (even a 401) proves Apache is up; only a
 # failed connection should count against the healthcheck. nagios.lock isn't used here since
 # the runit run script execs nagios without -d/--daemon, so nagios never writes that file.
+# hadolint ignore=DL3025
 HEALTHCHECK --interval=30s --timeout=5s --start-period=45s --retries=3 \
     CMD curl -so /dev/null http://localhost/ && sv check /etc/service/nagios >/dev/null 2>&1 || exit 1
 
