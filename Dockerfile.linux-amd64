@@ -14,10 +14,13 @@ ARG NSCA_VERSION=2.10.3
 ARG NCPA_VERSION=3.5.0
 ARG NAGIOSTV_VERSION=0.9.11
 
+# Multi-arch index digest, so the same value works for amd64 and arm64
+ARG BASE_IMAGE=ubuntu:26.04@sha256:da6fc2be547864451aa253836dd926da33623312df4a9a243e35dc877c378a78
+
 ############################
 # Builder stage: build Nagios and its plugins from source
 ############################
-FROM ubuntu:26.04 AS builder
+FROM ${BASE_IMAGE} AS builder
 
 ARG NAGIOS_UID
 ARG NAGIOS_GID
@@ -280,7 +283,7 @@ RUN chown -R root:${NAGIOS_GROUP} ${NAGIOS_HOME} /opt/nagiosgraph && \
 ############################
 # Final image: runtime-only packages plus the artifacts copied from the builder
 ############################
-FROM ubuntu:26.04
+FROM ${BASE_IMAGE}
 
 ARG NAGIOS_UID
 ARG NAGIOS_GID
