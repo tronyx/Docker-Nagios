@@ -25,6 +25,20 @@ ARG NAGIOS_VERSION
 ARG NAGIOS_PLUGINS_VERSION
 ARG NRPE_VERSION
 ARG NSCA_VERSION
+# Exact upstream commits for every git source; tagged ones are also verified against their tag
+ARG NAGIOS_COMMIT=cfa5684eb50facc3183d5ddb01d853b9eb9cc218
+ARG NAGIOS_PLUGINS_COMMIT=8852bf48d5a190df3ca32da253ee4ddf38c35e16
+ARG NRPE_COMMIT=563594c02717e9a86ed20696306f8e87aadf9f56
+ARG NSCA_COMMIT=c259e1c08d866cb0920bb807d36a174cca15b249
+ARG NAGIOSGRAPH_COMMIT=c1d98baaea7df181dc558ebddfaa4338a2f70c5f
+ARG QSTAT_COMMIT=bb34c265ca18a31487fcf8fa1071ee05b4169752
+ARG WL_PLUGINS_COMMIT=4011ea1507eefa35a07ee11a3035a276d6c1fae0
+ARG JR_PLUGINS_COMMIT=5914922632e59bb788db816a6940529e4c2f513f
+ARG JE_PLUGINS_COMMIT=3b81f33e1277290475cddb78fb377701ddb38f95
+ARG MSSQL_PLUGINS_COMMIT=c33be86a2ba5dc9671e4e1ff3fec7d496e32111b
+ARG DF_PLUGINS_COMMIT=484c9fa8ad0d329aa0734fcc3615976d5b9b7c1c
+ARG CHECK_MQTT_COMMIT=003f5cf392051deed4024e75cbf445aca400060f
+ARG CHECK_NWC_HEALTH_COMMIT=af6cbdba6cf5611c6eca117ffe53b734d9875d9a
 ARG GNUCONFIG_COMMIT=428664896cf9e92d264976a960c76660938dffce
 ARG GNUCONFIG_GUESS_SHA256=ac18bbd7dc3769e1646af49ebba331a391829f4a73579b735dc8d439bd1c7f07
 ARG GNUCONFIG_SUB_SHA256=f9a31e9a3f5b7cbeb8d8c3f2015895a51e7222130114c9c363fcbccd78e4bf6b
@@ -91,9 +105,29 @@ RUN ( id -u ${NAGIOS_USER}    || useradd --system --uid ${NAGIOS_UID} -d ${NAGIO
 
 RUN update-ca-certificates -f
 
+# Usage: git-fetch-commit <url> <commit> <dir> [<tag>]
+# With <tag>, the tag is fetched too (build scripts use git describe) and must point at <commit>.
+COPY --chmod=755 <<'EOF' /usr/local/bin/git-fetch-commit
+#!/bin/sh
+set -eu
+url=$1 commit=$2 dir=$3 tag=${4:-}
+git init -q "$dir"
+if [ -n "$tag" ]; then
+    git -C "$dir" fetch -q --depth 1 "$url" "refs/tags/$tag:refs/tags/$tag"
+    tagged=$(git -C "$dir" rev-parse "refs/tags/$tag^{commit}")
+    if [ "$tagged" != "$commit" ]; then
+        echo "$url: tag $tag is $tagged, but the pinned commit is $commit" >&2
+        exit 1
+    fi
+else
+    git -C "$dir" fetch -q --depth 1 "$url" "$commit"
+fi
+git -C "$dir" checkout -q "$commit"
+EOF
+
 # Install Nagios Core
 RUN cd /tmp && \
-    git clone --depth 1 https://github.com/NagiosEnterprises/nagioscore.git -b nagios-${NAGIOS_VERSION} && \
+    git-fetch-commit https://github.com/NagiosEnterprises/nagioscore.git ${NAGIOS_COMMIT} nagioscore nagios-${NAGIOS_VERSION} && \
     cd nagioscore && \
     cp /usr/share/misc/config.* . && \
     ./configure \
@@ -114,7 +148,7 @@ RUN cd /tmp && \
 
 # Install QStat (must precede Nagios Plugins, whose configure only builds check_game if qstat is found)
 RUN cd /tmp && \
-    git clone --depth 1 https://github.com/multiplay/qstat.git && \
+    git-fetch-commit https://github.com/multiplay/qstat.git ${QSTAT_COMMIT} qstat && \
     cd qstat && \
     ./autogen.sh && \
     ./configure && \
@@ -125,7 +159,7 @@ RUN cd /tmp && \
 
 # Install Nagios Plugins
 RUN cd /tmp && \
-    git clone --depth 1 https://github.com/nagios-plugins/nagios-plugins.git -b release-${NAGIOS_PLUGINS_VERSION} && \
+    git-fetch-commit https://github.com/nagios-plugins/nagios-plugins.git ${NAGIOS_PLUGINS_COMMIT} nagios-plugins release-${NAGIOS_PLUGINS_VERSION} && \
     cd nagios-plugins && \
     ./tools/setup && \
     ./configure \
@@ -144,7 +178,7 @@ RUN cd /tmp && \
 
 # Install NRPE
 RUN cd /tmp && \
-    git clone --depth 1 https://github.com/NagiosEnterprises/nrpe.git -b nrpe-${NRPE_VERSION} && \
+    git-fetch-commit https://github.com/NagiosEnterprises/nrpe.git ${NRPE_COMMIT} nrpe nrpe-${NRPE_VERSION} && \
     cd nrpe && \
     ./configure && \
     make check_nrpe > /dev/null && \
@@ -154,7 +188,7 @@ RUN cd /tmp && \
 
 # Install NagiosGraph
 RUN cd /tmp && \
-    git clone --depth 1 https://git.code.sf.net/p/nagiosgraph/git nagiosgraph && \
+    git-fetch-commit https://git.code.sf.net/p/nagiosgraph/git ${NAGIOSGRAPH_COMMIT} nagiosgraph && \
     cd nagiosgraph && \
     ./install.pl --install \
         --prefix /opt/nagiosgraph \
@@ -169,7 +203,7 @@ RUN cd /tmp && \
 # aarch64 isn't recognized by the config.guess/config.sub shipped with this NSCA tag, so
 # they're replaced with current ones from a pinned, checksum-verified gnuconfig commit
 RUN cd /tmp && \
-    git clone --depth 1 --branch nsca-${NSCA_VERSION} https://github.com/NagiosEnterprises/nsca.git && \
+    git-fetch-commit https://github.com/NagiosEnterprises/nsca.git ${NSCA_COMMIT} nsca nsca-${NSCA_VERSION} && \
     cd nsca && \
     wget -q -O config.guess "https://raw.githubusercontent.com/spack/gnuconfig/${GNUCONFIG_COMMIT}/config.guess" && \
     wget -q -O config.sub "https://raw.githubusercontent.com/spack/gnuconfig/${GNUCONFIG_COMMIT}/config.sub" && \
@@ -196,12 +230,12 @@ RUN mkdir -p /opt/nagios-pyplugins && \
         pywbem==${PYWBEM_VERSION} paramiko==${PARAMIKO_VERSION} pplogger==${PPLOGGER_VERSION} paho-mqtt==${PAHO_MQTT_VERSION} && \
     pip3 install --break-system-packages --no-cache-dir --target=/opt/nagios-pyplugins --find-links https://wheel-index.linuxserver.io/ubuntu/ \
         requests==${REQUESTS_VERSION} && \
-    git clone --depth 1 https://github.com/willixix/naglio-plugins.git WL-Nagios-Plugins && \
-    git clone --depth 1 https://github.com/JasonRivers/nagios-plugins.git JR-Nagios-Plugins && \
-    git clone --depth 1 https://github.com/justintime/nagios-plugins.git JE-Nagios-Plugins && \
-    git clone --depth 1 https://github.com/nagiosenterprises/check_mssql_collection.git nagios-mssql && \
-    git clone --depth 1 https://github.com/danfruehauf/nagios-plugins.git DF-Nagios-Plugins && \
-    git clone --depth 1 https://github.com/jpmens/check-mqtt.git jpmens-mqtt && \
+    git-fetch-commit https://github.com/willixix/naglio-plugins.git ${WL_PLUGINS_COMMIT} WL-Nagios-Plugins && \
+    git-fetch-commit https://github.com/JasonRivers/nagios-plugins.git ${JR_PLUGINS_COMMIT} JR-Nagios-Plugins && \
+    git-fetch-commit https://github.com/justintime/nagios-plugins.git ${JE_PLUGINS_COMMIT} JE-Nagios-Plugins && \
+    git-fetch-commit https://github.com/nagiosenterprises/check_mssql_collection.git ${MSSQL_PLUGINS_COMMIT} nagios-mssql && \
+    git-fetch-commit https://github.com/danfruehauf/nagios-plugins.git ${DF_PLUGINS_COMMIT} DF-Nagios-Plugins && \
+    git-fetch-commit https://github.com/jpmens/check-mqtt.git ${CHECK_MQTT_COMMIT} jpmens-mqtt && \
     chmod +x /opt/WL-Nagios-Plugins/check* && \
     chmod +x /opt/JE-Nagios-Plugins/check_mem/check_mem.pl && \
     chmod +x /opt/DF-Nagios-Plugins/check_sql/check_sql && \
@@ -223,7 +257,7 @@ RUN chmod +x ${NAGIOS_HOME}/libexec/check_apc.pl
 
 # Add check_nwc_health
 RUN cd /tmp && \
-    git clone --depth 1 https://github.com/lausser/check_nwc_health.git && \
+    git-fetch-commit https://github.com/lausser/check_nwc_health.git ${CHECK_NWC_HEALTH_COMMIT} check_nwc_health && \
     cd check_nwc_health && \
     git submodule update --init && \
     autoreconf && \
