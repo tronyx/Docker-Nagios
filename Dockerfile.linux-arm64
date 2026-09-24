@@ -467,7 +467,7 @@ RUN sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars && \
     postfix check && \
     cp /etc/services /var/spool/postfix/etc/ && \
     echo "smtp_address_preference = ipv4" >> /etc/postfix/main.cf && \
-    rm -rf /etc/rsyslog.d /etc/rsyslog.conf /etc/sv/getty-5
+    rm -rf /etc/rsyslog.d /etc/rsyslog.conf /etc/sv/getty-5 /etc/sv/svlogd
 
 COPY overlay /
 
