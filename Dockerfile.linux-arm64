@@ -77,8 +77,6 @@ RUN apt-get -qq update && \
         gperf \
         libcgi-pm-perl \
         libdbi-dev \
-        libfreeradius-dev \
-        libradsec-dev \
         libgd-dev \
         libgd-gd2-perl \
         libfile-slurp-perl \
