@@ -25,3 +25,12 @@ jobs:
           days-before-close: 90
           exempt-issue-labels: "bypass-activity"
           exempt-pr-labels: "bypass-activity"
+
+      - name: Lock issues closed for inactivity
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh issue list --state closed --label closed-no-issue-activity --search 'is:unlocked' \
+            --limit 100 --json number --jq '.[].number' |
+            while read -r n; do gh issue lock "$n" --reason resolved; done
