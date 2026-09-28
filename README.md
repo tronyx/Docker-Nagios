@@ -104,6 +104,8 @@ docker run --name nagios  \
 
 Note: The path for the custom plugins will be `/opt/Custom-Nagios-Plugins`, which you will need to reference in your configuration scripts.
 
+To accept passive check results from remote hosts via NSCA, also publish its port with `-p 5667:5667`.
+
 When bind mounting host directories, empty `etc`/`var` directories are populated with the default configuration on first start, and the Nagios and NagiosGraph directories are chowned to the container's `nagios` user (UID/GID `5000`) on every start.
 
 ### Using Docker Compose
@@ -169,7 +171,7 @@ The image defines a Docker `HEALTHCHECK` that reports unhealthy unless both of t
 | [Nagios NSCA](https://exchange.nagios.org/directory/Addons/Passive-Checks/NSCA--2D-Nagios-Service-Check-Acceptor/details) | Integrate passive alerts and checks from remote machines and applications |
 | [Nagiosgraph](http://exchange.nagios.org/directory/Addons/Graphing-and-Trending/nagiosgraph/details) | Displays data in Nagios trends, as popups for hosts and services |
 | [JR-Nagios-Plugins](https://github.com/JasonRivers/nagios-plugins) | Custom plugins from Jason Rivers |
-| [WL-Nagios-Plugins](https://github.com/willixix/WL-NagiosPlugins) | Custom plugins from William Leibzon |
+| [WL-Nagios-Plugins](https://github.com/willixix/naglio-plugins) | Custom plugins from William Leibzon |
 | [JE-Nagios-Plugins](https://github.com/justintime/nagios-plugins) | Custom plugins from Justin Ellison |
 | [DF-Nagios-Plugins](https://github.com/danfruehauf/nagios-plugins) | Custom plugins from Dan Fruehauf (`check_sql`, `check_jenkins`, `check_vpn`) |
 | [check_mssql_collection](https://github.com/NagiosEnterprises/check_mssql_collection) | MSSQL database and server checks from Nagios Enterprises |
@@ -183,6 +185,7 @@ The image defines a Docker `HEALTHCHECK` that reports unhealthy unless both of t
 
 Every upstream source is pinned: git repositories to an exact commit (the `*_COMMIT` build args), the Ubuntu base image to a digest (`BASE_IMAGE`), and downloaded files to a SHA-256 checksum. Tagged releases are also checked at build time, so the build fails if a tag no longer points at its pinned commit.
 
-* **Updating pins:** [scripts/update-pinned-checksums.sh](scripts/update-pinned-checksums.sh) refreshes every pin in both Dockerfiles and prints a summary of what changed. It needs `git`, `curl` and `docker buildx`. Review the diff before committing. The `update-pins` workflow runs it every other week and opens a pull request against `develop` when anything has changed. GitHub only runs scheduled workflows from the default branch, so this starts once the workflow is on `master`. Until then, run the script by hand or trigger the workflow manually.
+* **Updating pins:** [scripts/update-pinned-checksums.sh](scripts/update-pinned-checksums.sh) refreshes every pin in both Dockerfiles and prints a summary of what changed. It needs `git`, `curl` and `docker buildx`. Review the diff before committing. The `update-pins` workflow runs it every other week and opens a pull request against `develop` when anything has changed. GitHub only runs scheduled workflows from the default branch, so this starts once the workflow is on `master`. Until then, run the script by hand or trigger the workflow manually. For the workflow to open its pull request, "Allow GitHub Actions to create and approve pull requests" must be enabled under Settings → Actions → General.
 * **Bumping a component:** Change its `*_VERSION` build arg (e.g. `NAGIOS_VERSION`) in both Dockerfiles, then run the script to re-pin its commit and checksums.
+* **Updating CI tools:** buildx, BuildKit and Trivy (in `build.yml`) and hadolint, shellcheck and actionlint (in `lint.yml`) are pinned to fixed versions by hand. The script doesn't touch them, so bump them occasionally.
 * **Testing an image:** `scripts/smoke-test.sh <image>` starts the image and checks the web UI, key plugins, file permissions and a clean shutdown. CI runs it on every build before anything is pushed.
