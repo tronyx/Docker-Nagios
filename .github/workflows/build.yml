@@ -102,6 +102,8 @@ jobs:
         uses: docker/build-push-action@v7.3.0
         with:
           push: true
+          sbom: true
+          provenance: mode=max
           platforms: ${{ steps.prep.outputs.platform }}
           file: ./Dockerfile.${{ matrix.architecture }}
           cache-from: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }}
