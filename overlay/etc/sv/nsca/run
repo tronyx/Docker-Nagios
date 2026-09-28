@@ -4,4 +4,6 @@ if [[ -f /opt/nagios/etc/nsca.cfg ]]; then
     exec /opt/nagios/bin/nsca -f -c /opt/nagios/etc/nsca.cfg --single
 else
     echo 'NSCA configuration not found, skipping...'
+    # Stay up so runit doesn't restart this every second; sv restart nsca picks up a new config
+    exec sleep infinity
 fi
