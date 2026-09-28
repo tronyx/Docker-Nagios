@@ -4,6 +4,9 @@ on:
   issues:
     types: [closed]
 
+permissions:
+  issues: write
+
 jobs:
   lock:
     if: github.event.label.name == 'closed-no-issue-activity'
