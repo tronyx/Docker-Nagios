@@ -66,15 +66,17 @@ docker exec nagios sh -c 'cp -r /etc/radcli /opt/nagios/etc/radcli && sed -i "s|
 
 Then add your servers and shared secrets to `/opt/nagios/etc/radcli/servers` and use `-F /opt/nagios/etc/radcli/radiusclient.conf` in your `check_radius` commands.
 
-The images can be found on the [Docker Hub Registry](https://hub.docker.com/r/tronyx/nagios) or the [GitHub Registry](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
-
 ### Configurations
 
 * Nagios configuration is stored in the `/opt/nagios/etc` directory.
 * NagiosGraph configuration is stored in the `/opt/nagiosgraph/etc` directory.
 * NSCA configuration is stored in the `/opt/nagios/etc` directory.
 
-### Pull the Image
+### Docker
+
+The images can be found on the [Docker Hub Registry](https://hub.docker.com/r/tronyx/nagios) or the [GitHub Registry](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
+
+#### Pull the Image
 
 ```bash
 docker pull tronyx/nagios
@@ -90,7 +92,7 @@ docker pull ghcr.io/tronyx/nagios
 
 I may spawn other branches for testing from time to time, IE: new Ubuntu LTS or something similar, but for the most part these are the main branches.
 
-### Running
+#### Running the Container
 
 Run the container with the example configuration using the following `docker` commands:
 
@@ -125,7 +127,7 @@ To accept passive check results from remote hosts via NSCA, also publish its por
 
 When bind mounting host directories, empty `etc`/`var` directories are populated with the default configuration on first start, and the Nagios and NagiosGraph directories are chowned to the container's `nagios` user (UID/GID `5000`) on every start.
 
-### Using Docker Compose
+#### Using Docker Compose
 
 An example [docker-compose.yml](docker-compose.yml) is included that uses named volumes by default, with a commented-out bind mount alternative:
 
