@@ -145,6 +145,14 @@ To change the password on an existing container:
 docker exec -it nagios htpasswd -b /opt/nagios/etc/htpasswd.users nagiosadmin '<new-password>'
 ```
 
+### Reverse Proxy and TLS
+
+The container only serves plain HTTP on port 80, and the web interface uses HTTP Basic authentication, which sends the password with every request. For anything beyond a trusted LAN, put it behind a reverse proxy that terminates TLS, such as Traefik, nginx, Caddy or SWAG:
+
+* Proxy a whole hostname (e.g. `https://nagios.example.com/`) to the container's port 80, not a sub-path: Nagios, NagiosGraph and NagiosTV use the absolute paths `/nagios/`, `/cgi-bin/` and `/nagiostv/`.
+* Set `NAGIOS_FQDN` to that hostname, as it's also used as Apache's `ServerName`.
+* Don't publish port 80 on the host if the proxy can reach the container over a Docker network.
+
 ### Health Check
 
 The image defines a Docker `HEALTHCHECK` that reports unhealthy unless both of the following succeed:
