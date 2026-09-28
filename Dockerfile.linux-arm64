@@ -176,7 +176,7 @@ RUN cd /tmp && \
     ln -sf ${NAGIOS_HOME}/libexec/utils.pm /usr/lib/nagios/plugins && \
     chown root:root ${NAGIOS_HOME}/libexec/check_icmp && \
     chmod u+s ${NAGIOS_HOME}/libexec/check_icmp && \
-    cd /tmp && rm -Rf nagios-plugins 
+    cd /tmp && rm -Rf nagios-plugins
 
 # Install NRPE
 RUN cd /tmp && \
@@ -266,7 +266,7 @@ RUN cd /tmp && \
     ./configure && \
     make -j"$(nproc)" && \
     cp plugins-scripts/check_nwc_health ${NAGIOS_HOME}/libexec/ && \
-    cd /tmp/ &&\ 
+    cd /tmp/ && \
     rm -rf check_nwc_health
 
 # Discover the runtime shared-library packages actually linked by everything just
@@ -486,7 +486,7 @@ RUN cd /opt/nagiosgraph/etc && \
     cp -Rp /opt/nagiosgraph/var /orig/graph-var && \
     ln -sf /etc/sv/* /etc/service
 
-# Expose port 80 for the web UI
+# Web UI (Apache) and NSCA
 EXPOSE 80 5667
 
 # Specify volumes
