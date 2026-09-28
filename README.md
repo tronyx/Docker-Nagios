@@ -124,7 +124,7 @@ There are a number of environment variables that you can use to adjust the behav
 | MAIL_INET_PROTOCOLS | Set the inet_protocols in Postfix |
 | NAGIOS_FQDN | Set the server Fully Qualified Domain Name used by Postfix and as Apache's `ServerName` (default `nagios.example.com`) |
 | NAGIOS_TIMEZONE | Set the timezone of the server (default `UTC`). Written to `use_timezone` in `nagios.cfg` on every start, so it overrides any manual edit of that setting |
-| NAGIOSADMIN_USER | Web interface admin username, used only when `htpasswd.users` is first created (default `nagiosadmin`) |
+| NAGIOSADMIN_USER | Web interface admin username, used only when `htpasswd.users` is first created, at which point it's also given the admin permissions in `cgi.cfg` (default `nagiosadmin`) |
 | NAGIOSADMIN_PASS | Web interface admin password, used only when `htpasswd.users` is first created (default `nagios`) |
 
 For the best results your Nagios container should have access to both IPv4 & IPv6 networks.

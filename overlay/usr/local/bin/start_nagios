@@ -27,6 +27,11 @@ fi
 if [[ ! -f ${NAGIOS_HOME}/etc/htpasswd.users ]]; then
     htpasswd -c -b -s "${NAGIOS_HOME}/etc/htpasswd.users" "${NAGIOSADMIN_USER}" "${NAGIOSADMIN_PASS}"
     chown "${NAGIOS_USER}:${NAGIOS_GROUP}" "${NAGIOS_HOME}/etc/htpasswd.users"
+    # The bundled cgi.cfg grants the admin permissions to nagiosadmin only
+    if [[ ${NAGIOSADMIN_USER} != nagiosadmin ]]; then
+        admin_user=$(printf '%s' "${NAGIOSADMIN_USER}" | sed 's/[&/\]/\\&/g')
+        sed -i "s/^\(authorized_for_[a-z_]*\)=nagiosadmin$/\1=${admin_user}/" "${NAGIOS_HOME}/etc/cgi.cfg"
+    fi
 fi
 
 shutdown() {

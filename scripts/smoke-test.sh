@@ -7,6 +7,8 @@ set -uo pipefail
 
 image=${1:?usage: $0 <image>}
 name=nagios-smoke-$$
+# Not the default nagiosadmin, so the cgi.cfg permission hand-off is exercised too
+user=smokeadmin
 password=smoke-$RANDOM$RANDOM
 pass=0
 fail=0
@@ -35,7 +37,7 @@ http_is() {
     [ "$(docker exec "$name" curl -s -o /dev/null -w '%{http_code}' "$@")" = "$expected" ]
 }
 
-docker run -d --name "$name" -e NAGIOSADMIN_PASS="$password" "$image" >/dev/null
+docker run -d --name "$name" -e NAGIOSADMIN_USER="$user" -e NAGIOSADMIN_PASS="$password" "$image" >/dev/null
 
 echo "Waiting for $image to become healthy..."
 for _ in $(seq 1 40); do
@@ -50,10 +52,12 @@ check "all runit services are up" in_container \
 check "nagios -v accepts the config" in_container '/opt/nagios/bin/nagios -v /opt/nagios/etc/nagios.cfg'
 
 check "/nagios/ requires authentication" http_is 401 http://localhost/nagios/
-check "/nagios/ loads with credentials" http_is 200 -u "nagiosadmin:$password" http://localhost/nagios/
-check "status.cgi loads" http_is 200 -u "nagiosadmin:$password" http://localhost/nagios/cgi-bin/status.cgi
-check "NagiosGraph show.cgi loads" http_is 200 -u "nagiosadmin:$password" http://localhost/cgi-bin/show.cgi
-check "NagiosTV loads" http_is 200 -u "nagiosadmin:$password" http://localhost/nagiostv/
+check "/nagios/ loads with credentials" http_is 200 -u "$user:$password" http://localhost/nagios/
+check "status.cgi loads" http_is 200 -u "$user:$password" http://localhost/nagios/cgi-bin/status.cgi
+check "admin user is authorized to see all hosts" \
+    sh -c "docker exec '$name' curl -s -u '$user:$password' 'http://localhost/nagios/cgi-bin/status.cgi?host=all' | grep -q 'host=localhost'"
+check "NagiosGraph show.cgi loads" http_is 200 -u "$user:$password" http://localhost/cgi-bin/show.cgi
+check "NagiosTV loads" http_is 200 -u "$user:$password" http://localhost/nagiostv/
 check "Apache hides its version" in_container \
     '[ "$(curl -sI http://localhost/ | tr -d "\r" | sed -n "s/^Server: //p")" = Apache ] && ! curl -s http://localhost/no-such-page | grep -q "<address>"'
 
