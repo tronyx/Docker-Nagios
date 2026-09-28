@@ -441,6 +441,8 @@ RUN sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars && \
     sed -i "s,</VirtualHost>,<IfDefine ENABLE_USR_LIB_CGI_BIN>\nScriptAlias /cgi-bin/ ${NAGIOS_HOME}/sbin/\n</IfDefine>\n</VirtualHost>," /etc/apache2/sites-enabled/000-default.conf && \
     ln -s /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/cgi.load && \
     a2enmod -q session session_cookie session_crypto auth_form request authnz_ldap && \
+    sed -i -e 's/^ServerTokens .*/ServerTokens Prod/' -e 's/^ServerSignature .*/ServerSignature Off/' \
+        /etc/apache2/conf-available/security.conf && \
     # Single-quoted so Apache resolves NAGIOS_FQDN from the container's environment at startup
     echo 'ServerName ${NAGIOS_FQDN}' > /etc/apache2/conf-available/servername.conf && \
     echo "PassEnv TZ" > /etc/apache2/conf-available/timezone.conf && \
