@@ -39,7 +39,7 @@ Things that I have changed/updated/added to date:
 * Published images include SBOM and provenance attestations
 * Binaries, CGIs and web files are owned by root, so the `nagios` user can only write its own `etc` and `var` data
 * Apache no longer reveals its version in response headers or error pages
-* Added `check_mysql` and `check_mysql_query`, and fixed `check_game` not being built
+* Added `check_mysql` and `check_mysql_query`, kept `check_radius` available on Ubuntu 26.04, and fixed `check_game` not being built
 * Fixed SMTP relay authentication
 * `NAGIOS_TIMEZONE` and `NAGIOS_FQDN` are now applied at startup instead of being fixed when the image was built
 * A custom `NAGIOSADMIN_USER` now gets full admin access in the web interface
@@ -58,7 +58,13 @@ Nagios Core running on Ubuntu 26.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and 
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.3 |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.9.11 |
 
-All of the standard Nagios Plugins are included, now including `check_mysql` and `check_mysql_query`, with the exception of `check_radius`: it needs a RADIUS client library (`freeradius-client` or `radiusclient`) that isn't packaged for Ubuntu 26.04. If you're upgrading and rely on `check_radius`, you'll need to provide it yourself, e.g. via `/opt/Custom-Nagios-Plugins`.
+All of the standard Nagios Plugins are included, now including `check_mysql` and `check_mysql_query`. The one exception is `check_radius`: Nagios Plugins can't build it on Ubuntu 26.04 because the RADIUS client library it needs isn't packaged, so the image ships Ubuntu's build of `check_radius` from the sister project [Monitoring Plugins](https://www.monitoring-plugins.org/) instead, built against [radcli](https://github.com/radcli/radcli). It takes the same options, but its configuration lives in `/etc/radcli`, which isn't persistent and has no RADIUS servers configured. To set it up, copy it into the `etc` volume once:
+
+```bash
+docker exec nagios sh -c 'cp -r /etc/radcli /opt/nagios/etc/radcli && sed -i "s|/etc/radcli/|/opt/nagios/etc/radcli/|" /opt/nagios/etc/radcli/radiusclient.conf && chown -R nagios:nagios /opt/nagios/etc/radcli && chmod 600 /opt/nagios/etc/radcli/servers'
+```
+
+Then add your servers and shared secrets to `/opt/nagios/etc/radcli/servers` and use `-F /opt/nagios/etc/radcli/radiusclient.conf` in your `check_radius` commands.
 
 The images can be found on the [Docker Hub Registry](https://hub.docker.com/r/tronyx/nagios) or the [GitHub Registry](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
 

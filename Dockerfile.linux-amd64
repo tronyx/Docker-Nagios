@@ -84,6 +84,7 @@ RUN apt-get -qq update && \
         libnagios-object-perl \
         libpq-dev \
         libpython3-dev \
+        libradcli4 \
         librrds-perl \
         libssl-dev \
         libxpm-dev \
@@ -173,6 +174,15 @@ RUN cd /tmp && \
     chown root:root ${NAGIOS_HOME}/libexec/check_icmp && \
     chmod u+s ${NAGIOS_HOME}/libexec/check_icmp && \
     cd /tmp && rm -Rf nagios-plugins
+
+# Nagios Plugins can't build check_radius on 26.04 (no freeradius-client/radiusclient package), so take
+# Ubuntu's radcli-based build from monitoring-plugins-standard; extracted, not installed, to skip its other plugins
+RUN cd /tmp && \
+    apt-get -qq update && \
+    apt-get -qq download monitoring-plugins-standard && \
+    dpkg-deb -x monitoring-plugins-standard_*.deb monitoring-plugins && \
+    install -m 755 monitoring-plugins/usr/lib/nagios/plugins/check_radius ${NAGIOS_HOME}/libexec/ && \
+    rm -rf monitoring-plugins monitoring-plugins-standard_*.deb /var/lib/apt/lists/*
 
 # Install NRPE
 RUN cd /tmp && \

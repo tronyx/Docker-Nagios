@@ -66,6 +66,7 @@ check "check_ping works as nagios" as_nagios '/opt/nagios/libexec/check_ping -H 
 check "check_game is built" as_nagios '/opt/nagios/libexec/check_game --version | grep -q nagios-plugins'
 check "check_mysql and check_mysql_query are built" as_nagios \
     '/opt/nagios/libexec/check_mysql --version | grep -q nagios-plugins && /opt/nagios/libexec/check_mysql_query --version | grep -q nagios-plugins'
+check "check_radius runs" as_nagios '/opt/nagios/libexec/check_radius --version | grep -q monitoring-plugins'
 check "check_nrpe runs" as_nagios '/opt/nagios/libexec/check_nrpe --help | grep -q NRPE'
 check "check_ncpa.py runs" as_nagios '/opt/nagios/libexec/check_ncpa.py --help'
 check "check_mssql_server.py runs" as_nagios '/opt/nagios/libexec/check_mssql_server.py --help'
