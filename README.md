@@ -47,7 +47,7 @@ Nagios Core running on Ubuntu 26.04 LTS with NagiosGraph, NRPE, NCPA, NSCA, and 
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.3 |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.9.11 |
 
-All of the standard Nagios Plugins are included, including `check_mysql` and `check_mysql_query`, except `check_radius`: it needs a RADIUS client library (`freeradius-client` or `radiusclient`) that isn't packaged for Ubuntu 26.04.
+All of the standard Nagios Plugins are included, now including `check_mysql` and `check_mysql_query`, with the exception of `check_radius`: it needs a RADIUS client library (`freeradius-client` or `radiusclient`) that isn't packaged for Ubuntu 26.04. If you're upgrading and rely on `check_radius`, you'll need to provide it yourself, e.g. via `/opt/Custom-Nagios-Plugins`.
 
 The images can be found on the [Docker Hub Registry](https://hub.docker.com/r/tronyx/nagios) or the [GitHub Registry](https://github.com/tronyx/Docker-Nagios/pkgs/container/nagios).
 
