@@ -140,7 +140,7 @@ RUN cd /tmp && \
         --with-command-group=${NAGIOS_CMDGROUP} \
         --with-nagios-user=${NAGIOS_USER} \
         --with-nagios-group=${NAGIOS_GROUP} && \
-    make all && \
+    make -j"$(nproc)" all && \
     make install && \
     make install-config && \
     make install-commandmode && \
@@ -154,7 +154,7 @@ RUN cd /tmp && \
     cd qstat && \
     ./autogen.sh && \
     ./configure && \
-    make && \
+    make -j"$(nproc)" && \
     make install && \
     make clean && \
     cd /tmp && rm -Rf qstat
@@ -169,7 +169,7 @@ RUN cd /tmp && \
         --with-ipv6 \
         --with-ping-command="/usr/bin/ping -n -U -W %d -c %d %s" \
         --with-ping6-command="/usr/bin/ping -6 -n -U -W %d -c %d %s" && \
-    make && \
+    make -j"$(nproc)" && \
     make install && \
     make clean && \
     mkdir -p /usr/lib/nagios/plugins && \
@@ -183,7 +183,7 @@ RUN cd /tmp && \
     git-fetch-commit https://github.com/NagiosEnterprises/nrpe.git ${NRPE_COMMIT} nrpe nrpe-${NRPE_VERSION} && \
     cd nrpe && \
     ./configure && \
-    make check_nrpe > /dev/null && \
+    make -j"$(nproc)" check_nrpe > /dev/null && \
     cp src/check_nrpe ${NAGIOS_HOME}/libexec/ && \
     make clean && \
     cd /tmp && rm -Rf nrpe
@@ -215,7 +215,7 @@ RUN cd /tmp && \
         --prefix=${NAGIOS_HOME} \
         --with-nsca-user=${NAGIOS_USER} \
         --with-nsca-grp=${NAGIOS_GROUP} && \
-    make all && \
+    make -j"$(nproc)" all && \
     cp src/nsca ${NAGIOS_HOME}/bin/ && \
     cp src/send_nsca ${NAGIOS_HOME}/bin/ && \
     cp sample-config/nsca.cfg ${NAGIOS_HOME}/etc/ && \
@@ -264,7 +264,7 @@ RUN cd /tmp && \
     git submodule update --init && \
     autoreconf && \
     ./configure && \
-    make && \
+    make -j"$(nproc)" && \
     cp plugins-scripts/check_nwc_health ${NAGIOS_HOME}/libexec/ && \
     cd /tmp/ &&\ 
     rm -rf check_nwc_health
