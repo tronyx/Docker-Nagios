@@ -33,6 +33,17 @@ Things that I have changed/updated/added to date:
 * Added NagiosTV
 * Built multi-arch images (amd64 & arm64)
 * Implemented multi-stage build to reduce the final image size by nearly 60%
+* Pinned every upstream source to an exact commit or checksum, and the Ubuntu base image to a digest, with a workflow that refreshes the pins every other week
+* Every image is smoke-tested in CI (startup, web UI, key plugins, file permissions, clean shutdown) before it's published
+* Dockerfiles, scripts and workflows are linted in CI, and every image is scanned for known vulnerabilities
+* Published images include SBOM and provenance attestations
+* Binaries, CGIs and web files are owned by root, so the `nagios` user can only write its own `etc` and `var` data
+* Apache no longer reveals its version in response headers or error pages
+* Added `check_mysql` and `check_mysql_query`, and fixed `check_game` not being built
+* Fixed SMTP relay authentication
+* `NAGIOS_TIMEZONE` and `NAGIOS_FQDN` are now applied at startup instead of being fixed when the image was built
+* A custom `NAGIOSADMIN_USER` now gets full admin access in the web interface
+* The container now shuts down cleanly within a few seconds
 
 ## Information
 
