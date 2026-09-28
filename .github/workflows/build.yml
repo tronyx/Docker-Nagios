@@ -20,6 +20,9 @@ jobs:
           - architecture: linux-arm64
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      security-events: write
     outputs:
       version: ${{ steps.prep.outputs.version }}
       branch: ${{ steps.prep.outputs.branch }}
@@ -95,6 +98,26 @@ jobs:
 
       - name: Smoke test
         run: bash scripts/smoke-test.sh nagios-smoke-test:${{ matrix.architecture }}
+
+      # Report-only: findings never fail the build, and a scanner outage doesn't block publishing
+      - name: Vulnerability scan
+        id: trivy
+        continue-on-error: true
+        env:
+          TRIVY: aquasec/trivy:0.74.0
+          IMAGE: nagios-smoke-test:${{ matrix.architecture }}
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$RUNNER_TEMP:/out" "$TRIVY" \
+            image --scanners vuln --ignore-unfixed --format json --output /out/trivy.json "$IMAGE"
+          docker run --rm -v "$RUNNER_TEMP:/out" "$TRIVY" convert --scanners vuln --format table /out/trivy.json
+          docker run --rm -v "$RUNNER_TEMP:/out" "$TRIVY" convert --format sarif --output /out/trivy.sarif /out/trivy.json
+
+      - name: Upload scan results
+        if: github.event_name != 'pull_request' && steps.trivy.outcome == 'success'
+        uses: github/codeql-action/upload-sarif@v4.38.2
+        with:
+          sarif_file: ${{ runner.temp }}/trivy.sarif
+          category: trivy-${{ matrix.architecture }}
 
       # Reuses the layers built above, so this only exports and pushes
       - name: Build and push
