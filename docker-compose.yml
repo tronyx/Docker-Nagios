@@ -1,10 +1,7 @@
 ---
 
-# This compose file acts as an example on using docker volumes or bind mounts for nagios
-# configuration. As nagios configurations are different for each site they are
-# not considered part of the container image. The best way to deal with the
-# configurations is to store them in a volume allowing the user to upgrade the
-# image without the need to extract the site configuration from the container.
+# Example setup that keeps the Nagios configuration and data in volumes, so you can upgrade
+# the image without losing your site's configuration.
 
 services:
   nagios:
