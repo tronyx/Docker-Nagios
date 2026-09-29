@@ -212,8 +212,8 @@ RUN cd /tmp && \
     cd /tmp && rm -Rf nagiosgraph
 
 # Install NSCA
-# aarch64 isn't recognized by the config.guess/config.sub shipped with this NSCA tag, so
-# they're replaced with current ones from a pinned, checksum-verified gnuconfig commit
+# aarch64 isn't recognized by the config.guess/config.sub shipped with this NSCA tag, so they're
+# replaced (on both architectures) with current ones from a pinned, checksum-verified gnuconfig commit
 RUN cd /tmp && \
     git-fetch-commit https://github.com/NagiosEnterprises/nsca.git ${NSCA_COMMIT} nsca nsca-${NSCA_VERSION} && \
     cd nsca && \

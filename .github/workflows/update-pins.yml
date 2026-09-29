@@ -56,8 +56,7 @@ jobs:
           branch: automation/update-pins
           delete-branch: true
           add-paths: |
-            Dockerfile.linux-amd64
-            Dockerfile.linux-arm64
+            Dockerfile
           commit-message: Refresh pinned commits, base image digest and checksums
           title: Refresh pinned upstream sources
           body-path: ${{ runner.temp }}/pr-body.md

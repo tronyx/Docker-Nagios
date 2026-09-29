@@ -23,11 +23,7 @@ jobs:
           persist-credentials: false
 
       - name: hadolint
-        run: |
-          for f in Dockerfile.linux-*; do
-            echo "== $f"
-            docker run --rm -i -v "$PWD/.hadolint.yaml:/.config/hadolint.yaml:ro" hadolint/hadolint:v2.15.1 < "$f"
-          done
+        run: docker run --rm -i -v "$PWD/.hadolint.yaml:/.config/hadolint.yaml:ro" hadolint/hadolint:v2.15.1 < Dockerfile
 
       - name: shellcheck
         run: |

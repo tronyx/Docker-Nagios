@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Refreshes every pin in Dockerfile.linux-amd64/-arm64 and rewrites the ARG lines in place:
+# Refreshes every pin in the Dockerfile and rewrites the ARG lines in place:
 #   - *_COMMIT for each git-fetch-commit source: the commit its tag points at (tagged sources)
 #     or the latest commit on its default branch (everything else)
 #   - BASE_IMAGE: the current multi-arch digest of its tag
-#   - download checksums for NCPA, NagiosTV and (arm64) gnuconfig
+#   - download checksums for NCPA, NagiosTV and gnuconfig
 # Version bumps stay manual: edit *_VERSION, then run this to re-pin.
 # It re-trusts whatever upstream serves, so review the diff (or the PR it feeds) before merging,
 # and never run it as part of the image build itself. Needs git, curl and docker buildx.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-dockerfiles=(Dockerfile.linux-amd64 Dockerfile.linux-arm64)
+dockerfiles=(Dockerfile)
 
 sha256() {
     if command -v sha256sum >/dev/null 2>&1; then
@@ -109,7 +109,7 @@ for dockerfile in "${dockerfiles[@]}"; do
     echo "  NAGIOSTV_SHA256 (nagiostv-${nagiostv_version}.tar.gz) = ${nagiostv_sha}"
     set_arg_value "$dockerfile" NAGIOSTV_SHA256 "$nagiostv_sha"
 
-    # arm64-only: config.guess/config.sub replacements needed for aarch64 autotools detection.
+    # config.guess/config.sub replacements for NSCA, which needs them for aarch64 autotools detection.
     if has_arg "$dockerfile" GNUCONFIG_COMMIT; then
         gnuconfig_commit=$(arg_value "$dockerfile" GNUCONFIG_COMMIT)
         curl -fsSL -o "$tmpdir/config.guess" \
