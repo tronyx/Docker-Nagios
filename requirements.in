@@ -1,0 +1,10 @@
+# Python packages for the extra plugins, installed into /opt/nagios-pyplugins.
+# Edit versions here, then regenerate requirements.txt (hash-pinned, including dependencies) with:
+#   uv pip compile requirements.in --generate-hashes --universal --python-version 3.14 -o requirements.txt
+packaging==26.3
+paho-mqtt==2.1.0
+paramiko==5.0.0
+pplogger==4.2.0
+pymssql==2.3.13
+pywbem==1.9.0
+requests==2.34.2

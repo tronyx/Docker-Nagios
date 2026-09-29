@@ -45,13 +45,6 @@ ARG CHECK_NWC_HEALTH_COMMIT=af6cbdba6cf5611c6eca117ffe53b734d9875d9a
 ARG GNUCONFIG_COMMIT=428664896cf9e92d264976a960c76660938dffce
 ARG GNUCONFIG_GUESS_SHA256=ac18bbd7dc3769e1646af49ebba331a391829f4a73579b735dc8d439bd1c7f07
 ARG GNUCONFIG_SUB_SHA256=f9a31e9a3f5b7cbeb8d8c3f2015895a51e7222130114c9c363fcbccd78e4bf6b
-ARG PYMSSQL_VERSION=2.3.13
-ARG PACKAGING_VERSION=26.3
-ARG PYWBEM_VERSION=1.9.0
-ARG PARAMIKO_VERSION=5.0.0
-ARG PPLOGGER_VERSION=4.2.0
-ARG PAHO_MQTT_VERSION=2.1.0
-ARG REQUESTS_VERSION=2.34.2
 
 ENV NAGIOS_HOME=/opt/nagios
 ENV NAGIOS_USER=nagios
@@ -234,14 +227,13 @@ RUN cd /tmp && \
     cd /tmp && rm -Rf nsca
 
 # Install additional plugins
+# Python packages come from requirements.txt, which pins every package and dependency by version and hash
+COPY requirements.txt /tmp/requirements.txt
 RUN mkdir -p /opt/nagios-pyplugins && \
     cd /opt && \
-    pip3 install --break-system-packages --no-cache-dir --target=/opt/nagios-pyplugins \
-        pymssql==${PYMSSQL_VERSION} packaging==${PACKAGING_VERSION} && \
-    pip3 install --break-system-packages --no-cache-dir --target=/opt/nagios-pyplugins --find-links https://wheel-index.linuxserver.io/ubuntu/ \
-        pywbem==${PYWBEM_VERSION} paramiko==${PARAMIKO_VERSION} pplogger==${PPLOGGER_VERSION} paho-mqtt==${PAHO_MQTT_VERSION} && \
-    pip3 install --break-system-packages --no-cache-dir --target=/opt/nagios-pyplugins --find-links https://wheel-index.linuxserver.io/ubuntu/ \
-        requests==${REQUESTS_VERSION} && \
+    pip3 install --break-system-packages --no-cache-dir --require-hashes --only-binary :all: \
+        --target=/opt/nagios-pyplugins -r /tmp/requirements.txt && \
+    rm /tmp/requirements.txt && \
     git-fetch-commit https://github.com/willixix/naglio-plugins.git ${WL_PLUGINS_COMMIT} WL-Nagios-Plugins && \
     git-fetch-commit https://github.com/JasonRivers/nagios-plugins.git ${JR_PLUGINS_COMMIT} JR-Nagios-Plugins && \
     git-fetch-commit https://github.com/justintime/nagios-plugins.git ${JE_PLUGINS_COMMIT} JE-Nagios-Plugins && \

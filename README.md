@@ -223,10 +223,11 @@ The image's Docker health check reports healthy when Apache is answering request
 
 ## 🛠️ Maintaining the Image
 
-Every upstream source is pinned to an exact version: git repositories to a commit (the `*_COMMIT` build args), the Ubuntu base image to a digest (`BASE_IMAGE`), and downloaded files to a SHA-256 checksum. Tagged releases are also checked at build time, so the build fails if a tag has been moved.
+Every upstream source is pinned to an exact version: git repositories to a commit (the `*_COMMIT` build args), the Ubuntu base image to a digest (`BASE_IMAGE`), downloaded files to a SHA-256 checksum, and Python packages to a version and hash (`requirements.txt`). Tagged releases are also checked at build time, so the build fails if a tag has been moved.
 
 * **Updating pins:** run [scripts/update-pinned-checksums.sh](scripts/update-pinned-checksums.sh), which needs `git`, `curl` and `docker buildx`. It updates the [Dockerfile](Dockerfile) and summarises what changed; review the diff before committing. The `update-pins` workflow runs it every other week and opens a pull request against `develop`.
 * **Bumping a component:** change its `*_VERSION` build arg (e.g. `NAGIOS_VERSION`) in the Dockerfile, then run the script to update its commit and checksums.
+* **Updating Python packages:** change the versions in [requirements.in](requirements.in), then regenerate [requirements.txt](requirements.txt) with the [uv](https://docs.astral.sh/uv/) command at the top of either file. `requirements.txt` lists every package and dependency with its version and hashes, so it's also the place to check what's currently in the image.
 * **Updating CI tools:** buildx, BuildKit and Trivy (in `build.yml`) and hadolint, shellcheck and actionlint (in `lint.yml`) are pinned by hand, and the script doesn't update them. Bump them now and then.
 * **Testing an image:** `scripts/smoke-test.sh <image>` starts the image and checks logins, the web interface, key plugins, file permissions and a clean shutdown. CI runs it on every build before anything is published.
 
