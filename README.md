@@ -38,7 +38,7 @@ Things that I have changed/updated/added to date:
 * Made the container shut down cleanly within a few seconds
 * Hardened the image: binaries and web files are owned by root, and Apache no longer shows its version
 * Pinned every upstream source to an exact version, with a workflow that refreshes the pins every other week
-* Added CI that lints, smoke-tests and scans every image for vulnerabilities before publishing it, with SBOM and provenance attestations attached
+* Added CI that lints, smoke-tests and scans every image for vulnerabilities before publishing it (an image with a fixable critical vulnerability isn't published), with SBOM and provenance attestations attached
 
 ## ℹ️ Information
 
@@ -230,6 +230,7 @@ Every upstream source is pinned to an exact version: git repositories to a commi
 * **Updating Python packages:** change the versions in [requirements.in](requirements.in), then regenerate [requirements.txt](requirements.txt) with the [uv](https://docs.astral.sh/uv/) command at the top of either file. `requirements.txt` lists every package and dependency with its version and hashes, so it's also the place to check what's currently in the image.
 * **Updating CI tools:** buildx, BuildKit and Trivy (in `build.yml`) and hadolint, shellcheck and actionlint (in `lint.yml`) are pinned by hand, and the script doesn't update them. Bump them now and then.
 * **Testing an image:** `scripts/smoke-test.sh <image>` starts the image and checks logins, the web interface, key plugins, file permissions and a clean shutdown. CI runs it on every build before anything is published.
+* **Vulnerability scans:** CI scans every image with Trivy and uploads the results to the repository's Security → Code scanning page. If it finds a critical vulnerability that has a fix available, the build fails and nothing is published. The fix is usually a newer package: refresh the pins so the base image and its packages are updated, then rebuild.
 
 > [!NOTE]
 > GitHub only runs scheduled and manually triggered workflows from the default branch, so `update-pins` starts working once it's on `master`; until then, run the script by hand. It also needs "Allow GitHub Actions to create and approve pull requests" enabled under Settings → Actions → General.

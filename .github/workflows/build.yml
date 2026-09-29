@@ -23,6 +23,8 @@ jobs:
           - architecture: linux-arm64
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
+    env:
+      TRIVY: aquasec/trivy:0.74.0
     permissions:
       contents: read
       packages: write
@@ -105,12 +107,11 @@ jobs:
       - name: Smoke test
         run: bash scripts/smoke-test.sh nagios-smoke-test:${{ matrix.architecture }}
 
-      # Report-only: findings never fail the build, and a scanner outage doesn't block publishing
+      # Reports every fixable finding; a scanner outage doesn't block publishing
       - name: Vulnerability scan
         id: trivy
         continue-on-error: true
         env:
-          TRIVY: aquasec/trivy:0.74.0
           IMAGE: nagios-smoke-test:${{ matrix.architecture }}
         run: |
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$RUNNER_TEMP:/out" "$TRIVY" \
@@ -124,6 +125,13 @@ jobs:
         with:
           sarif_file: ${{ runner.temp }}/trivy.sarif
           category: trivy-${{ matrix.architecture }}
+
+      # After the upload, so the findings still reach the Security tab when this blocks publishing
+      - name: Fail on fixable critical vulnerabilities
+        if: steps.trivy.outcome == 'success'
+        run: |
+          docker run --rm -v "$RUNNER_TEMP:/out" "$TRIVY" convert --quiet --scanners vuln --format table \
+            --severity CRITICAL --exit-code 1 /out/trivy.json
 
       # Reuses the layers built above, so this only exports and pushes
       - name: Build and push
