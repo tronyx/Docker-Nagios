@@ -63,6 +63,8 @@ jobs:
 
       - name: Prepare
         id: prep
+        env:
+          HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           # GITHUB_REF is refs/pull/N/merge on PRs, which isn't a valid tag and has no cache of its own
           if [[ "${GITHUB_EVENT_NAME}" == pull_request ]]; then
@@ -72,10 +74,11 @@ jobs:
             REF_NAME="${GITHUB_REF_NAME}"
             CACHE_REF_NAME="${GITHUB_REF_NAME}"
           fi
+          ARCHITECTURE=${{ matrix.architecture }}
+          CACHE=$(echo "${GITHUB_REPOSITORY}:${CACHE_REF_NAME}-cache-${ARCHITECTURE}" | tr '[:upper:]' '[:lower:]')
           {
-            ARCHITECTURE=${{ matrix.architecture }}
             echo "platform=${ARCHITECTURE//-/\/}"
-            echo "cache=$(echo "${GITHUB_REPOSITORY}:${CACHE_REF_NAME}-cache-${ARCHITECTURE}" | tr '[:upper:]' '[:lower:]')"
+            echo "cache=${CACHE}"
             echo "tag=$(echo "${GITHUB_REPOSITORY}:${REF_NAME}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}-${ARCHITECTURE}" | tr '[:upper:]' '[:lower:]' | sed s/docker-//)"
           } >> "$GITHUB_OUTPUT"
           VERSION=$(grep -m1 '^ARG NAGIOS_VERSION=' Dockerfile | cut -d= -f2)
@@ -84,6 +87,14 @@ jobs:
           fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "branch=${REF_NAME}" >> "$GITHUB_OUTPUT"
+          # "[no-cache]" in a pushed commit's message rebuilds every layer, e.g. to pick up package fixes the cache holds back
+          if [[ "${GITHUB_EVENT_NAME}" == push && "${HEAD_COMMIT_MESSAGE}" == *'[no-cache]'* ]]; then
+            echo "nocache=true" >> "$GITHUB_OUTPUT"
+            echo "cache_from=" >> "$GITHUB_OUTPUT"
+          else
+            echo "nocache=false" >> "$GITHUB_OUTPUT"
+            echo "cache_from=type=registry,ref=docker.io/${CACHE}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Docker metadata
         id: meta
@@ -98,9 +109,10 @@ jobs:
         uses: docker/build-push-action@v7.3.0
         with:
           load: true
+          no-cache: ${{ steps.prep.outputs.nocache == 'true' }}
           platforms: ${{ steps.prep.outputs.platform }}
           file: ./Dockerfile
-          cache-from: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }}
+          cache-from: ${{ steps.prep.outputs.cache_from }}
           tags: nagios-smoke-test:${{ matrix.architecture }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -143,7 +155,7 @@ jobs:
           provenance: mode=max
           platforms: ${{ steps.prep.outputs.platform }}
           file: ./Dockerfile
-          cache-from: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }}
+          cache-from: ${{ steps.prep.outputs.cache_from }}
           cache-to: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }},mode=max
           tags: |
             docker.io/${{ steps.prep.outputs.tag }}
