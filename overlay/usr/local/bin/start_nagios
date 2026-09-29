@@ -25,7 +25,25 @@ if [[ -z $(ls -A /opt/nagiosgraph/var) ]]; then
 fi
 
 if [[ ! -f ${NAGIOS_HOME}/etc/htpasswd.users ]]; then
-    printf '%s\n' "${NAGIOSADMIN_PASS}" | htpasswd -c -i -B "${NAGIOS_HOME}/etc/htpasswd.users" "${NAGIOSADMIN_USER}"
+    if [[ -n ${NAGIOSADMIN_PASS_FILE:-} ]]; then
+        if [[ ! -r ${NAGIOSADMIN_PASS_FILE} ]]; then
+            echo "NAGIOSADMIN_PASS_FILE (${NAGIOSADMIN_PASS_FILE}) can't be read" >&2
+            exit 1
+        fi
+        admin_pass=$(<"${NAGIOSADMIN_PASS_FILE}")
+        if [[ -z ${admin_pass} ]]; then
+            echo "NAGIOSADMIN_PASS_FILE (${NAGIOSADMIN_PASS_FILE}) is empty" >&2
+            exit 1
+        fi
+    elif [[ -n ${NAGIOSADMIN_PASS:-} ]]; then
+        admin_pass=${NAGIOSADMIN_PASS}
+    else
+        admin_pass=$(head -c 24 /dev/urandom | base64 | tr -d '/+=')
+        echo "Generated password for ${NAGIOSADMIN_USER}: ${admin_pass}"
+        echo "Change it with: docker exec -it <container> htpasswd -B ${NAGIOS_HOME}/etc/htpasswd.users ${NAGIOSADMIN_USER}"
+    fi
+    printf '%s\n' "${admin_pass}" | htpasswd -c -i -B "${NAGIOS_HOME}/etc/htpasswd.users" "${NAGIOSADMIN_USER}"
+    unset admin_pass
     chown "${NAGIOS_USER}:${NAGIOS_GROUP}" "${NAGIOS_HOME}/etc/htpasswd.users"
     # The bundled cgi.cfg grants the admin permissions to nagiosadmin only
     if [[ ${NAGIOSADMIN_USER} != nagiosadmin ]]; then

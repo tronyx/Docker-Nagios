@@ -44,6 +44,7 @@ Things that I have changed/updated/added to date:
 * `NAGIOS_TIMEZONE` and `NAGIOS_FQDN` are now applied at startup instead of being fixed when the image was built
 * A custom `NAGIOSADMIN_USER` now gets full admin access in the web interface
 * The web interface password is stored as a bcrypt hash instead of unsalted SHA-1
+* There's no default web interface password anymore: set one, or a random one is generated and logged on first start
 * The container now shuts down cleanly within a few seconds
 
 ## Information
@@ -147,19 +148,39 @@ There are a number of environment variables that you can use to adjust the behav
 | NAGIOS_FQDN | Set the server Fully Qualified Domain Name used by Postfix and as Apache's `ServerName` (default `nagios.example.com`) |
 | NAGIOS_TIMEZONE | Set the timezone of the server (default `UTC`). Written to `use_timezone` in `nagios.cfg` on every start, so it overrides any manual edit of that setting |
 | NAGIOSADMIN_USER | Web interface admin username, used only when `htpasswd.users` is first created, at which point it's also given the admin permissions in `cgi.cfg` (default `nagiosadmin`) |
-| NAGIOSADMIN_PASS | Web interface admin password, used only when `htpasswd.users` is first created (default `nagios`) |
+| NAGIOSADMIN_PASS | Web interface admin password, used only when `htpasswd.users` is first created. No default: if neither this nor `NAGIOSADMIN_PASS_FILE` is set, a random password is generated (see [Credentials](#credentials)) |
+| NAGIOSADMIN_PASS_FILE | Path to a file containing the admin password, such as a Docker secret. Takes precedence over `NAGIOSADMIN_PASS` and keeps the password out of the container's environment |
 
 For the best results your Nagios container should have access to both IPv4 & IPv6 networks.
 
 ### Credentials
 
-The default credentials for the web interface are:
+There's no default password. The first time the container starts, the web interface login for `NAGIOSADMIN_USER` (default `nagiosadmin`) gets its password from, in order:
 
-| Username | Password |
-| -------- | -------- |
-| `nagiosadmin` | `nagios` |
+1. The file named by `NAGIOSADMIN_PASS_FILE`
+2. `NAGIOSADMIN_PASS`
+3. Otherwise, a randomly generated password, printed once in the container log:
 
-`NAGIOSADMIN_USER`/`NAGIOSADMIN_PASS` only seed `/opt/nagios/etc/htpasswd.users` the first time the container starts (i.e. when that file doesn't already exist, such as on a fresh named volume or empty bind mount). Changing these env vars on a container that already has a populated `etc` volume has no effect on the stored password.
+```bash
+docker logs nagios 2>&1 | grep 'Generated password'
+```
+
+With Docker Compose, a secret keeps the password out of the environment and `docker inspect`:
+
+```yaml
+services:
+  nagios:
+    environment:
+      NAGIOSADMIN_PASS_FILE: /run/secrets/nagiosadmin_pass
+    secrets:
+      - nagiosadmin_pass
+
+secrets:
+  nagiosadmin_pass:
+    file: ./nagiosadmin_pass.txt
+```
+
+These settings only seed `/opt/nagios/etc/htpasswd.users` the first time the container starts (i.e. when that file doesn't already exist, such as on a fresh named volume or empty bind mount). Changing them on a container that already has a populated `etc` volume has no effect on the stored password, so existing installs keep the password they already have.
 
 To change the password on an existing container (it prompts for the new one, and also upgrades an older SHA-1 entry, if present, to bcrypt):
 

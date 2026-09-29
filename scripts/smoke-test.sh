@@ -7,13 +7,17 @@ set -uo pipefail
 
 image=${1:?usage: $0 <image>}
 name=nagios-smoke-$$
+# Started with no password at all, to check one is generated and logged
+gen_name=$name-generated
 # Not the default nagiosadmin, so the cgi.cfg permission hand-off is exercised too
 user=smokeadmin
 password=smoke-$RANDOM$RANDOM
+pass_file=$(mktemp)
+printf '%s\n' "$password" > "$pass_file"
 pass=0
 fail=0
 
-cleanup() { docker rm -f "$name" >/dev/null 2>&1; }
+cleanup() { docker rm -f "$name" "$gen_name" >/dev/null 2>&1; rm -f "$pass_file"; }
 trap cleanup EXIT
 
 check() {
@@ -37,7 +41,9 @@ http_is() {
     [ "$(docker exec "$name" curl -s -o /dev/null -w '%{http_code}' "$@")" = "$expected" ]
 }
 
-docker run -d --name "$name" -e NAGIOSADMIN_USER="$user" -e NAGIOSADMIN_PASS="$password" "$image" >/dev/null
+docker run -d --name "$name" -e NAGIOSADMIN_USER="$user" -e NAGIOSADMIN_PASS_FILE=/run/secrets/nagiosadmin_pass \
+    -v "$pass_file:/run/secrets/nagiosadmin_pass:ro" "$image" >/dev/null
+docker run -d --name "$gen_name" "$image" >/dev/null
 
 echo "Waiting for $image to become healthy..."
 for _ in $(seq 1 40); do
@@ -53,6 +59,10 @@ check "nagios -v accepts the config" in_container '/opt/nagios/bin/nagios -v /op
 
 check "/nagios/ requires authentication" http_is 401 http://localhost/nagios/
 check "admin password is stored as bcrypt" in_container 'grep -q "^[^:]*:[$]2y[$]" /opt/nagios/etc/htpasswd.users'
+generated=$(docker logs "$gen_name" 2>&1 | sed -n 's/^Generated password for nagiosadmin: \([^ ]*\)$/\1/p')
+check "a password is generated and logged when none is given" \
+    docker exec "$gen_name" htpasswd -vb /opt/nagios/etc/htpasswd.users nagiosadmin "$generated"
+docker rm -f "$gen_name" >/dev/null 2>&1
 check "/nagios/ loads with credentials" http_is 200 -u "$user:$password" http://localhost/nagios/
 check "status.cgi loads" http_is 200 -u "$user:$password" http://localhost/nagios/cgi-bin/status.cgi
 check "admin user is authorized to see all hosts" \
