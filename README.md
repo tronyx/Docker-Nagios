@@ -43,6 +43,7 @@ Things that I have changed/updated/added to date:
 * Fixed SMTP relay authentication
 * `NAGIOS_TIMEZONE` and `NAGIOS_FQDN` are now applied at startup instead of being fixed when the image was built
 * A custom `NAGIOSADMIN_USER` now gets full admin access in the web interface
+* The web interface password is stored as a bcrypt hash instead of unsalted SHA-1
 * The container now shuts down cleanly within a few seconds
 
 ## Information
@@ -160,10 +161,10 @@ The default credentials for the web interface are:
 
 `NAGIOSADMIN_USER`/`NAGIOSADMIN_PASS` only seed `/opt/nagios/etc/htpasswd.users` the first time the container starts (i.e. when that file doesn't already exist, such as on a fresh named volume or empty bind mount). Changing these env vars on a container that already has a populated `etc` volume has no effect on the stored password.
 
-To change the password on an existing container:
+To change the password on an existing container (it prompts for the new one, and also upgrades an older SHA-1 entry, if present, to bcrypt):
 
 ```bash
-docker exec -it nagios htpasswd -b /opt/nagios/etc/htpasswd.users nagiosadmin '<new-password>'
+docker exec -it nagios htpasswd -B /opt/nagios/etc/htpasswd.users nagiosadmin
 ```
 
 ### Reverse Proxy and TLS

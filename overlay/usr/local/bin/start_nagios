@@ -25,7 +25,7 @@ if [[ -z $(ls -A /opt/nagiosgraph/var) ]]; then
 fi
 
 if [[ ! -f ${NAGIOS_HOME}/etc/htpasswd.users ]]; then
-    htpasswd -c -b -s "${NAGIOS_HOME}/etc/htpasswd.users" "${NAGIOSADMIN_USER}" "${NAGIOSADMIN_PASS}"
+    printf '%s\n' "${NAGIOSADMIN_PASS}" | htpasswd -c -i -B "${NAGIOS_HOME}/etc/htpasswd.users" "${NAGIOSADMIN_USER}"
     chown "${NAGIOS_USER}:${NAGIOS_GROUP}" "${NAGIOS_HOME}/etc/htpasswd.users"
     # The bundled cgi.cfg grants the admin permissions to nagiosadmin only
     if [[ ${NAGIOSADMIN_USER} != nagiosadmin ]]; then

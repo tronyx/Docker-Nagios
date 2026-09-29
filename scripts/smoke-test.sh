@@ -52,6 +52,7 @@ check "all runit services are up" in_container \
 check "nagios -v accepts the config" in_container '/opt/nagios/bin/nagios -v /opt/nagios/etc/nagios.cfg'
 
 check "/nagios/ requires authentication" http_is 401 http://localhost/nagios/
+check "admin password is stored as bcrypt" in_container 'grep -q "^[^:]*:[$]2y[$]" /opt/nagios/etc/htpasswd.users'
 check "/nagios/ loads with credentials" http_is 200 -u "$user:$password" http://localhost/nagios/
 check "status.cgi loads" http_is 200 -u "$user:$password" http://localhost/nagios/cgi-bin/status.cgi
 check "admin user is authorized to see all hosts" \
