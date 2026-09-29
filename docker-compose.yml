@@ -16,6 +16,13 @@ services:
       - "8080:80"
     environment:
       NAGIOS_TIMEZONE: America/New_York
+      # Web interface admin password, only used on first start. If none is set, a random one is
+      # generated and logged: docker logs nagios 2>&1 | grep 'Generated password'
+      # Prefer the secret (see the bottom of this file); NAGIOSADMIN_PASS shows up in docker inspect.
+      #NAGIOSADMIN_PASS_FILE: /run/secrets/nagiosadmin_pass
+      #NAGIOSADMIN_PASS: change-me
+    #secrets:
+    #  - nagiosadmin_pass
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       # Named volumes (declared at the bottom of this file)
@@ -43,3 +50,8 @@ volumes:
     nagiosgraphvar:
     nagiosgraphetc:
     nagiosa2logs:
+
+# Only needed for NAGIOSADMIN_PASS_FILE above; put the password in nagiosadmin_pass.txt
+#secrets:
+#  nagiosadmin_pass:
+#    file: ./nagiosadmin_pass.txt
