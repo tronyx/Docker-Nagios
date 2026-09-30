@@ -1,0 +1,13 @@
+# Same bar as shellcheck --severity=warning in the lint workflow; info/style findings are still printed
+failure-threshold: warning
+
+ignored:
+  # Base image is pinned by digest; pinning apt versions breaks builds once Ubuntu supersedes them
+  - DL3008
+  # Each cd is into a /tmp build dir that the same RUN deletes
+  - DL3003
+  # Pipelines either end in the command that matters or tolerate partial failure on purpose;
+  # the runtime-library and smoke-test checks catch real breakage
+  - DL4006
+  # Existing nagiosVersion/nrpeVersion/... label keys are kept for anyone already reading them
+  - DL3048

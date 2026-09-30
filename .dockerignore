@@ -2,6 +2,7 @@
 .github
 *.md
 .dockerignore
-Dockerfile.*
+Dockerfile
 docker-compose.yml
+requirements.in
 scripts/

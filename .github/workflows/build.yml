@@ -10,9 +10,11 @@ on:
       - master
       - develop
 
+permissions:
+  contents: read
+
 jobs:
   build:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
     strategy:
       matrix:
         include:
@@ -21,28 +23,30 @@ jobs:
           - architecture: linux-arm64
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
+    env:
+      TRIVY: aquasec/trivy:0.74.0
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
     outputs:
       version: ${{ steps.prep.outputs.version }}
       branch: ${{ steps.prep.outputs.branch }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
-
-      - name: Check if architecture exists
-        id: arch_check
-        run: |
-          (test -f Dockerfile.${{ matrix.architecture }} && echo "check=passed" >> $GITHUB_OUTPUT) || echo "check=failed" >> $GITHUB_OUTPUT
+        with:
+          persist-credentials: false
 
       - name: Set up Docker Buildx
-        if: "contains(steps.arch_check.outputs.check, 'passed')"
         uses: docker/setup-buildx-action@v4.2.0
         with:
           #install: true
-          version: latest
-          driver-opts: image=moby/buildkit:master
+          version: v0.37.1
+          driver-opts: image=moby/buildkit:v0.33.0
 
       - name: Login to docker.io
-        if: "contains(steps.arch_check.outputs.check, 'passed')"
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v4.4.0
         with:
           registry: docker.io
@@ -50,80 +54,124 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Login to ghcr.io
-        if: "contains(steps.arch_check.outputs.check, 'passed')"
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          password: ${{ github.token }}
 
       - name: Prepare
-        if: "contains(steps.arch_check.outputs.check, 'passed')"
         id: prep
+        env:
+          HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
+          # GITHUB_REF is refs/pull/N/merge on PRs, which isn't a valid tag and has no cache of its own
+          if [[ "${GITHUB_EVENT_NAME}" == pull_request ]]; then
+            REF_NAME="pr-${{ github.event.number }}"
+            CACHE_REF_NAME="${GITHUB_BASE_REF}"
+          else
+            REF_NAME="${GITHUB_REF_NAME}"
+            CACHE_REF_NAME="${GITHUB_REF_NAME}"
+          fi
+          ARCHITECTURE=${{ matrix.architecture }}
+          CACHE="type=gha,scope=${CACHE_REF_NAME}-${ARCHITECTURE}"
           {
-            ARCHITECTURE=${{ matrix.architecture }}
-            echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            echo "title=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//} | tr '[:upper:]' '[:lower:]')"
-            echo "revision=${GITHUB_SHA}"
-            echo "source=$(echo ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//} | tr '[:upper:]' '[:lower:]')"
-            echo "vendor=${{ github.repository_owner }}"
-            echo "url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"
             echo "platform=${ARCHITECTURE//-/\/}"
-            echo "cache=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-cache-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]')"
-            echo "tag=$(echo ${GITHUB_REPOSITORY}:${GITHUB_REF//refs\/heads\//}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}-${{ matrix.architecture }} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)"
-          } >> $GITHUB_OUTPUT
-          VERSION=$(grep nagiosVersion Dockerfile.${{ matrix.architecture }} | awk -F= '{print $2}' | tr -d '" \\')
+            echo "cache=${CACHE}"
+            echo "tag=$(echo "${GITHUB_REPOSITORY}:${REF_NAME}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}-${ARCHITECTURE}" | tr '[:upper:]' '[:lower:]' | sed s/docker-//)"
+          } >> "$GITHUB_OUTPUT"
+          VERSION=$(grep -m1 '^ARG NAGIOS_VERSION=' Dockerfile | cut -d= -f2)
           if [[ -z ${VERSION} ]]; then
-            VERSION=$(date --utc --date=@$(git show -s --format=%ct $(git rev-parse --short HEAD)) +'%Y%m%d%H%M%S')
+            VERSION=$(date --utc --date="@$(git show -s --format=%ct HEAD)" +'%Y%m%d%H%M%S')
           fi
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          BRANCH="${GITHUB_REF//refs\/heads\//}"
-          if [[ -n ${BRANCH} ]]; then
-            echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "branch=${REF_NAME}" >> "$GITHUB_OUTPUT"
+          # "[no-cache]" in a pushed commit's message rebuilds every layer, e.g. to pick up package fixes the cache holds back
+          if [[ "${GITHUB_EVENT_NAME}" == push && "${HEAD_COMMIT_MESSAGE}" == *'[no-cache]'* ]]; then
+            echo "nocache=true" >> "$GITHUB_OUTPUT"
+            echo "cache_from=" >> "$GITHUB_OUTPUT"
+          else
+            echo "nocache=false" >> "$GITHUB_OUTPUT"
+            echo "cache_from=${CACHE}" >> "$GITHUB_OUTPUT"
           fi
 
-          echo $GITHUB_OUTPUT
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6.2.0
+        with:
+          labels: |
+            org.opencontainers.image.title=Nagios
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ steps.prep.outputs.version }}
 
-      - name: Build and push
+      - name: Build for testing
+        uses: docker/build-push-action@v7.3.0
+        with:
+          load: true
+          no-cache: ${{ steps.prep.outputs.nocache == 'true' }}
+          platforms: ${{ steps.prep.outputs.platform }}
+          file: ./Dockerfile
+          cache-from: ${{ steps.prep.outputs.cache_from }}
+          tags: nagios-smoke-test:${{ matrix.architecture }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Smoke test
+        run: bash scripts/smoke-test.sh nagios-smoke-test:${{ matrix.architecture }}
+
+      # Reports every fixable finding; a scanner outage doesn't block publishing
+      - name: Vulnerability scan
+        id: trivy
         continue-on-error: true
-        if: "contains(steps.arch_check.outputs.check, 'passed')"
-        id: build_attempt1
+        env:
+          IMAGE: nagios-smoke-test:${{ matrix.architecture }}
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$RUNNER_TEMP:/out" "$TRIVY" \
+            image --scanners vuln --ignore-unfixed --format json --output /out/trivy.json "$IMAGE"
+          docker run --rm -v "$RUNNER_TEMP:/out" "$TRIVY" convert --scanners vuln --format table /out/trivy.json
+          docker run --rm -v "$RUNNER_TEMP:/out" "$TRIVY" convert --format sarif --output /out/trivy.sarif /out/trivy.json
+
+      - name: Upload scan results
+        if: github.event_name != 'pull_request' && steps.trivy.outcome == 'success'
+        uses: github/codeql-action/upload-sarif@v4.38.2
+        with:
+          sarif_file: ${{ runner.temp }}/trivy.sarif
+          category: trivy-${{ matrix.architecture }}
+
+      # After the upload, so the findings still reach the Security tab when this blocks publishing
+      - name: Fail on fixable critical vulnerabilities
+        if: steps.trivy.outcome == 'success'
+        run: |
+          docker run --rm -v "$RUNNER_TEMP:/out" "$TRIVY" convert --quiet --scanners vuln --format table \
+            --severity CRITICAL --exit-code 1 /out/trivy.json
+
+      # Reuses the layers built above, so this only exports and pushes
+      - name: Build and push
+        if: github.event_name != 'pull_request'
         uses: docker/build-push-action@v7.3.0
         with:
           push: true
+          sbom: true
+          provenance: mode=max
           platforms: ${{ steps.prep.outputs.platform }}
-          file: ./Dockerfile.${{ matrix.architecture }}
-          cache-from: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }}
-          cache-to: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }},mode=max
+          file: ./Dockerfile
+          cache-from: ${{ steps.prep.outputs.cache_from }}
+          cache-to: ${{ steps.prep.outputs.cache }},mode=max
           tags: |
             docker.io/${{ steps.prep.outputs.tag }}
             ghcr.io/${{ steps.prep.outputs.tag }}
-          labels: |
-            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
-            org.opencontainers.image.title=${{ steps.prep.outputs.title }}
-            org.opencontainers.image.revision=${{ steps.prep.outputs.revision }}
-            org.opencontainers.image.source=${{ steps.prep.outputs.source }}
-            org.opencontainers.image.vendor=${{ steps.prep.outputs.vendor }}
-            org.opencontainers.image.url=${{ steps.prep.outputs.url }}
-            org.opencontainers.image.version=${{ steps.prep.outputs.version }}
-          build-args: |
-            ${{ steps.prep.outputs.build-args }}
-
-      - name: Fail if build failed
-        if: "contains(steps.arch_check.outputs.check, 'passed') && steps.build_attempt1.outcome == 'failure'"
-        run: exit 1
+          labels: ${{ steps.meta.outputs.labels }}
 
   publish:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-26.04
+    permissions:
+      packages: write
     strategy:
       matrix:
         registry: [docker.io, ghcr.io]
     needs: [build]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-
       - name: Login to docker.io
         if: matrix.registry == 'docker.io'
         uses: docker/login-action@v4.4.0
@@ -138,24 +186,18 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          password: ${{ github.token }}
 
       - name: Create manifests
-        continue-on-error: true
-        id: manifest_attempt1
         env:
           DOCKER_CLI_EXPERIMENTAL: enabled
         run: |
-          IMAGE=${{ matrix.registry }}/$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' | sed s/docker-//)
+          IMAGE=${{ matrix.registry }}/$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]' | sed s/docker-//)
           TAG=${{ needs.build.outputs.branch }}
           SOURCE=${IMAGE}:${TAG}-${GITHUB_SHA:0:7}-${GITHUB_RUN_NUMBER}
           VERSION=${{ needs.build.outputs.version }}
-          docker buildx imagetools create -t ${IMAGE}:${TAG} ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
-          docker buildx imagetools create -t ${IMAGE}:${TAG}-${VERSION} ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
+          docker buildx imagetools create -t "${IMAGE}:${TAG}" "${SOURCE}-linux-amd64" "${SOURCE}-linux-arm64"
+          docker buildx imagetools create -t "${IMAGE}:${TAG}-${VERSION}" "${SOURCE}-linux-amd64" "${SOURCE}-linux-arm64"
           if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
-          docker buildx imagetools create -t ${IMAGE}:latest ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm64
+          docker buildx imagetools create -t "${IMAGE}:latest" "${SOURCE}-linux-amd64" "${SOURCE}-linux-arm64"
           fi
-
-      - name: Fail if manifest creation failed
-        if: steps.manifest_attempt1.outcome == 'failure'
-        run: exit 1

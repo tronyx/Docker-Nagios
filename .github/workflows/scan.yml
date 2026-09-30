@@ -1,0 +1,62 @@
+name: scan
+
+# Rescans the published images so new vulnerabilities show up even when nothing is pushed
+on:
+  schedule:
+    - cron: '23 5 * * 2'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: [master, develop]
+        architecture: [linux-amd64, linux-arm64]
+    runs-on: ubuntu-26.04
+    env:
+      TRIVY: aquasec/trivy:0.74.0
+      IMAGE: docker.io/tronyx/nagios:${{ matrix.branch }}
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ matrix.branch }}
+          persist-credentials: false
+
+      - name: Prepare
+        id: prep
+        run: |
+          ARCHITECTURE=${{ matrix.architecture }}
+          echo "platform=${ARCHITECTURE//-/\/}" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Vulnerability scan
+        env:
+          PLATFORM: ${{ steps.prep.outputs.platform }}
+        run: |
+          docker run --rm -v "$RUNNER_TEMP:/out" "$TRIVY" image --image-src remote --platform "$PLATFORM" \
+            --scanners vuln --ignore-unfixed --format json --output /out/trivy.json "$IMAGE"
+          docker run --rm -v "$RUNNER_TEMP:/out" "$TRIVY" convert --scanners vuln --format table /out/trivy.json
+          docker run --rm -v "$RUNNER_TEMP:/out" "$TRIVY" convert --format sarif --output /out/trivy.sarif /out/trivy.json
+
+      # Same category, ref and commit as the build job, so these replace its results for that branch
+      - name: Upload scan results
+        uses: github/codeql-action/upload-sarif@v4.38.2
+        with:
+          sarif_file: ${{ runner.temp }}/trivy.sarif
+          category: trivy-${{ matrix.architecture }}
+          ref: refs/heads/${{ matrix.branch }}
+          sha: ${{ steps.prep.outputs.sha }}
+
+      # A failed scheduled run emails the maintainer
+      - name: Fail on fixable critical vulnerabilities
+        run: |
+          docker run --rm -v "$RUNNER_TEMP:/out" "$TRIVY" convert --quiet --scanners vuln --format table \
+            --severity CRITICAL --exit-code 1 /out/trivy.json
