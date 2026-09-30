@@ -234,4 +234,4 @@ Every upstream source is pinned to an exact version: git repositories to a commi
 * **Weekly rescans:** the `scan` workflow rescans the published `master` and `develop` images every Tuesday, so vulnerabilities disclosed after a build still show up. Its results replace the build's on the Code scanning page, and it fails (which emails you) if there's a fixable critical vulnerability.
 
 > [!NOTE]
-> GitHub only runs scheduled and manually triggered workflows from the default branch, so `update-pins` and `scan` start working once they're on `master`; until then, run the script by hand. It also needs "Allow GitHub Actions to create and approve pull requests" enabled under Settings → Actions → General.
+> GitHub only runs scheduled and manually triggered workflows from the default branch, so `update-pins` and `scan` start working once they're on `master`; until then, run the script by hand. `update-pins` also needs "Allow GitHub Actions to create and approve pull requests" enabled under Settings → Actions → General and, if the repository restricts which actions can run, `peter-evans/create-pull-request@*` added to the allowed actions on the same page.
