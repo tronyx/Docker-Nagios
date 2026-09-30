@@ -75,7 +75,7 @@ jobs:
             CACHE_REF_NAME="${GITHUB_REF_NAME}"
           fi
           ARCHITECTURE=${{ matrix.architecture }}
-          CACHE=$(echo "${GITHUB_REPOSITORY}:${CACHE_REF_NAME}-cache-${ARCHITECTURE}" | tr '[:upper:]' '[:lower:]')
+          CACHE="type=gha,scope=${CACHE_REF_NAME}-${ARCHITECTURE}"
           {
             echo "platform=${ARCHITECTURE//-/\/}"
             echo "cache=${CACHE}"
@@ -93,7 +93,7 @@ jobs:
             echo "cache_from=" >> "$GITHUB_OUTPUT"
           else
             echo "nocache=false" >> "$GITHUB_OUTPUT"
-            echo "cache_from=type=registry,ref=docker.io/${CACHE}" >> "$GITHUB_OUTPUT"
+            echo "cache_from=${CACHE}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Docker metadata
@@ -156,7 +156,7 @@ jobs:
           platforms: ${{ steps.prep.outputs.platform }}
           file: ./Dockerfile
           cache-from: ${{ steps.prep.outputs.cache_from }}
-          cache-to: type=registry,ref=docker.io/${{ steps.prep.outputs.cache }},mode=max
+          cache-to: ${{ steps.prep.outputs.cache }},mode=max
           tags: |
             docker.io/${{ steps.prep.outputs.tag }}
             ghcr.io/${{ steps.prep.outputs.tag }}
