@@ -6,7 +6,7 @@
 
 A fork of [JasonRivers' Docker Nagios image](https://github.com/JasonRivers/Docker-Nagios) that pulls in fixes from the open pull requests on his repo, along with other updates and quality-of-life improvements.
 
-## 🙏 Incorporated PRs
+## 📈 Incorporated PRs
 
 Listed here to give the original authors credit for their work.
 
@@ -20,7 +20,7 @@ Listed here to give the original authors credit for their work.
 * [#132](https://github.com/JasonRivers/Docker-Nagios/issues/132) - Add rsync ([LutzLegu](https://github.com/LutzLegu))
 * [#165](https://github.com/JasonRivers/Docker-Nagios/pull/165) - Added libcrypt-x509-perl and libtext-glob-perl modules ([Scott-Jones-COS](https://github.com/Scott-Jones-COS))
 
-## ✨ Changes That I've Made
+## 💻 Changes That I've Made
 
 Things that I have changed/updated/added to date:
 
@@ -198,7 +198,7 @@ When setting up the proxy:
 * Set `NAGIOS_FQDN` to that hostname.
 * If the proxy reaches the container over a Docker network, you don't need to publish port 80 on the host.
 
-### 🩺 Health Check
+### 🏥 Health Check
 
 The image's Docker health check reports healthy when Apache is answering requests and Nagios is running. It doesn't log in, so it works whatever password you set.
 
