@@ -14,10 +14,12 @@ user=smokeadmin
 password=smoke-$RANDOM$RANDOM
 pass_file=$(mktemp)
 printf '%s\n' "$password" > "$pass_file"
+stale_pid=$(mktemp)
+printf '1\n' > "$stale_pid"
 pass=0
 fail=0
 
-cleanup() { docker rm -f "$name" "$gen_name" >/dev/null 2>&1; rm -f "$pass_file"; }
+cleanup() { docker rm -f "$name" "$gen_name" >/dev/null 2>&1; rm -f "$pass_file" "$stale_pid"; }
 trap cleanup EXIT
 
 check() {
@@ -104,6 +106,9 @@ check "docker stop finishes within 10s (took ${elapsed}s)" [ "$elapsed" -lt 10 ]
 check "container exits with code 0" [ "$(docker inspect -f '{{.State.ExitCode}}' "$name")" = 0 ]
 
 log_lines=$(docker logs "$name" 2>&1 | wc -l)
+# Leftover PID files can point at a live process after a restart; PID 1 always is
+docker cp "$stale_pid" "$name:/run/nsca.pid"
+docker cp "$stale_pid" "$name:/run/apache2/apache2.pid"
 docker start "$name" >/dev/null
 wait_healthy
 sleep 5
