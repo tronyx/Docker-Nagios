@@ -41,16 +41,20 @@ http_is() {
     [ "$(docker exec "$name" curl -s -o /dev/null -w '%{http_code}' "$@")" = "$expected" ]
 }
 
+wait_healthy() {
+    for _ in $(seq 1 40); do
+        status=$(docker inspect -f '{{.State.Health.Status}}' "$name" 2>/dev/null)
+        [ "$status" = healthy ] || [ "$status" = unhealthy ] && break
+        sleep 3
+    done
+}
+
 docker run -d --name "$name" -e NAGIOSADMIN_USER="$user" -e NAGIOSADMIN_PASS_FILE=/run/secrets/nagiosadmin_pass \
     -v "$pass_file:/run/secrets/nagiosadmin_pass:ro" "$image" >/dev/null
 docker run -d --name "$gen_name" "$image" >/dev/null
 
 echo "Waiting for $image to become healthy..."
-for _ in $(seq 1 40); do
-    status=$(docker inspect -f '{{.State.Health.Status}}' "$name" 2>/dev/null)
-    [ "$status" = healthy ] || [ "$status" = unhealthy ] && break
-    sleep 3
-done
+wait_healthy
 check "container is healthy" [ "$status" = healthy ]
 
 check "all runit services are up" in_container \
@@ -98,6 +102,14 @@ docker stop "$name" >/dev/null
 elapsed=$(( $(date +%s) - start ))
 check "docker stop finishes within 10s (took ${elapsed}s)" [ "$elapsed" -lt 10 ]
 check "container exits with code 0" [ "$(docker inspect -f '{{.State.ExitCode}}' "$name")" = 0 ]
+
+log_lines=$(docker logs "$name" 2>&1 | wc -l)
+docker start "$name" >/dev/null
+wait_healthy
+sleep 5
+check "container is healthy after a restart" [ "$status" = healthy ]
+check "no service restart-loops after a restart" \
+    sh -c "! docker logs '$name' 2>&1 | tail -n +$((log_lines + 1)) | grep -Eq 'already running|Bailing out'"
 
 echo
 echo "$pass passed, $fail failed"
