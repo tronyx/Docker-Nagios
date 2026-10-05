@@ -71,6 +71,9 @@ shutdown() {
     exit 0
 }
 
+# docker restart keeps /run, and the new boot reuses the same PIDs, so old PID files look live
+find /run -name '*.pid' -type f -delete
+
 exec runsvdir -P /etc/service &
 RUNSVDIR=$!
 echo "Started runsvdir, PID is ${RUNSVDIR}"
