@@ -8,6 +8,12 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 Nothing yet.
 
+## 2026-10-06 · [#63](https://github.com/tronyx/Docker-Nagios/pull/63)
+
+### Project
+
+- A changelog (this file), linked from the README. The contributing guide and the pull request template ask for a line under **Unreleased** with each change.
+
 ## 2026-10-06 · [#62](https://github.com/tronyx/Docker-Nagios/pull/62)
 
 ### Security
