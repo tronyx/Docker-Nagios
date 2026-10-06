@@ -5,6 +5,7 @@
 -   [ ]   I have made only one major change in my proposed changes.
 -   [ ]   I have commented my proposed changes within the code.
 -   [ ]   I have tested my proposed changes, including running `scripts/smoke-test.sh` against the built image.
+-   [ ]   I have added a line about my change under **Unreleased** in `CHANGELOG.md`.
 -   [ ]   I am willing to help maintain this change if there are issues with it later.
 -   [ ]   I give this submission freely and claim no ownership.
 
