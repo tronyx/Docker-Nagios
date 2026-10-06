@@ -87,7 +87,7 @@ for dockerfile in "${dockerfiles[@]}"; do
 
     base_image=$(arg_value "$dockerfile" BASE_IMAGE)
     base_ref=${base_image%@*}
-    digest=$(docker buildx imagetools inspect "$base_ref" | awk '/^Digest:/ {print $2; exit}')
+    digest=$(docker buildx imagetools inspect "$base_ref" --format '{{.Manifest.Digest}}')
     if [ -z "$digest" ]; then
         echo "Could not resolve digest of $base_ref" >&2
         exit 1
