@@ -40,6 +40,8 @@ Things that I have changed/updated/added to date:
 * Pinned every upstream source to an exact version, with a workflow that refreshes the pins every other week
 * Added CI that lints, smoke-tests and scans every image for vulnerabilities before publishing it (an image with a fixable critical vulnerability isn't published), with SBOM and provenance attestations attached
 
+The [changelog](CHANGELOG.md) lists every change by release.
+
 ## ℹ️ Information
 
 Nagios Core running on Ubuntu 26.04 LTS with NagiosGraph, NRPE, NCPA, NSCA and NagiosTV.
