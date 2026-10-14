@@ -12,7 +12,7 @@ ARG NAGIOS_PLUGINS_VERSION=2.5
 ARG NRPE_VERSION=4.1.3
 ARG NSCA_VERSION=2.10.3
 ARG NCPA_VERSION=3.5.0
-ARG NAGIOSTV_VERSION=0.9.11
+ARG NAGIOSTV_VERSION=0.10.0
 
 # Multi-arch index digest, so the same value works for amd64 and arm64
 ARG BASE_IMAGE=ubuntu:26.04@sha256:f144425ff09be612d6d9ad965196e9cdc23dae1f42110a8a11a3e9a8198759f7
@@ -434,7 +434,7 @@ RUN missing=$( { find ${NAGIOS_HOME}/bin ${NAGIOS_HOME}/sbin ${NAGIOS_HOME}/libe
 
 # Install NCPA and NagiosTV
 ARG NCPA_CHECK_SHA256=7b8a2634b8ca1cdd9479e9d1841fd5c49f471097d2ed3006c89338bdeba04c50
-ARG NAGIOSTV_SHA256=db299d9728be210c39b9844500938317b43de693f548cec3fae7d7c0740d8e12
+ARG NAGIOSTV_SHA256=842cece3b9237ed2089b910e534f3b91c777001b2cea4e22afce38b6f8429045
 RUN wget -q -O ${NAGIOS_HOME}/libexec/check_ncpa.py https://raw.githubusercontent.com/NagiosEnterprises/ncpa/v${NCPA_VERSION}/client/check_ncpa.py && \
     echo "${NCPA_CHECK_SHA256}  ${NAGIOS_HOME}/libexec/check_ncpa.py" | sha256sum -c - && \
     chmod 755 ${NAGIOS_HOME}/libexec/check_ncpa.py && \

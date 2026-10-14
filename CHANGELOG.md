@@ -6,7 +6,9 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 ## Unreleased
 
-Nothing yet.
+### Changed
+
+- NagiosTV is updated to [0.10.0](https://github.com/chriscareycode/nagiostv-react/releases/tag/v0.10.0), with more AI summary options, sorting by next scheduled check, faster loading and more reliable polling.
 
 ## 2026-10-06 · [#63](https://github.com/tronyx/Docker-Nagios/pull/63)
 

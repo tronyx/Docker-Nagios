@@ -53,7 +53,7 @@ Nagios Core running on Ubuntu 26.04 LTS with NagiosGraph, NRPE, NCPA, NSCA and N
 | [NRPE](https://github.com/NagiosEnterprises/nrpe) | 4.1.3 |
 | [NCPA](https://github.com/NagiosEnterprises/ncpa) | 3.5.0 |
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.3 |
-| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.9.11 |
+| [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.10.0 |
 
 All of the standard Nagios Plugins are included, plus the extras listed under [Extra Plugins](#-extra-plugins).
 
