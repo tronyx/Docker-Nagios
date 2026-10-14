@@ -404,7 +404,8 @@ RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set
         unzip \
         wget && \
     apt-get -qq clean && \
-    rm -rf /var/lib/apt/lists/* /runtime-packages.txt /var/log/apt/* /var/log/dpkg.log /var/lib/dpkg/*-old
+    rm -rf /var/lib/apt/lists/* /runtime-packages.txt /var/log/apt/* /var/log/dpkg.log /var/lib/dpkg/*-old && \
+    rm -rf /usr/bin/pebble /var/lib/pebble
 
 RUN ( grep -Ei "^${NAGIOS_GROUP}"    /etc/group || groupadd --gid ${NAGIOS_GID} ${NAGIOS_GROUP} ) && \
     ( grep -Ei "^${NAGIOS_CMDGROUP}" /etc/group || groupadd ${NAGIOS_CMDGROUP} ) && \
