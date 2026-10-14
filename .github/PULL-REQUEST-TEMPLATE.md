@@ -1,13 +1,15 @@
+# Pull Request Template
+
 **By submitting this pull request, I confirm the following:**
 *Please fill in any appropriate check-boxes, e.g: [X]*
 
--   [ ]   I have read and understood the [contributors guide](https://github.com/tronyx/Docker-Nagios/blob/master/.github/CONTRIBUTING.md), as well as this entire template.
--   [ ]   I have made only one major change in my proposed changes.
--   [ ]   I have commented my proposed changes within the code.
--   [ ]   I have tested my proposed changes, including running `scripts/smoke-test.sh` against the built image.
--   [ ]   I have added a line about my change under **Unreleased** in `CHANGELOG.md`.
--   [ ]   I am willing to help maintain this change if there are issues with it later.
--   [ ]   I give this submission freely and claim no ownership.
+- [ ]   I have read and understood the [contributors guide](https://github.com/tronyx/Docker-Nagios/blob/master/.github/CONTRIBUTING.md), as well as this entire template.
+- [ ]   I have made only one major change in my proposed changes.
+- [ ]   I have commented my proposed changes within the code.
+- [ ]   I have tested my proposed changes, including running `scripts/smoke-test.sh` against the built image.
+- [ ]   I have added a line about my change under **Unreleased** in `CHANGELOG.md`.
+- [ ]   I am willing to help maintain this change if there are issues with it later.
+- [ ]   I give this submission freely and claim no ownership.
 
 ---
 **What does this PR aim to accomplish?:**
@@ -20,5 +22,6 @@
 *A detailed list of any necessary changes*
 
 ---
--   You must follow the template instructions. Failure to do so will result in your pull request being closed.
--   Please remember that Docker-Nagios is maintained by volunteers (i.e. me), who can only reply in their spare time.
+
+- You must follow the template instructions. Failure to do so will result in your pull request being closed.
+- Please remember that Docker-Nagios is maintained by volunteers (i.e. me), who can only reply in their spare time.
