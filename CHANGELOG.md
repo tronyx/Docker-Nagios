@@ -8,6 +8,13 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 Nothing yet.
 
+## 2026-10-14 · [#67](https://github.com/tronyx/Docker-Nagios/pull/67)
+
+### Changed
+
+- NagiosTV is updated to [0.10.0](https://github.com/chriscareycode/nagiostv-react/releases/tag/v0.10.0), with more AI summary options, sorting by next scheduled check, faster loading and more reliable polling.
+- The Pebble service manager that the Ubuntu 26.04 base image ships is removed. The image uses runit, so Pebble never ran, but vulnerability scans check the Go runtime it's built with, and only a new base image could update it.
+
 ## 2026-10-06 · [#63](https://github.com/tronyx/Docker-Nagios/pull/63)
 
 ### Project
