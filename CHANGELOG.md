@@ -8,6 +8,12 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 Nothing yet.
 
+## 2026-10-14 · [#68](https://github.com/tronyx/Docker-Nagios/pull/68)
+
+### Project
+
+- A `sync-develop` workflow fast-forwards `develop` to `master` after each release, so the release's merge commit no longer leaves `develop` one commit behind.
+
 ## 2026-10-14 · [#67](https://github.com/tronyx/Docker-Nagios/pull/67)
 
 ### Changed
