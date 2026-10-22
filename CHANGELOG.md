@@ -6,6 +6,10 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 ## Unreleased
 
+Nothing yet.
+
+## 2026-10-22 · [#69](https://github.com/tronyx/Docker-Nagios/pull/69)
+
 ### Security
 
 - certifi, which the Python plugins use, is updated to 2026.10.19. The old version trusted emSign root certificates whose intermediate CA keys were compromised ([GHSA-6q48-6c7w-9gw2](https://github.com/advisories/GHSA-6q48-6c7w-9gw2)).
