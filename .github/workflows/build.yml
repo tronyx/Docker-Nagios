@@ -24,7 +24,7 @@ jobs:
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
     env:
-      TRIVY: aquasec/trivy:0.74.0
+      TRIVY: aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
     permissions:
       contents: read
       packages: write
