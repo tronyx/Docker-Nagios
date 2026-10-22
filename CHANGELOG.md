@@ -6,7 +6,9 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 ## Unreleased
 
-Nothing yet.
+### Changed
+
+- NRPE is updated to [4.2.0](https://github.com/NagiosEnterprises/nrpe/releases/tag/nrpe-4.2.0), with upstream fixes for memory leaks and build warnings. The image includes only the `check_nrpe` plugin, so the new configuration options for the NRPE daemon do not apply.
 
 ## 2026-10-14 · [#68](https://github.com/tronyx/Docker-Nagios/pull/68)
 
