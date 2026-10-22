@@ -14,6 +14,10 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 - NRPE is updated to [4.2.0](https://github.com/NagiosEnterprises/nrpe/releases/tag/nrpe-4.2.0), with upstream fixes for memory leaks and build warnings. The image includes only the `check_nrpe` plugin, so the new configuration options for the NRPE daemon do not apply.
 
+### Project
+
+- The vulnerability scans use Trivy 0.76.1, which distrusts the compromised eMudhra intermediate CA certificates. Trivy is now pinned by digest as well as by version.
+
 ## 2026-10-14 · [#68](https://github.com/tronyx/Docker-Nagios/pull/68)
 
 ### Project
