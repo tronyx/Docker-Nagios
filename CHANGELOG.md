@@ -6,6 +6,10 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 ## Unreleased
 
+Nothing yet.
+
+## 2026-10-26 · [#71](https://github.com/tronyx/Docker-Nagios/pull/71)
+
 ### Security
 
 - `setuptools`, which the Python plugins' `pywbem` depends on, is updated from 84.0.0 to 84.2.1, fixing [GHSA-xmj3-9gf7-h52w](https://github.com/advisories/GHSA-xmj3-9gf7-h52w) (low).
