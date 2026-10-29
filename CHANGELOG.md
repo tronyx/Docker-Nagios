@@ -6,6 +6,10 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 ## Unreleased
 
+Nothing yet.
+
+## 2026-10-29 · [#72](https://github.com/tronyx/Docker-Nagios/pull/72)
+
 ### Security
 
 - The image is rebuilt with updated Ubuntu packages, fixing CVE-2026-111497, an out-of-bounds write in the Brotli decoder (`libbrotli1` 1.2.0-3build1 → 1.2.0-3ubuntu0.1, high).
