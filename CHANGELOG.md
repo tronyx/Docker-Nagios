@@ -6,7 +6,9 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 ## Unreleased
 
-Nothing yet.
+### Changed
+
+- NCPA is updated to [3.5.1](https://github.com/NagiosEnterprises/ncpa/blob/v3.5.1/CHANGES.rst). The image only includes its `check_ncpa.py` plugin, which is unchanged in this release, so only the version shown in the README and the image labels changes.
 
 ## 2026-10-29 · [#72](https://github.com/tronyx/Docker-Nagios/pull/72)
 
