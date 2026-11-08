@@ -51,7 +51,7 @@ Nagios Core running on Ubuntu 26.04 LTS with NagiosGraph, NRPE, NCPA, NSCA and N
 | [Nagios Core](https://github.com/NagiosEnterprises/nagioscore/releases) | 4.5.14 |
 | [Nagios Plugins](https://github.com/nagios-plugins/nagios-plugins) | 2.5 |
 | [NRPE](https://github.com/NagiosEnterprises/nrpe) | 4.2.0 |
-| [NCPA](https://github.com/NagiosEnterprises/ncpa) | 3.5.0 |
+| [NCPA](https://github.com/NagiosEnterprises/ncpa) | 3.5.1 |
 | [NSCA](https://github.com/NagiosEnterprises/nsca) | 2.10.3 |
 | [NagiosTV](https://github.com/chriscareycode/nagiostv-react) | 0.10.0 |
 
@@ -232,7 +232,7 @@ Every upstream source is pinned to an exact version: git repositories to a commi
 * **Updating Python packages:** change the versions in [requirements.in](requirements.in), then regenerate [requirements.txt](requirements.txt) with the [uv](https://docs.astral.sh/uv/) command at the top of either file. `requirements.txt` lists every package and dependency with its version and hashes, so it's also the place to check what's currently in the image.
 * **Updating CI tools:** buildx, BuildKit and Trivy (in `build.yml` and `scan.yml`) and hadolint, shellcheck and actionlint (in `lint.yml`) are pinned by hand, and the script doesn't update them. Bump them now and then.
 * **Testing an image:** `scripts/smoke-test.sh <image>` starts the image and checks logins, the web interface, key plugins, file permissions and a clean shutdown. CI runs it on every build before anything is published.
-* **Vulnerability scans:** CI scans every image with Trivy and uploads the results to the repository's Security → Code scanning page. If it finds a critical vulnerability that has a fix available, the build fails and nothing is published. The fix is usually a newer package: refresh the pins so the base image and its packages are updated, then rebuild. If the base image hasn't changed, put `[no-cache]` in the commit message of your next push to rebuild everything from scratch.
+* **Vulnerability scans:** CI scans every image with Trivy and uploads the results to the repository's Security → Code scanning page. If it finds a critical vulnerability that has a fix available, the build fails and nothing is published. The fix is usually a newer Ubuntu package. The build installs the current packages and upgrades the ones that come with the base image, but that layer is cached, so put `[no-cache]` in the commit message of your next push to rebuild everything from scratch. A new base image digest from `update-pins` also rebuilds it.
 * **Weekly rescans:** the `scan` workflow rescans the published `master` and `develop` images every Tuesday, so vulnerabilities disclosed after a build still show up. Its results replace the build's on the Code scanning page, and it fails (which emails you) if there's a fixable critical vulnerability.
 
 > [!NOTE]

@@ -8,6 +8,16 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 Nothing yet.
 
+## 2026-11-07 · [#73](https://github.com/tronyx/Docker-Nagios/pull/73)
+
+### Security
+
+- The build now also upgrades the packages that come with the Ubuntu base image. `apt-get install` leaves those at the base image's versions, so their security fixes only arrived with a new base image, and the current `ubuntu:26.04` doesn't have these yet. This fixes CVE-2026-109518 in APT (`apt` and `libapt-pkg7.0` 3.2.0 → 3.2.1ubuntu0.1, high) and CVE-2026-86145, CVE-2026-89156, CVE-2026-89157, CVE-2026-89158, CVE-2026-89160, CVE-2026-89161, CVE-2026-89162 and CVE-2026-103111 in PCRE2 (`libpcre2-8-0` 10.46-1build1 → 10.46-1ubuntu0.1, medium).
+
+### Changed
+
+- NCPA is updated to [3.5.1](https://github.com/NagiosEnterprises/ncpa/blob/v3.5.1/CHANGES.rst). The image only includes its `check_ncpa.py` plugin, which is unchanged in this release, so only the version shown in the README and the image labels changes.
+
 ## 2026-10-29 · [#72](https://github.com/tronyx/Docker-Nagios/pull/72)
 
 ### Security

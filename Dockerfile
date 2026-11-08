@@ -11,7 +11,7 @@ ARG NAGIOS_VERSION=4.5.14
 ARG NAGIOS_PLUGINS_VERSION=2.5
 ARG NRPE_VERSION=4.2.0
 ARG NSCA_VERSION=2.10.3
-ARG NCPA_VERSION=3.5.0
+ARG NCPA_VERSION=3.5.1
 ARG NAGIOSTV_VERSION=0.10.0
 
 # Multi-arch index digest, so the same value works for amd64 and arm64
@@ -343,11 +343,13 @@ ENV PYTHONPATH=/opt/nagios-pyplugins
 
 COPY --from=builder /runtime-packages.txt /runtime-packages.txt
 # $(cat /runtime-packages.txt) is split into package names on purpose
+# The upgrade applies Ubuntu's fixes to the packages that come with the base image, which install leaves as they are
 # hadolint ignore=SC2046
 RUN echo postfix postfix/main_mailer_type string "'Internet Site'" | debconf-set-selections && \
     echo postfix postfix/mynetworks string "127.0.0.0/8" | debconf-set-selections && \
     echo postfix postfix/mailname string ${NAGIOS_FQDN} | debconf-set-selections && \
     apt-get -qq update && \
+    apt-get -qq -y upgrade && \
     apt-get -qq -y install --no-install-recommends \
         $(cat /runtime-packages.txt) \
         apache2 \
