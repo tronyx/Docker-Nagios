@@ -6,7 +6,14 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 ## Unreleased
 
-Nothing yet.
+### Security
+
+- The image is rebuilt with updated Ubuntu packages. This fixes 83 CVEs. All of them are medium, except where the list says otherwise:
+  - MySQL client library: 65 CVEs (`libmysqlclient24` 8.4.11-0ubuntu0.26.04.1 → 8.4.13-0ubuntu0.26.04.2).
+  - Apache: 10 CVEs, including CVE-2026-119618 (high) and CVE-2026-109163 (low) (`apache2`, `apache2-bin`, `apache2-data` and `apache2-utils` 2.4.66-2ubuntu2.6 → 2.4.66-2ubuntu2.8).
+  - glibc: 6 CVEs (`libc6`, `libc-bin` and `libc-gconv-modules-extra` 2.43-2ubuntu2.4 → 2.43-2ubuntu2.7).
+  - Perl: CVE-2026-82560 (`perl`, `perl-base`, `perl-modules-5.40` and `libperl5.40` 5.40.1-7ubuntu0.3 → 5.40.1-7ubuntu0.4).
+  - libheif: CVE-2026-120208 (`libheif1` and `libheif-plugin-aomdec` 1.21.2-3ubuntu0.6 → 1.21.2-3ubuntu0.7).
 
 ## 2026-11-07 · [#73](https://github.com/tronyx/Docker-Nagios/pull/73)
 
