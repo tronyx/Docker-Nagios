@@ -6,6 +6,10 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 ## Unreleased
 
+Nothing yet.
+
+## 2026-11-18 · [#75](https://github.com/tronyx/Docker-Nagios/pull/75)
+
 ### Security
 
 - The image is rebuilt with updated Ubuntu packages. This fixes 83 CVEs. All of them are medium, except where the list says otherwise:
