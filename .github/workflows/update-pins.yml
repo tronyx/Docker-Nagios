@@ -51,7 +51,7 @@ jobs:
       # PRs opened with the default token don't trigger other workflows, so CI only builds
       # this PR when PIN_UPDATE_TOKEN (a fine-grained PAT or GitHub App token) is set.
       - name: Open or update pull request
-        uses: peter-evans/create-pull-request@v8.1.1
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.PIN_UPDATE_TOKEN || github.token }}
           base: develop

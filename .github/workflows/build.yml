@@ -24,7 +24,7 @@ jobs:
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
     env:
-      TRIVY: aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
+      TRIVY: aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb
     permissions:
       contents: read
       packages: write
@@ -39,7 +39,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4.2.0
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
         with:
           #install: true
           version: v0.37.1
@@ -47,7 +47,7 @@ jobs:
 
       - name: Login to docker.io
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v4.4.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -55,7 +55,7 @@ jobs:
 
       - name: Login to ghcr.io
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v4.4.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -98,7 +98,7 @@ jobs:
 
       - name: Docker metadata
         id: meta
-        uses: docker/metadata-action@v6.2.0
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
         with:
           labels: |
             org.opencontainers.image.title=Nagios
@@ -106,7 +106,7 @@ jobs:
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
 
       - name: Build for testing
-        uses: docker/build-push-action@v7.3.0
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         with:
           load: true
           no-cache: ${{ steps.prep.outputs.nocache == 'true' }}
@@ -148,7 +148,7 @@ jobs:
       # Reuses the layers built above, so this only exports and pushes
       - name: Build and push
         if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@v7.3.0
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         with:
           push: true
           sbom: true
@@ -174,7 +174,7 @@ jobs:
     steps:
       - name: Login to docker.io
         if: matrix.registry == 'docker.io'
-        uses: docker/login-action@v4.4.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -182,7 +182,7 @@ jobs:
 
       - name: Login to ghcr.io
         if: matrix.registry == 'ghcr.io'
-        uses: docker/login-action@v4.4.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
