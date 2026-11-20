@@ -6,7 +6,10 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 ## Unreleased
 
-Nothing yet.
+### Project
+
+- The vulnerability scans use Trivy 0.76.2. The image of Trivy 0.76.1 has known vulnerabilities in `musl` and in `libcurl` (24 CVEs, one of them high), and in two Go modules. Trivy 0.76.2 fixes them.
+- The workflows refer to each action that is not from GitHub by the SHA of its commit, with its version in a comment. These actions are from Docker (`setup-buildx-action`, `login-action`, `build-push-action` and `metadata-action`) and `peter-evans/create-pull-request`. A version tag can move to other code, but a SHA cannot. The versions do not change.
 
 ## 2026-11-18 · [#75](https://github.com/tronyx/Docker-Nagios/pull/75)
 
