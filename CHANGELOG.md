@@ -6,6 +6,10 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 ## Unreleased
 
+Nothing yet.
+
+## 2026-11-20 · [#76](https://github.com/tronyx/Docker-Nagios/pull/76)
+
 ### Project
 
 - The vulnerability scans use Trivy 0.76.2. The image of Trivy 0.76.1 has known vulnerabilities in `musl` and in `libcurl` (24 CVEs, one of them high), and in two Go modules. Trivy 0.76.2 fixes them.
