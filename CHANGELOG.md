@@ -6,7 +6,9 @@ The project doesn't use version numbers of its own. Each entry is one merge into
 
 ## Unreleased
 
-Nothing yet.
+### Security
+
+- The image is rebuilt with the PHP security update from Ubuntu. This fixes 17 CVEs that newer PHP releases also fix (`php8.5-cli`, `php8.5-common`, `php8.5-gd`, `php8.5-readline` and `libapache2-mod-php8.5` 8.5.4-0ubuntu1.5 → 8.5.4-0ubuntu1.6). Ubuntu keeps the version number 8.5.4 and adds the fixes to it, so `php -v` still shows 8.5.4.
 
 ## 2026-11-20 · [#76](https://github.com/tronyx/Docker-Nagios/pull/76)
 
